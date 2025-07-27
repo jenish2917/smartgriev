@@ -1,0 +1,24 @@
+# Base requirements for Grievance Management System
+# Core Django and essential packages
+
+Django>=4.2.0,<5.0.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.0.0
+Pillow>=10.0.0
+python-decouple>=3.8
+
+# Database
+psycopg2-binary>=2.9.0  # PostgreSQL adapter
+
+# Authentication & Security
+djangorestframework-simplejwt>=5.2.0
+django-oauth-toolkit>=1.7.0
+cryptography>=41.0.0
+
+# API Documentation
+drf-spectacular>=0.26.0
+drf-spectacular[sidecar]>=0.26.0
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3

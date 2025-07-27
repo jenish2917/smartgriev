@@ -1,12 +1,18 @@
-from rest_framework import generics, permissions, filters
+from rest_framework import generics, permissions, filters, status
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q
-from .models import Complaint, Department, AuditTrail
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from django.db.models import Q, Count
+from math import radians, sin, cos, sqrt, atan2
+from .models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
 from .serializers import (
     ComplaintSerializer,
     DepartmentSerializer,
     ComplaintStatusUpdateSerializer,
-    AuditTrailSerializer
+    AuditTrailSerializer,
+    IncidentLocationHistorySerializer,
+    GPSValidationSerializer,
+    ComplaintLocationUpdateSerializer
 )
 
 class IsOfficerOrReadOnly(permissions.BasePermission):
@@ -171,3 +177,189 @@ class AuditTrailListView(generics.ListAPIView):
             Q(complaint__user=self.request.user) |
             Q(by_user=self.request.user)
         )
+
+# GPS Location Views
+class IncidentLocationHistoryView(generics.ListCreateAPIView):
+    serializer_class = IncidentLocationHistorySerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        complaint_id = self.kwargs.get('complaint_id')
+        if complaint_id:
+            return IncidentLocationHistory.objects.filter(complaint_id=complaint_id)
+        
+        if self.request.user.is_officer:
+            return IncidentLocationHistory.objects.filter(
+                complaint__department__officer=self.request.user
+            )
+        return IncidentLocationHistory.objects.filter(
+            complaint__user=self.request.user
+        )
+
+class ComplaintLocationUpdateView(generics.UpdateAPIView):
+    serializer_class = ComplaintLocationUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if self.request.user.is_officer:
+            return Complaint.objects.filter(department__officer=self.request.user)
+        return Complaint.objects.filter(user=self.request.user)
+    
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        
+        # Create location history entry
+        IncidentLocationHistory.objects.create(
+            complaint=instance,
+            latitude=instance.incident_latitude,
+            longitude=instance.incident_longitude,
+            accuracy=instance.gps_accuracy,
+            address=instance.incident_address,
+            updated_by=self.request.user,
+            update_reason='correction' if IncidentLocationHistory.objects.filter(complaint=instance).exists() else 'initial'
+        )
+
+class GPSValidationView(generics.RetrieveUpdateAPIView):
+    serializer_class = GPSValidationSerializer
+    permission_classes = [IsAuthenticated, IsOfficerOrReadOnly]
+    
+    def get_queryset(self):
+        return GPSValidation.objects.filter(complaint__department__officer=self.request.user)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validate_gps_location(request, complaint_id):
+    """Validate GPS coordinates for a complaint"""
+    try:
+        complaint = Complaint.objects.get(id=complaint_id)
+        
+        # Check permissions
+        if not request.user.is_officer and complaint.user != request.user:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Get or create GPS validation
+        gps_validation, created = GPSValidation.objects.get_or_create(
+            complaint=complaint,
+            defaults={'validated_by': request.user}
+        )
+        
+        # Perform validation checks
+        validation_results = _perform_gps_validation(complaint)
+        
+        # Update validation record
+        gps_validation.accuracy_check = validation_results['accuracy_check']
+        gps_validation.range_check = validation_results['range_check']
+        gps_validation.duplicate_check = validation_results['duplicate_check']
+        gps_validation.speed_check = validation_results['speed_check']
+        gps_validation.validation_score = validation_results['score']
+        gps_validation.is_valid = validation_results['is_valid']
+        gps_validation.validation_notes = validation_results['notes']
+        gps_validation.validated_by = request.user
+        gps_validation.save()
+        
+        serializer = GPSValidationSerializer(gps_validation)
+        return Response(serializer.data)
+        
+    except Complaint.DoesNotExist:
+        return Response({'error': 'Complaint not found'}, status=status.HTTP_404_NOT_FOUND)
+
+def _perform_gps_validation(complaint):
+    """Perform GPS validation checks"""
+    results = {
+        'accuracy_check': True,
+        'range_check': True,
+        'duplicate_check': True,
+        'speed_check': True,
+        'score': 1.0,
+        'is_valid': True,
+        'notes': ''
+    }
+    
+    notes = []
+    
+    # Check GPS accuracy
+    if complaint.gps_accuracy and complaint.gps_accuracy > 50:
+        results['accuracy_check'] = False
+        notes.append(f"GPS accuracy too low: {complaint.gps_accuracy}m")
+    
+    # Check if coordinates are within service area (you can customize this)
+    # Example: Check if within India bounds
+    if complaint.incident_latitude and complaint.incident_longitude:
+        if not (6.0 <= complaint.incident_latitude <= 37.6 and 68.7 <= complaint.incident_longitude <= 97.25):
+            results['range_check'] = False
+            notes.append("Location outside service area")
+    
+    # Check for duplicate locations (within 100m radius)
+    from math import radians, sin, cos, sqrt, atan2
+    
+    def calculate_distance(lat1, lon1, lat2, lon2):
+        R = 6371000  # Earth radius in meters
+        
+        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        
+        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        
+        return R * c
+    
+    if complaint.incident_latitude and complaint.incident_longitude:
+        nearby_complaints = Complaint.objects.filter(
+            incident_latitude__isnull=False,
+            incident_longitude__isnull=False
+        ).exclude(id=complaint.id)
+        
+        for nearby in nearby_complaints:
+            distance = calculate_distance(
+                complaint.incident_latitude, complaint.incident_longitude,
+                nearby.incident_latitude, nearby.incident_longitude
+            )
+            if distance < 100:  # Within 100 meters
+                results['duplicate_check'] = False
+                notes.append(f"Similar location within 100m (Complaint #{nearby.id})")
+                break
+    
+    # Calculate overall score
+    checks = [results['accuracy_check'], results['range_check'], results['duplicate_check'], results['speed_check']]
+    results['score'] = sum(checks) / len(checks)
+    results['is_valid'] = results['score'] >= 0.75
+    results['notes'] = '; '.join(notes) if notes else 'All validation checks passed'
+    
+    return results
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def nearby_complaints(request):
+    """Find complaints near a given location"""
+    lat = request.GET.get('lat')
+    lon = request.GET.get('lon')
+    radius = float(request.GET.get('radius', 1000))  # Default 1km
+    
+    if not lat or not lon:
+        return Response({'error': 'Latitude and longitude required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    lat, lon = float(lat), float(lon)
+    
+    # Simple bounding box search (for better performance, consider using PostGIS)
+    lat_range = radius / 111000  # Rough conversion: 1 degree ≈ 111km
+    lon_range = radius / (111000 * cos(radians(lat)))
+    
+    nearby = Complaint.objects.filter(
+        incident_latitude__range=[lat - lat_range, lat + lat_range],
+        incident_longitude__range=[lon - lon_range, lon + lon_range],
+        incident_latitude__isnull=False,
+        incident_longitude__isnull=False
+    )
+    
+    # Filter by user permissions
+    if not request.user.is_officer:
+        nearby = nearby.filter(user=request.user)
+    else:
+        nearby = nearby.filter(department__officer=request.user)
+    
+    serializer = ComplaintSerializer(nearby, many=True)
+    return Response({
+        'count': nearby.count(),
+        'complaints': serializer.data
+    })

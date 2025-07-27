@@ -33,11 +33,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'storages',
+    'channels',  # WebSocket support
     # Local apps
     'authentication',
     'complaints',
     'chatbot',
     'mlmodels',
+    'analytics',  # Real-time analytics and dashboard
+    'ml_experiments',  # A/B testing for ML models
+    'geospatial',  # Geographic analytics
+    'notifications',  # Advanced notification system
 ]
 
 MIDDLEWARE = [
@@ -49,6 +54,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'analytics.middleware.UserActivityMiddleware',  # Track user activity
+    'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers
+    'analytics.middleware.CacheControlMiddleware',  # Cache control
 ]
 
 ROOT_URLCONF = 'smartgriev.urls'
@@ -159,6 +167,118 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@smartgriev.com')
+
+# Caching
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# WebSocket (Channels) configuration
+ASGI_APPLICATION = 'smartgriev.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}
+
+# SMS/Notification settings
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+
+# Firebase settings for push notifications
+FIREBASE_CONFIG = {
+    'type': os.getenv('FIREBASE_TYPE'),
+    'project_id': os.getenv('FIREBASE_PROJECT_ID'),
+    'private_key_id': os.getenv('FIREBASE_PRIVATE_KEY_ID'),
+    'private_key': os.getenv('FIREBASE_PRIVATE_KEY', '').replace('\\n', '\n'),
+    'client_email': os.getenv('FIREBASE_CLIENT_EMAIL'),
+    'client_id': os.getenv('FIREBASE_CLIENT_ID'),
+    'auth_uri': os.getenv('FIREBASE_AUTH_URI'),
+    'token_uri': os.getenv('FIREBASE_TOKEN_URI'),
+}
+
+# ML Models directory
+MODELS_ROOT = os.path.join(BASE_DIR, 'ml_models')
+
+# Analytics settings
+ANALYTICS_RETENTION_DAYS = int(os.getenv('ANALYTICS_RETENTION_DAYS', 90))
+ENABLE_REAL_TIME_METRICS = os.getenv('ENABLE_REAL_TIME_METRICS', 'True') == 'True'
+
+# Performance monitoring
+ENABLE_PERFORMANCE_MONITORING = os.getenv('ENABLE_PERFORMANCE_MONITORING', 'True') == 'True'
+SLOW_REQUEST_THRESHOLD = float(os.getenv('SLOW_REQUEST_THRESHOLD', 1.0))  # seconds
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Rate limiting
+RATELIMIT_ENABLE = True
+RATELIMIT_USE_CACHE = 'default'
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'analytics': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'ml_experiments': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 

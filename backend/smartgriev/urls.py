@@ -19,8 +19,34 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+@api_view(['GET'])
+def api_root(request):
+    """API Root - SmartGriev System"""
+    return Response({
+        'message': 'Welcome to SmartGriev API',
+        'version': '1.0.0',
+        'endpoints': {
+            'Authentication': '/api/auth/',
+            'Complaints': '/api/complaints/',
+            'Chatbot': '/api/chatbot/',
+            'ML Models': '/api/ml/',
+            'Analytics': '/api/analytics/',
+            'ML Experiments': '/api/ml-experiments/',
+            'Geospatial': '/api/geospatial/',
+            'Notifications': '/api/notifications/',
+            'Admin': '/admin/',
+        },
+        'auth': {
+            'token_obtain': '/api/token/',
+            'token_refresh': '/api/token/refresh/',
+        }
+    })
 
 urlpatterns = [
+    path('', api_root, name='api_root'),
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -28,4 +54,8 @@ urlpatterns = [
     path('api/complaints/', include('complaints.urls')),
     path('api/chatbot/', include('chatbot.urls')),
     path('api/ml/', include('mlmodels.urls')),
+    path('api/analytics/', include('analytics.urls')),
+    path('api/ml-experiments/', include('ml_experiments.urls')),
+    path('api/geospatial/', include('geospatial.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

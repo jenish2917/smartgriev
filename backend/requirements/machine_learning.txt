@@ -1,0 +1,29 @@
+# Machine Learning & AI requirements
+-r base.txt
+
+# Core ML libraries (compatible versions)
+numpy>=1.24.3,<1.25.0  # Compatible with TensorFlow
+scikit-learn>=1.3.0
+pandas>=2.0.0
+
+# Natural Language Processing
+transformers>=4.31.0,<5.0.0
+torch>=2.0.0
+spacy>=3.6.0
+
+# TensorFlow (compatible with numpy 1.24.x)
+tensorflow>=2.13.0,<2.14.0
+
+# Additional ML utilities
+nltk>=3.8.0
+textblob>=0.17.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# Computer Vision (if needed)
+opencv-python>=4.8.0
+
+# Model deployment
+joblib>=1.3.0
+pickle5>=0.0.12
