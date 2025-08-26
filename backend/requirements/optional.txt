@@ -1,0 +1,23 @@
+# Optional requirements for advanced notification features
+# These are not required for basic functionality but enable additional features
+
+# Firebase Cloud Messaging for push notifications
+firebase-admin>=6.2.0
+
+# SMS notifications via Twilio
+twilio>=8.5.0
+
+# Additional monitoring and error tracking
+sentry-sdk[django]>=1.29.0
+
+# WebSocket support for real-time notifications
+channels>=4.0.0
+channels-redis>=4.1.0
+
+# Advanced email features
+premailer>=3.10.0
+django-anymail>=10.0.0
+
+# External API integrations
+requests>=2.31.0
+httpx>=0.24.0

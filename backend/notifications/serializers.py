@@ -11,89 +11,41 @@ User = get_user_model()
 class NotificationTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationTemplate
-        fields = '__all__'
-        read_only_fields = ('template_id', 'created_at', 'updated_at')
-    
-    def validate_template_variables(self, value):
-        """Validate template variables format"""
-        if not isinstance(value, list):
-            raise serializers.ValidationError("Template variables must be a list")
-        return value
+        fields = ('id', 'name', 'notification_type', 'channel', 'subject_template', 'body_template', 'available_variables', 'html_template', 'css_styles', 'language', 'is_active', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')
 
 class NotificationRuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationRule
-        fields = '__all__'
-        read_only_fields = ('rule_id', 'created_at', 'updated_at')
-    
-    def validate_conditions(self, value):
-        """Validate rule conditions format"""
-        if not isinstance(value, dict):
-            raise serializers.ValidationError("Conditions must be a dictionary")
-        return value
+        fields = ('id', 'name', 'trigger_event', 'template', 'conditions', 'recipient_type', 'custom_recipients', 'delay_minutes', 'max_frequency_hours', 'is_active', 'created_by', 'created_at')
+        read_only_fields = ('id', 'created_at')
 
 class NotificationDeliveryLogSerializer(serializers.ModelSerializer):
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    template_name = serializers.CharField(source='template.name', read_only=True)
-    
     class Meta:
         model = NotificationDeliveryLog
-        fields = '__all__'
-        read_only_fields = ('log_id', 'sent_at')
+        fields = ('id', 'notification', 'attempt_number', 'attempted_at', 'provider_name', 'provider_response', 'success', 'error_code', 'error_message', 'response_time_ms')
+        read_only_fields = ('id', 'attempted_at')
 
 class NotificationPreferenceSerializer(serializers.ModelSerializer):
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    
     class Meta:
         model = NotificationPreference
-        fields = '__all__'
-        read_only_fields = ('preference_id', 'user', 'created_at', 'updated_at')
-    
-    def validate_preferences(self, value):
-        """Validate preferences format"""
-        if not isinstance(value, dict):
-            raise serializers.ValidationError("Preferences must be a dictionary")
-        
-        valid_channels = ['email', 'sms', 'push']
-        for channel in value.keys():
-            if channel not in valid_channels:
-                raise serializers.ValidationError(f"Invalid channel: {channel}")
-        
-        return value
+        fields = ('id', 'user', 'email_enabled', 'sms_enabled', 'push_enabled', 'in_app_enabled', 'whatsapp_enabled', 'complaint_updates', 'system_alerts', 'marketing_messages', 'reminders', 'quiet_hours_start', 'quiet_hours_end', 'timezone', 'max_emails_per_day', 'max_sms_per_day', 'updated_at')
+        read_only_fields = ('id', 'user', 'updated_at')
 
 class NotificationQueueSerializer(serializers.ModelSerializer):
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    template_name = serializers.CharField(source='template.name', read_only=True)
-    
     class Meta:
         model = NotificationQueue
-        fields = '__all__'
-        read_only_fields = ('queue_id', 'created_at', 'updated_at')
-    
-    def validate_priority(self, value):
-        """Validate priority level"""
-        valid_priorities = ['low', 'medium', 'high', 'urgent']
-        if value not in valid_priorities:
-            raise serializers.ValidationError(f"Priority must be one of: {valid_priorities}")
-        return value
+        fields = ('id', 'notification_id', 'rule', 'recipient', 'subject', 'body', 'html_body', 'channel', 'recipient_address', 'status', 'scheduled_at', 'sent_at', 'provider_message_id', 'delivery_status', 'opened_at', 'clicked_at', 'retry_count', 'error_message', 'context_data', 'created_at')
+        read_only_fields = ('id', 'notification_id', 'created_at')
 
 class NotificationAnalyticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = NotificationAnalytics
-        fields = '__all__'
-        read_only_fields = ('analytics_id', 'date')
+        fields = ('id', 'template', 'date', 'sent_count', 'delivered_count', 'failed_count', 'opened_count', 'clicked_count', 'unsubscribed_count', 'avg_delivery_time_seconds', 'bounce_rate', 'delivery_rate', 'open_rate', 'click_rate', 'updated_at')
+        read_only_fields = ('id', 'date', 'updated_at')
 
 class PushNotificationDeviceSerializer(serializers.ModelSerializer):
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    
     class Meta:
         model = PushNotificationDevice
-        fields = '__all__'
-        read_only_fields = ('device_id', 'user', 'created_at', 'updated_at')
-    
-    def validate_device_type(self, value):
-        """Validate device type"""
-        valid_types = ['ios', 'android', 'web']
-        if value not in valid_types:
-            raise serializers.ValidationError(f"Device type must be one of: {valid_types}")
-        return value
+        fields = ('id', 'user', 'device_token', 'device_type', 'device_name', 'app_version', 'os_version', 'is_active', 'last_used', 'registered_at')
+        read_only_fields = ('id', 'user', 'last_used', 'registered_at')

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from collections import namedtuple
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
@@ -26,7 +27,7 @@ class Complaint(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='complaints')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    media = models.FileField(upload_to='complaints/', null=True, blank=True)
+    media = models.ImageField(upload_to='complaints/', null=True, blank=True)
     category = models.CharField(max_length=100)
     sentiment = models.FloatField(null=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='complaints')
@@ -68,29 +69,20 @@ class Complaint(models.Model):
     
     def get_incident_coordinates(self):
         """Get the primary incident coordinates"""
+        Coordinates = namedtuple('Coordinates', ['latitude', 'longitude', 'accuracy', 'method'])
         # Use new GPS fields if available, otherwise fall back to legacy fields
         lat = self.incident_latitude if self.incident_latitude is not None else self.location_lat
         lon = self.incident_longitude if self.incident_longitude is not None else self.location_lon
         
-        return {
-            'latitude': lat,
-            'longitude': lon,
-            'accuracy': self.gps_accuracy,
-            'method': self.location_method
-        }
-    
-    def save(self, *args, **kwargs):
-        """Override save to migrate legacy location data"""
-        # If new GPS fields are empty but legacy fields exist, migrate the data
-        if (self.incident_latitude is None and self.incident_longitude is None and 
-            self.location_lat is not None and self.location_lon is not None):
-            self.incident_latitude = self.location_lat
-            self.incident_longitude = self.location_lon
-            
-        super().save(*args, **kwargs)
+        return Coordinates(
+            latitude=lat,
+            longitude=lon,
+            accuracy=self.gps_accuracy,
+            method=self.location_method
+        )
 
 class IncidentLocationHistory(models.Model):
-    """Track location updates and validations for complaints"""
+    """Track location updates and validations for complaints""""
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='location_history')
     latitude = models.FloatField()
     longitude = models.FloatField()

@@ -11,6 +11,11 @@ class UserRegistrationView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
 
+    def create(self, request, *args, **kwargs):
+        if request.data.get('password') != request.data.get('confirm_password'):
+            return Response({"password": "Password fields didn't match."})
+        return super().create(request, *args, **kwargs)
+
 class UserLoginView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
 
@@ -31,6 +36,9 @@ class ChangePasswordView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        if request.data.get('new_password') != request.data.get('confirm_new_password'):
+            return Response({"new_password": "Password fields didn't match."})
 
         user = self.get_object()
         if not user.check_password(serializer.data.get('old_password')):

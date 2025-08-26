@@ -76,3 +76,28 @@ docker-compose.override.yml
 # Database
 *.sql
 *.sqlite
+
+# Build tools and executables
+*.exe
+*.msi
+*.dmg
+*.pkg
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Old requirements files (use requirements/ directory)
+requirements_*.txt
+!requirements/
+
+# Test outputs
+test-results/
+test_output/

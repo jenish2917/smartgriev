@@ -1,68 +1,66 @@
-from rest_framework import serializers
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import (
     GeospatialCluster, HeatmapData, GeoAnalytics,
-    RouteOptimization, LocationIntelligence
+    RouteOptimization, LocationIntelligence, CategoryDistribution,
+    RecommendedAction, ComplaintVisit, RouteCoordinate
 )
 
-class GeospatialClusterSerializer(serializers.ModelSerializer):
+class CategoryDistributionSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = CategoryDistribution
+        fields = ('category', 'count')
+
+class RecommendedActionSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = RecommendedAction
+        fields = ('action',)
+
+class GeospatialClusterSerializer(GeoFeatureModelSerializer):
+    category_distribution = CategoryDistributionSerializer(many=True, read_only=True)
+    recommended_actions = RecommendedActionSerializer(many=True, read_only=True)
+
     class Meta:
         model = GeospatialCluster
-        fields = '__all__'
-        read_only_fields = ('cluster_id', 'created_at', 'updated_at')
+        geo_field = "center"
+        fields = ('id', 'cluster_id', 'cluster_type', 'center', 'radius_meters', 'complaint_count', 'severity_score', 'first_complaint_date', 'last_complaint_date', 'time_span_days', 'is_active', 'priority_level', 'category_distribution', 'recommended_actions', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')
 
-class HeatmapDataSerializer(serializers.ModelSerializer):
+class HeatmapDataSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = HeatmapData
-        fields = '__all__'
-        read_only_fields = ('heatmap_id', 'created_at', 'updated_at')
+        geo_field = "bounds"
+        fields = ('id', 'region_type', 'region_id', 'bounds', 'center', 'complaint_density', 'resolution_rate', 'avg_response_time', 'satisfaction_score', 'time_period', 'period_start', 'period_end', 'total_complaints', 'resolved_complaints', 'pending_complaints', 'updated_at')
+        read_only_fields = ('id', 'updated_at')
 
-class GeoAnalyticsSerializer(serializers.ModelSerializer):
+class GeoAnalyticsSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = GeoAnalytics
-        fields = '__all__'
-        read_only_fields = ('analytics_id', 'created_at')
+        fields = ('id', 'analysis_type', 'analysis_date', 'data_version', 'algorithm_version')
+        read_only_fields = ('id', 'analysis_date')
 
-class RouteOptimizationSerializer(serializers.ModelSerializer):
-    officer_name = serializers.CharField(source='officer.username', read_only=True)
-    
+class ComplaintVisitSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = ComplaintVisit
+        fields = ('complaint', 'order')
+
+class RouteCoordinateSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = RouteCoordinate
+        geo_field = "point"
+        fields = ('point', 'order')
+
+class RouteOptimizationSerializer(GeoFeatureModelSerializer):
+    complaint_visits = ComplaintVisitSerializer(many=True)
+    route_coordinates = RouteCoordinateSerializer(many=True)
+
     class Meta:
         model = RouteOptimization
-        fields = '__all__'
-        read_only_fields = ('route_id', 'officer', 'created_at', 'updated_at')
-    
-    def validate_waypoints(self, value):
-        """Validate waypoints format"""
-        if not isinstance(value, list):
-            raise serializers.ValidationError("Waypoints must be a list")
-        
-        for waypoint in value:
-            if not isinstance(waypoint, dict) or 'lat' not in waypoint or 'lon' not in waypoint:
-                raise serializers.ValidationError(
-                    "Each waypoint must contain 'lat' and 'lon' keys"
-                )
-        
-        return value
+        fields = ('id', 'officer', 'route_date', 'total_distance_km', 'estimated_time_hours', 'fuel_cost_estimate', 'is_completed', 'actual_distance_km', 'actual_time_hours', 'created_at', 'completed_at', 'complaint_visits', 'route_coordinates')
+        read_only_fields = ('id', 'created_at', 'completed_at')
 
-class LocationIntelligenceSerializer(serializers.ModelSerializer):
+class LocationIntelligenceSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = LocationIntelligence
-        fields = '__all__'
-        read_only_fields = ('intelligence_id', 'created_at')
-    
-    def validate_coordinates(self, value):
-        """Validate coordinates format"""
-        if not isinstance(value, dict) or 'lat' not in value or 'lon' not in value:
-            raise serializers.ValidationError(
-                "Coordinates must contain 'lat' and 'lon' keys"
-            )
-        
-        lat = value.get('lat')
-        lon = value.get('lon')
-        
-        if not (-90 <= lat <= 90):
-            raise serializers.ValidationError("Latitude must be between -90 and 90")
-        
-        if not (-180 <= lon <= 180):
-            raise serializers.ValidationError("Longitude must be between -180 and 180")
-        
-        return value
+        geo_field = "location"
+        fields = ('id', 'location', 'risk_score', 'confidence_score', 'last_updated')
+        read_only_fields = ('id', 'last_updated')

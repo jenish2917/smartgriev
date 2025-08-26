@@ -1,101 +1,30 @@
 from celery import shared_task
-from .utils import classifier, sentiment_analyzer, entity_extractor, calculate_priority
-from .models import MLModel, ModelPrediction
-from complaints.models import Complaint
-from django.core.mail import send_mail
-from django.conf import settings
-import logging
-
-logger = logging.getLogger(__name__)
+from .models import ModelPrediction
+from .utils import load_model
 
 @shared_task
-def process_complaint(complaint_id: int):
-    """Process a new complaint with ML models."""
+def process_prediction(prediction_id):
     try:
-        complaint = Complaint.objects.get(id=complaint_id)
+        prediction = ModelPrediction.objects.get(id=prediction_id)
+        model = prediction.model
         
-        # Classify complaint
-        categories = classifier.classify(complaint.description)
-        main_category = max(categories.items(), key=lambda x: x[1])[0]
+        ml_model = load_model(model.model_type)
         
-        # Analyze sentiment
-        sentiment = sentiment_analyzer.analyze(complaint.description)
+        if not ml_model:
+            prediction.prediction = "ML model not available"
+            prediction.confidence = 0.0
+            prediction.save()
+            return False
         
-        # Extract entities
-        entities = entity_extractor.extract_entities(complaint.description)
+        result = ml_model(prediction.input_text)[0]
+        prediction.prediction = result['label']
+        prediction.confidence = result['score']
         
-        # Calculate priority
-        priority_level, priority_score = calculate_priority(
-            sentiment,
-            list(categories.keys()),
-            complaint.description
-        )
-        
-        # Update complaint
-        complaint.category = main_category
-        complaint.sentiment = sentiment['compound']
-        complaint.priority = priority_level
-        complaint.location_extracted = ', '.join(entities['locations'])
-        complaint.save()
-        
-        # Create prediction records
-        model = MLModel.objects.get(model_type='classification', is_active=True)
-        ModelPrediction.objects.create(
-            model=model,
-            input_text=complaint.description,
-            prediction=main_category,
-            confidence=max(categories.values())
-        )
-        
-        # Notify if high priority
-        if priority_level == 'HIGH':
-            notify_department.delay(complaint_id)
-        
+        prediction.save()
         return True
-        
-    except Exception as e:
-        logger.error(f"Error processing complaint {complaint_id}: {str(e)}")
+    except ModelPrediction.DoesNotExist:
+        print(f"Prediction with id {prediction_id} does not exist.")
         return False
-
-@shared_task
-def notify_department(complaint_id: int):
-    """Send notification for high priority complaints."""
-    try:
-        complaint = Complaint.objects.get(id=complaint_id)
-        department = complaint.department
-        
-        if department and department.officer:
-            subject = f"High Priority Complaint: {complaint.title}"
-            message = f"""
-            Urgent: A high priority complaint has been filed.
-            
-            Title: {complaint.title}
-            Category: {complaint.category}
-            Priority: {complaint.priority}
-            Location: {complaint.location_extracted or complaint.location}
-            
-            Description:
-            {complaint.description}
-            
-            Please review and take immediate action.
-            """
-            
-            send_mail(
-                subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [department.officer.email],
-                fail_silently=False,
-            )
-            
-        return True
-        
     except Exception as e:
-        logger.error(f"Error notifying about complaint {complaint_id}: {str(e)}")
+        print(f"Error processing prediction {prediction_id}: {str(e)}")
         return False
-
-@shared_task
-def retrain_models():
-    """Periodic task to retrain ML models with new data."""
-    # TODO: Implement model retraining logic
-    pass

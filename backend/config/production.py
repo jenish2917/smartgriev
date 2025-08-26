@@ -4,8 +4,14 @@ Production-ready settings with security and performance optimizations
 """
 
 from .base import *
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+
+# Conditional Sentry import
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    SENTRY_AVAILABLE = True
+except ImportError:
+    SENTRY_AVAILABLE = False
 
 # Production settings
 DEBUG = False
@@ -72,7 +78,7 @@ X_FRAME_OPTIONS = 'DENY'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Sentry for error tracking
-if config('SENTRY_DSN', default=None):
+if config('SENTRY_DSN', default=None) and SENTRY_AVAILABLE:
     sentry_sdk.init(
         dsn=config('SENTRY_DSN'),
         integrations=[

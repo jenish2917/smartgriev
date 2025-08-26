@@ -1,3 +1,17 @@
+"""
+Notification Tasks for SmartGriev
+
+This module handles asynchronous notification processing with support for multiple channels:
+- Email (always available)
+- SMS via Twilio (requires: pip install twilio)
+- Push notifications via Firebase (requires: pip install firebase-admin)
+- In-app notifications via WebSocket (requires: pip install channels channels-redis)
+- Webhook notifications (always available)
+
+The system gracefully handles missing optional dependencies by logging failures
+and continuing with available notification channels.
+"""
+
 from celery import shared_task
 from django.template import Context, Template
 from django.core.mail import EmailMultiAlternatives
@@ -267,7 +281,11 @@ def send_email_notification(notification):
 def send_sms_notification(notification):
     """Send SMS notification via Twilio"""
     try:
-        from twilio.rest import Client
+        try:
+            from twilio.rest import Client
+        except ImportError:
+            log_delivery_attempt(notification, False, "Twilio SDK not installed")
+            return False
         
         client = Client(
             settings.TWILIO_ACCOUNT_SID,
@@ -294,8 +312,12 @@ def send_push_notification(notification):
     """Send push notification"""
     try:
         # Firebase Cloud Messaging implementation
-        import firebase_admin
-        from firebase_admin import messaging
+        try:
+            import firebase_admin
+            from firebase_admin import messaging
+        except ImportError:
+            log_delivery_attempt(notification, False, "Firebase Admin SDK not installed")
+            return False
         
         message = messaging.Message(
             notification=messaging.Notification(
@@ -319,8 +341,12 @@ def send_push_notification(notification):
 def send_in_app_notification(notification):
     """Send in-app notification via WebSocket"""
     try:
-        from channels.layers import get_channel_layer
-        from asgiref.sync import async_to_sync
+        try:
+            from channels.layers import get_channel_layer
+            from asgiref.sync import async_to_sync
+        except ImportError:
+            log_delivery_attempt(notification, False, "Channels not installed")
+            return False
         
         channel_layer = get_channel_layer()
         group_name = f"notifications_{notification.recipient.id}"
@@ -379,14 +405,20 @@ def send_webhook_notification(notification):
 
 def log_delivery_attempt(notification, success, error_message=None):
     """Log delivery attempt"""
-    NotificationDeliveryLog.objects.create(
-        notification=notification,
-        attempt_number=notification.retry_count + 1,
-        provider_name=notification.channel,
-        success=success,
-        error_message=error_message or '',
-        provider_response={'success': success}
-    )
+    try:
+        # Only log if notification is a proper NotificationQueue instance
+        if hasattr(notification, '_meta') and notification._meta.model_name == 'notificationqueue':
+            NotificationDeliveryLog.objects.create(
+                notification=notification,
+                attempt_number=notification.retry_count + 1,
+                provider_name=notification.channel,
+                success=success,
+                error_message=error_message or '',
+                provider_response={'success': success}
+            )
+    except Exception:
+        # Silently ignore logging errors to prevent notification system failures
+        pass
 
 @shared_task
 def update_notification_analytics():

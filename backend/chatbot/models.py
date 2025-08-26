@@ -47,9 +47,8 @@ class ChatLog(models.Model):
     input_language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='en')
     reply_language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='en')
     
-    # Reply type and metadata
+    # Reply type
     reply_type = models.CharField(max_length=20, choices=REPLY_TYPE_CHOICES, default='text')
-    reply_metadata = models.JSONField(default=dict, blank=True)  # Store quick replies, media info, etc.
     
     # Sentiment analysis
     sentiment = models.CharField(max_length=20, null=True, blank=True)
@@ -61,6 +60,29 @@ class ChatLog(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.timestamp}"
+
+class ReplyMetadata(models.Model):
+    chat_log = models.OneToOneField(ChatLog, on_delete=models.CASCADE, related_name='reply_metadata')
+    # Add fields for your metadata, e.g.:
+    # image_url = models.URLField(null=True, blank=True)
+    # video_url = models.URLField(null=True, blank=True)
+    # document_url = models.URLField(null=True, blank=True)
+
+class QuickReplyTemplate(models.Model):
+    """Predefined quick reply templates"""
+    name = models.CharField(max_length=100)
+    intent = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Quick Reply: {self.name}"
+
+class QuickReplyButton(models.Model):
+    template = models.ForeignKey(QuickReplyTemplate, on_delete=models.CASCADE, related_name='buttons')
+    text = models.CharField(max_length=100)
+    action = models.CharField(max_length=100)
+    # Add other button properties as needed
 
 class ChatFeedback(models.Model):
     """User feedback on chat interactions"""
@@ -82,17 +104,6 @@ class ChatFeedback(models.Model):
     def __str__(self):
         return f"Feedback for {self.chat_log} - Rating: {self.rating}"
 
-class QuickReplyTemplate(models.Model):
-    """Predefined quick reply templates"""
-    name = models.CharField(max_length=100)
-    intent = models.CharField(max_length=100)
-    buttons = models.JSONField()  # List of button objects with text and action
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Quick Reply: {self.name}"
-
 class ChatNotification(models.Model):
     """Proactive notifications to users"""
     NOTIFICATION_TYPES = [
@@ -109,7 +120,12 @@ class ChatNotification(models.Model):
     is_sent = models.BooleanField(default=False)
     scheduled_at = models.DateTimeField()
     sent_at = models.DateTimeField(null=True, blank=True)
-    metadata = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
         return f"Notification for {self.user.username}: {self.title}"
+
+class NotificationMetadata(models.Model):
+    chat_notification = models.OneToOneField(ChatNotification, on_delete=models.CASCADE, related_name='metadata')
+    # Add fields for your metadata, e.g.:
+    # complaint_id = models.IntegerField(null=True, blank=True)
+    # url = models.URLField(null=True, blank=True)

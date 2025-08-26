@@ -14,12 +14,14 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-xzj^umq6=ztd61=$eu%&8z_+ciedwkvc$-cz$d0ha87&!4x&1j')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
+# Set this in your .env file for production
+# For example: DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -188,7 +190,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [(REDIS_HOST, REDIS_PORT)],
+            "hosts": [({REDIS_HOST}, {REDIS_PORT})],
         },
     },
 }
@@ -199,11 +201,19 @@ TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
 # Firebase settings for push notifications
+# For better security, store your Firebase credentials in a JSON file
+# and set the GOOGLE_APPLICATION_CREDENTIALS environment variable
+# to the path of the JSON file.
+# Example:
+# export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/credentials.json"
+#
+# The firebase-admin library will automatically pick up the credentials.
+# You can remove the FIREBASE_CONFIG dictionary below if you use this method.
 FIREBASE_CONFIG = {
     'type': os.getenv('FIREBASE_TYPE'),
     'project_id': os.getenv('FIREBASE_PROJECT_ID'),
     'private_key_id': os.getenv('FIREBASE_PRIVATE_KEY_ID'),
-    'private_key': os.getenv('FIREBASE_PRIVATE_KEY', '').replace('\\n', '\n'),
+    'private_key': os.getenv('FIREBASE_PRIVATE_KEY', '').replace('\n', '\n'),
     'client_email': os.getenv('FIREBASE_CLIENT_EMAIL'),
     'client_id': os.getenv('FIREBASE_CLIENT_ID'),
     'auth_uri': os.getenv('FIREBASE_AUTH_URI'),
@@ -211,11 +221,12 @@ FIREBASE_CONFIG = {
 }
 
 # ML Models directory
-MODELS_ROOT = os.path.join(BASE_DIR, 'ml_models')
+MODELS_ROOT = BASE_DIR / 'ml_models'
 
 # Analytics settings
 ANALYTICS_RETENTION_DAYS = int(os.getenv('ANALYTICS_RETENTION_DAYS', 90))
 ENABLE_REAL_TIME_METRICS = os.getenv('ENABLE_REAL_TIME_METRICS', 'True') == 'True'
+DASHBOARD_CACHE_TIMEOUT = int(os.getenv('DASHBOARD_CACHE_TIMEOUT', 900))
 
 # Performance monitoring
 ENABLE_PERFORMANCE_MONITORING = os.getenv('ENABLE_PERFORMANCE_MONITORING', 'True') == 'True'
@@ -229,6 +240,13 @@ X_FRAME_OPTIONS = 'DENY'
 # Rate limiting
 RATELIMIT_ENABLE = True
 RATELIMIT_USE_CACHE = 'default'
+
+# GPS Validation Settings
+GPS_ACCURACY_THRESHOLD = float(os.getenv('GPS_ACCURACY_THRESHOLD', 50))
+MIN_LAT = float(os.getenv('MIN_LAT', 6.0))
+MAX_LAT = float(os.getenv('MAX_LAT', 37.6))
+MIN_LON = float(os.getenv('MIN_LON', 68.7))
+MAX_LON = float(os.getenv('MAX_LON', 97.25))
 
 # Logging configuration
 LOGGING = {
@@ -248,7 +266,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'filename': BASE_DIR / 'logs' / 'django.log',
             'formatter': 'verbose',
         },
         'console': {
@@ -279,10 +297,3 @@ LOGGING = {
         },
     },
 }
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
-# Twilio settings
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_FROM_NUMBER = os.getenv('TWILIO_FROM_NUMBER')

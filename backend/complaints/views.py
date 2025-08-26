@@ -3,7 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Q, Count
-from math import radians, sin, cos, sqrt, atan2
 from .models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
 from .serializers import (
     ComplaintSerializer,
@@ -14,6 +13,8 @@ from .serializers import (
     GPSValidationSerializer,
     ComplaintLocationUpdateSerializer
 )
+from .utils import perform_gps_validation
+from notifications.utils import send_notification
 
 class IsOfficerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -66,7 +67,7 @@ class ComplaintListCreateView(generics.ListCreateAPIView):
 
         # Notify department officer
         if complaint.department and complaint.department.officer:
-            pass  # Implement notification system later
+            send_notification(complaint.department.officer, f'New complaint assigned to your department: {complaint.title}')
 
 class ComplaintDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ComplaintSerializer
@@ -91,8 +92,7 @@ class ComplaintDetailView(generics.RetrieveUpdateDestroyAPIView):
         
         # Notify user of status change
         if old_status != complaint.status:
-            # Send notification to user (implement notification system)
-            pass
+            send_notification(complaint.user, f'Your complaint status has been updated to: {complaint.status}')
 
 class DepartmentListCreateView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
@@ -122,7 +122,7 @@ class ComplaintStatusUpdateView(generics.UpdateAPIView):
         )
         
         # Notify user of status update
-        # Implement notification system
+        send_notification(complaint.user, f'Your complaint status has been updated to: {complaint.status}')
 
 class AuditTrailListView(generics.ListAPIView):
     serializer_class = AuditTrailSerializer
@@ -158,25 +158,6 @@ class DepartmentStatsView(generics.RetrieveAPIView):
             urgent_priority=Count('id', filter=Q(priority='urgent'))
         )
         return Response(stats)
-    permission_classes = [IsAuthenticated, IsOfficerOrReadOnly]
-
-    def get_queryset(self):
-        return Complaint.objects.filter(department__officer=self.request.user)
-
-class AuditTrailListView(generics.ListAPIView):
-    serializer_class = AuditTrailSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        if self.request.user.is_officer:
-            return AuditTrail.objects.filter(
-                Q(complaint__department__officer=self.request.user) |
-                Q(by_user=self.request.user)
-            )
-        return AuditTrail.objects.filter(
-            Q(complaint__user=self.request.user) |
-            Q(by_user=self.request.user)
-        )
 
 # GPS Location Views
 class IncidentLocationHistoryView(generics.ListCreateAPIView):
@@ -244,7 +225,7 @@ def validate_gps_location(request, complaint_id):
         )
         
         # Perform validation checks
-        validation_results = _perform_gps_validation(complaint)
+        validation_results = perform_gps_validation(complaint)
         
         # Update validation record
         gps_validation.accuracy_check = validation_results['accuracy_check']
@@ -262,71 +243,6 @@ def validate_gps_location(request, complaint_id):
         
     except Complaint.DoesNotExist:
         return Response({'error': 'Complaint not found'}, status=status.HTTP_404_NOT_FOUND)
-
-def _perform_gps_validation(complaint):
-    """Perform GPS validation checks"""
-    results = {
-        'accuracy_check': True,
-        'range_check': True,
-        'duplicate_check': True,
-        'speed_check': True,
-        'score': 1.0,
-        'is_valid': True,
-        'notes': ''
-    }
-    
-    notes = []
-    
-    # Check GPS accuracy
-    if complaint.gps_accuracy and complaint.gps_accuracy > 50:
-        results['accuracy_check'] = False
-        notes.append(f"GPS accuracy too low: {complaint.gps_accuracy}m")
-    
-    # Check if coordinates are within service area (you can customize this)
-    # Example: Check if within India bounds
-    if complaint.incident_latitude and complaint.incident_longitude:
-        if not (6.0 <= complaint.incident_latitude <= 37.6 and 68.7 <= complaint.incident_longitude <= 97.25):
-            results['range_check'] = False
-            notes.append("Location outside service area")
-    
-    # Check for duplicate locations (within 100m radius)
-    from math import radians, sin, cos, sqrt, atan2
-    
-    def calculate_distance(lat1, lon1, lat2, lon2):
-        R = 6371000  # Earth radius in meters
-        
-        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-        dlat = lat2 - lat1
-        dlon = lon2 - lon1
-        
-        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-        c = 2 * atan2(sqrt(a), sqrt(1-a))
-        
-        return R * c
-    
-    if complaint.incident_latitude and complaint.incident_longitude:
-        nearby_complaints = Complaint.objects.filter(
-            incident_latitude__isnull=False,
-            incident_longitude__isnull=False
-        ).exclude(id=complaint.id)
-        
-        for nearby in nearby_complaints:
-            distance = calculate_distance(
-                complaint.incident_latitude, complaint.incident_longitude,
-                nearby.incident_latitude, nearby.incident_longitude
-            )
-            if distance < 100:  # Within 100 meters
-                results['duplicate_check'] = False
-                notes.append(f"Similar location within 100m (Complaint #{nearby.id})")
-                break
-    
-    # Calculate overall score
-    checks = [results['accuracy_check'], results['range_check'], results['duplicate_check'], results['speed_check']]
-    results['score'] = sum(checks) / len(checks)
-    results['is_valid'] = results['score'] >= 0.75
-    results['notes'] = '; '.join(notes) if notes else 'All validation checks passed'
-    
-    return results
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
