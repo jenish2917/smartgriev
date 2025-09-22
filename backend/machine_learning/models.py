@@ -6,6 +6,46 @@ import uuid
 
 User = get_user_model()
 
+class MLModel(models.Model):
+    """Core ML Model management"""
+    class ModelType(models.TextChoices):
+        COMPLAINT = 'COMPLAINT', 'Complaint Classifier'
+        SENTIMENT = 'SENTIMENT', 'Sentiment Analyzer'
+        NER = 'NER', 'Named Entity Recognition'
+        LANG = 'LANG', 'Language Detector'
+        TRANS = 'TRANS', 'Translator'
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(default='')
+    model_type = models.CharField(max_length=20, choices=ModelType.choices)
+    version = models.CharField(max_length=20)
+    model_path = models.FilePathField(path='models/', default='models/default')
+    config_path = models.FilePathField(path='models/', null=True, blank=True)
+    vocab_path = models.FilePathField(path='models/', null=True, blank=True)
+    accuracy = models.FloatField(default=0.0)
+    supported_languages = models.JSONField(default=list, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} v{self.version}"
+
+    class Meta:
+        unique_together = ('name', 'version')
+
+class ModelPrediction(models.Model):
+    """Model prediction results"""
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='predictions')
+    input_text = models.TextField()
+    prediction_result = models.JSONField()
+    confidence = models.FloatField()
+    processing_time = models.FloatField(help_text="Processing time in seconds", null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    metadata = models.JSONField(default=dict)
+
+    def __str__(self):
+        return f"{self.model.name} - {self.timestamp}"
+
 class MLExperiment(models.Model):
     """A/B testing for ML models"""
     EXPERIMENT_STATUS = [
@@ -20,8 +60,8 @@ class MLExperiment(models.Model):
     experiment_id = models.UUIDField(default=uuid.uuid4, unique=True)
     
     # Model configurations
-    control_model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='control_experiments')
-    treatment_model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='treatment_experiments')
+    control_model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='control_experiments')
+    treatment_model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='treatment_experiments')
     
     # Traffic allocation (percentage)
     traffic_allocation = models.FloatField(default=50.0, help_text="Percentage of traffic to treatment model")
@@ -74,7 +114,7 @@ class ExperimentResult(models.Model):
 
 class ModelPerformanceMetric(models.Model):
     """Track model performance over time"""
-    model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='performance_metrics')
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='performance_metrics')
     
     # Metric details
     metric_name = models.CharField(max_length=100)  # accuracy, precision, recall, f1_score, etc.
@@ -93,7 +133,7 @@ class ModelPerformanceMetric(models.Model):
 
 class DataDriftDetection(models.Model):
     """Monitor for data drift in ML models"""
-    model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='drift_detections')
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='drift_detections')
     
     # Drift metrics
     drift_score = models.FloatField()
@@ -123,7 +163,7 @@ class ModelRetrainingJob(models.Model):
         ('cancelled', 'Cancelled')
     ]
     
-    model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='retraining_jobs')
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='retraining_jobs')
     job_id = models.UUIDField(default=uuid.uuid4, unique=True)
     
     # Job configuration
@@ -148,7 +188,7 @@ class ModelRetrainingJob(models.Model):
 
 class FeatureImportance(models.Model):
     """Track feature importance for model interpretability"""
-    model = models.ForeignKey('mlmodels.MLModel', on_delete=models.CASCADE, related_name='feature_importance')
+    model = models.ForeignKey(MLModel, on_delete=models.CASCADE, related_name='feature_importance')
     
     feature_name = models.CharField(max_length=200)
     importance_score = models.FloatField()
@@ -162,7 +202,7 @@ class FeatureImportance(models.Model):
 
 class PredictionExplanation(models.Model):
     """Store explanations for individual predictions"""
-    prediction = models.ForeignKey('mlmodels.ModelPrediction', on_delete=models.CASCADE, related_name='explanations')
+    prediction = models.ForeignKey(ModelPrediction, on_delete=models.CASCADE, related_name='explanations')
     
     # Explanation method and results
     explanation_method = models.CharField(max_length=50)  # SHAP, LIME, attention, etc.

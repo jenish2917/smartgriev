@@ -1,288 +1,490 @@
-import { apiService } from './api';
+import api from './api';
+import { BaseService, ServiceError } from './BaseService';
 import {
+  Complaint,
+  PaginatedResponse,
   GeospatialCluster,
   HeatmapData,
 } from '@/types';
 
-export const geospatialService = {
-  // Get complaint clusters
-  getClusters: async (params?: {
-    zoom_level?: number;
-    bounds?: {
-      north: number;
-      south: number;
-      east: number;
-      west: number;
-    };
-    cluster_type?: string;
-    min_complaints?: number;
-  }): Promise<GeospatialCluster[]> => {
-    return apiService.get<GeospatialCluster[]>('/geospatial/clusters/', params);
-  },
+// Geospatial-specific types
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
 
-  // Get heatmap data
-  getHeatmapData: async (params?: {
-    bounds?: {
-      north: number;
-      south: number;
-      east: number;
-      west: number;
-    };
-    time_range?: string;
-    complaint_type?: string;
-  }): Promise<HeatmapData[]> => {
-    return apiService.get<HeatmapData[]>('/geospatial/heatmap/', params);
-  },
+export interface BoundingBox {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+}
 
-  // Get geographic analytics
-  getGeoAnalytics: async (params?: {
+export interface GeospatialComplaint extends Complaint {
+  distance?: number; // Distance from query point in meters
+  cluster_id?: number;
+}
+
+export interface LocationData {
+  coordinates: Coordinates;
+  address: string;
+  landmark?: string;
+  accuracy?: number;
+  timestamp: string;
+}
+
+export interface HeatmapPoint {
+  latitude: number;
+  longitude: number;
+  weight: number;
+  complaint_count: number;
+  category?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface ClusterData {
+  cluster_id: number;
+  center: Coordinates;
+  radius: number;
+  complaint_count: number;
+  dominant_category: string;
+  avg_severity: number;
+  complaints: GeospatialComplaint[];
+}
+
+export interface GeofenceArea {
+  id: number;
+  name: string;
+  description?: string;
+  type: 'circle' | 'polygon';
+  center?: Coordinates;
+  radius?: number; // for circle type
+  boundaries?: Coordinates[]; // for polygon type
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LocationAnalytics {
+  total_complaints: number;
+  hotspots: Array<{
+    id: number;
+    name: string;
+    latitude: number;
+    longitude: number;
+    complaint_count: number;
+    severity_score: number;
+    trend: 'increasing' | 'stable' | 'decreasing';
+  }>;
+  coverage_areas: Array<{
+    area_name: string;
+    complaint_density: number;
+    avg_response_time: number;
+    efficiency_score: number;
+  }>;
+  spatial_trends: Array<{
+    date: string;
+    location: Coordinates;
+    complaint_count: number;
+  }>;
+}
+
+export interface GeospatialFilters {
+  zoom_level?: number;
+  bounds?: BoundingBox;
+  cluster_type?: string;
+  min_complaints?: number;
+  time_range?: string;
+  complaint_type?: string;
+  category?: string[];
+  status?: string[];
+  priority?: string[];
+  start_date?: string;
+  end_date?: string;
+  include_clusters?: boolean;
+  cluster_radius?: number;
+  min_cluster_size?: number;
+  page?: number;
+  page_size?: number;
+}
+
+/**
+ * Service class for geospatial and location-based operations
+ */
+export class GeospatialService extends BaseService {
+  constructor() {
+    super('/geospatial');
+  }
+
+  /**
+   * Get complaint clusters
+   */
+  async getClusters(params: GeospatialFilters = {}): Promise<GeospatialCluster[]> {
+    try {
+      this.log('getClusters', params);
+      
+      const cacheKey = `clusters_${JSON.stringify(params)}`;
+      const cached = this.getCached<GeospatialCluster[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const queryString = this.buildQueryString(params);
+      const response = await api.get<GeospatialCluster[]>(`${this.endpoint}/clusters/${queryString}`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 10 minutes
+      this.setCached(cacheKey, data, 10 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get heatmap data
+   */
+  async getHeatmapData(params: GeospatialFilters = {}): Promise<HeatmapData[]> {
+    try {
+      this.log('getHeatmapData', params);
+      
+      const cacheKey = `heatmap_${JSON.stringify(params)}`;
+      const cached = this.getCached<HeatmapData[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const queryString = this.buildQueryString(params);
+      const response = await api.get<HeatmapData[]>(`${this.endpoint}/heatmap/${queryString}`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 15 minutes
+      this.setCached(cacheKey, data, 15 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get geographic analytics
+   */
+  async getGeoAnalytics(params: {
     region_type?: 'city' | 'district' | 'ward';
     start_date?: string;
     end_date?: string;
-  }): Promise<{
-    hotspots: Array<{
-      id: number;
-      name: string;
-      latitude: number;
-      longitude: number;
-      complaint_count: number;
-      severity_score: number;
-      trend: 'increasing' | 'stable' | 'decreasing';
-    }>;
-    regional_stats: Array<{
-      region_name: string;
-      total_complaints: number;
-      resolved_rate: number;
-      avg_response_time: number;
-    }>;
-    coverage_analysis: {
-      total_area_covered: number;
-      service_gaps: Array<{
-        latitude: number;
-        longitude: number;
-        gap_score: number;
-      }>;
-    };
-  }> => {
-    return apiService.get('/geospatial/analytics/', params);
-  },
+  } = {}): Promise<LocationAnalytics> {
+    try {
+      this.log('getGeoAnalytics', params);
+      
+      const cacheKey = `geo_analytics_${JSON.stringify(params)}`;
+      const cached = this.getCached<LocationAnalytics>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get route optimization
-  getOptimizedRoute: async (data: {
-    start_location: {
-      latitude: number;
-      longitude: number;
-    };
-    waypoints: Array<{
-      latitude: number;
-      longitude: number;
-      priority?: number;
-      complaint_id?: number;
-    }>;
-    vehicle_type?: 'car' | 'bike' | 'walking';
-    optimize_for?: 'time' | 'distance' | 'priority';
-  }): Promise<{
-    optimized_route: Array<{
-      latitude: number;
-      longitude: number;
-      order: number;
-      estimated_arrival: string;
-    }>;
-    total_distance: number;
-    total_time: number;
-    route_geometry: string; // GeoJSON string
-  }> => {
-    return apiService.post('/geospatial/route-optimization/', data);
-  },
+      const queryString = this.buildQueryString(params);
+      const response = await api.get<LocationAnalytics>(`${this.endpoint}/analytics/${queryString}`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 20 minutes
+      this.setCached(cacheKey, data, 20 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get location intelligence
-  getLocationIntelligence: async (
-    latitude: number,
-    longitude: number,
-    radius: number = 1000
-  ): Promise<{
-    location_info: {
-      address: string;
-      area_type: string;
-      population_density: number;
-      socioeconomic_index: number;
-    };
-    nearby_services: Array<{
-      type: string;
-      name: string;
-      distance: number;
-      latitude: number;
-      longitude: number;
-    }>;
-    historical_complaints: {
-      total_count: number;
-      by_category: Array<{
-        category: string;
-        count: number;
-      }>;
-      trend_analysis: {
-        direction: 'increasing' | 'stable' | 'decreasing';
-        change_percentage: number;
+  /**
+   * Get complaints near a specific location
+   */
+  async getNearbyComplaints(
+    coordinates: Coordinates,
+    radiusMeters: number = 5000,
+    filters: Partial<GeospatialFilters> = {}
+  ): Promise<PaginatedResponse<GeospatialComplaint>> {
+    try {
+      this.log('getNearbyComplaints', { coordinates, radiusMeters, filters });
+      
+      const params = {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        radius: radiusMeters,
+        ...filters,
       };
-    };
-    risk_assessment: {
-      risk_level: 'low' | 'medium' | 'high';
-      risk_factors: string[];
-      recommendations: string[];
-    };
-  }> => {
-    return apiService.get('/geospatial/location-intelligence/', {
-      lat: latitude,
-      lon: longitude,
-      radius,
-    });
-  },
+      
+      const cacheKey = `nearby_complaints_${JSON.stringify(params)}`;
+      const cached = this.getCached<PaginatedResponse<GeospatialComplaint>>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Geocode address
-  geocodeAddress: async (address: string): Promise<{
-    latitude: number;
-    longitude: number;
+      const queryString = this.buildQueryString(params);
+      const response = await api.get<PaginatedResponse<GeospatialComplaint>>(
+        `${this.endpoint}/nearby/${queryString}`
+      );
+      const data = this.transformPaginatedResponse(response);
+      
+      // Cache for 5 minutes
+      this.setCached(cacheKey, data, 5 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Geocode an address to coordinates
+   */
+  async geocodeAddress(address: string): Promise<{
+    coordinates: Coordinates;
     formatted_address: string;
+    accuracy: 'high' | 'medium' | 'low';
     components: {
-      street_number?: string;
-      route?: string;
-      locality?: string;
-      administrative_area?: string;
+      street?: string;
+      city?: string;
+      state?: string;
       postal_code?: string;
       country?: string;
     };
-    confidence: number;
-  }> => {
-    return apiService.get('/geospatial/geocode/', { address });
-  },
+  }> {
+    try {
+      this.log('geocodeAddress', { address });
+      
+      if (!address.trim()) {
+        throw new ServiceError('Address cannot be empty');
+      }
 
-  // Reverse geocode coordinates
-  reverseGeocode: async (
-    latitude: number,
-    longitude: number
-  ): Promise<{
+      const cacheKey = `geocode_${address.trim().toLowerCase()}`;
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const response = await api.post(`${this.endpoint}/geocode/`, {
+        address: address.trim(),
+      });
+      const data = this.transformResponse(response);
+      
+      // Cache for 24 hours (addresses don't change)
+      this.setCached(cacheKey, data, 24 * 60 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Reverse geocode coordinates to address
+   */
+  async reverseGeocode(coordinates: Coordinates): Promise<{
+    address: string;
     formatted_address: string;
     components: {
-      street_number?: string;
-      route?: string;
-      locality?: string;
-      administrative_area?: string;
+      street?: string;
+      city?: string;
+      state?: string;
       postal_code?: string;
       country?: string;
     };
-  }> => {
-    return apiService.get('/geospatial/reverse-geocode/', {
-      lat: latitude,
-      lon: longitude,
-    });
-  },
+    accuracy: 'high' | 'medium' | 'low';
+  }> {
+    try {
+      this.log('reverseGeocode', coordinates);
+      
+      const cacheKey = `reverse_geocode_${coordinates.latitude}_${coordinates.longitude}`;
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get nearby points of interest
-  getNearbyPOI: async (
-    latitude: number,
-    longitude: number,
-    radius: number = 1000,
-    types?: string[]
-  ): Promise<Array<{
-    id: string;
-    name: string;
-    type: string;
-    latitude: number;
-    longitude: number;
-    distance: number;
-    rating?: number;
-    address?: string;
-  }>> => {
-    return apiService.get('/geospatial/nearby-poi/', {
-      lat: latitude,
-      lon: longitude,
-      radius,
-      types: types?.join(','),
-    });
-  },
+      const response = await api.post(`${this.endpoint}/reverse-geocode/`, coordinates);
+      const data = this.transformResponse(response);
+      
+      // Cache for 24 hours
+      this.setCached(cacheKey, data, 24 * 60 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get administrative boundaries
-  getAdministrativeBoundaries: async (params?: {
-    level?: 'country' | 'state' | 'district' | 'city' | 'ward';
-    bounds?: {
-      north: number;
-      south: number;
-      east: number;
-      west: number;
-    };
-  }): Promise<Array<{
-    id: string;
-    name: string;
-    level: string;
-    geometry: string; // GeoJSON string
-    properties: Record<string, any>;
-  }>> => {
-    return apiService.get('/geospatial/boundaries/', params);
-  },
+  /**
+   * Get geofence areas
+   */
+  async getGeofences(): Promise<GeofenceArea[]> {
+    try {
+      this.log('getGeofences');
+      
+      const cacheKey = 'geofences';
+      const cached = this.getCached<GeofenceArea[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get complaint density by area
-  getComplaintDensity: async (params?: {
+      const response = await api.get<GeofenceArea[]>(`${this.endpoint}/geofences/`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 30 minutes
+      this.setCached(cacheKey, data, 30 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Create a geofence area
+   */
+  async createGeofence(geofence: Omit<GeofenceArea, 'id' | 'created_at' | 'updated_at'>): Promise<GeofenceArea> {
+    try {
+      this.log('createGeofence', geofence);
+      
+      // Validate required fields
+      this.validateRequest(geofence, ['name', 'type']);
+      
+      if (geofence.type === 'circle' && (!geofence.center || !geofence.radius)) {
+        throw new ServiceError('Circle geofence requires center and radius');
+      }
+      
+      if (geofence.type === 'polygon' && (!geofence.boundaries || geofence.boundaries.length < 3)) {
+        throw new ServiceError('Polygon geofence requires at least 3 boundary points');
+      }
+
+      const response = await api.post<GeofenceArea>(`${this.endpoint}/geofences/`, geofence);
+      const newGeofence = this.transformResponse(response);
+      
+      // Clear geofences cache
+      this.clearCache('geofences');
+      
+      return newGeofence;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Export geospatial data
+   */
+  async exportGeospatialData(
+    dataType: 'complaints' | 'heatmap' | 'clusters' | 'analytics',
+    format: 'geojson' | 'csv' | 'kml',
+    filters: GeospatialFilters = {}
+  ): Promise<Blob> {
+    try {
+      this.log('exportGeospatialData', { dataType, format, filters });
+      
+      const params = {
+        type: dataType,
+        format,
+        ...filters,
+      };
+      
+      const queryString = this.buildQueryString(params);
+      const response = await api.get(`${this.endpoint}/export/${queryString}`, {
+        responseType: 'blob',
+      });
+      
+      return response.data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get spatial complaint density
+   */
+  async getComplaintDensity(params: {
+    bounds?: BoundingBox;
     grid_size?: number;
-    bounds?: {
+    time_range?: string;
+  } = {}): Promise<Array<{
+    grid_cell: {
       north: number;
       south: number;
       east: number;
       west: number;
     };
-    start_date?: string;
-    end_date?: string;
-  }): Promise<Array<{
-    grid_id: string;
-    center_latitude: number;
-    center_longitude: number;
     complaint_count: number;
     density_score: number;
-    geometry: string; // GeoJSON string
-  }>> => {
-    return apiService.get('/geospatial/density/', params);
-  },
+    dominant_category?: string;
+  }>> {
+    try {
+      this.log('getComplaintDensity', params);
+      
+      const cacheKey = `complaint_density_${JSON.stringify(params)}`;
+      const cached = this.getCached<any[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Create custom geographic area
-  createCustomArea: async (data: {
-    name: string;
-    geometry: string; // GeoJSON string
-    area_type: string;
-    properties?: Record<string, any>;
-  }): Promise<{
-    id: number;
-    message: string;
-  }> => {
-    return apiService.post('/geospatial/custom-areas/', data);
-  },
-
-  // Get complaints within custom area
-  getComplaintsInArea: async (
-    area_id: number,
-    params?: {
-      start_date?: string;
-      end_date?: string;
-      status?: string[];
+      const queryString = this.buildQueryString(params);
+      const response = await api.get(`${this.endpoint}/density/${queryString}`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 15 minutes
+      this.setCached(cacheKey, data, 15 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
     }
-  ): Promise<{
-    total_complaints: number;
-    complaints: Array<{
-      id: number;
+  }
+
+  /**
+   * Get spatial analysis insights
+   */
+  async getSpatialInsights(params: {
+    analysis_type?: 'hotspot' | 'clustering' | 'trend' | 'distribution';
+    time_period?: 'week' | 'month' | 'quarter' | 'year';
+    category_filter?: string[];
+  } = {}): Promise<{
+    insights: Array<{
+      type: string;
       title: string;
-      status: string;
-      latitude: number;
-      longitude: number;
-      created_at: string;
+      description: string;
+      confidence: number;
+      location?: Coordinates;
+      affected_area?: BoundingBox;
+      recommendations: string[];
     }>;
-    statistics: {
-      by_status: Array<{ status: string; count: number }>;
-      by_category: Array<{ category: string; count: number }>;
-      trend_analysis: {
-        current_period: number;
-        previous_period: number;
-        change_percentage: number;
-      };
+    summary: {
+      total_hotspots: number;
+      high_risk_areas: number;
+      trend_direction: 'increasing' | 'decreasing' | 'stable';
+      spatial_distribution: 'clustered' | 'scattered' | 'uniform';
     };
-  }> => {
-    return apiService.get(`/geospatial/custom-areas/${area_id}/complaints/`, params);
-  },
-};
+  }> {
+    try {
+      this.log('getSpatialInsights', params);
+      
+      const cacheKey = `spatial_insights_${JSON.stringify(params)}`;
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const queryString = this.buildQueryString(params);
+      const response = await api.get(`${this.endpoint}/insights/${queryString}`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 30 minutes
+      this.setCached(cacheKey, data, 30 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+}
+
+// Export singleton instance
+export const geospatialService = new GeospatialService();
+export default geospatialService;

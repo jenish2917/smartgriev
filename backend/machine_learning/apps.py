@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MlExperimentsConfig(AppConfig):
+class MachineLearningConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ml_experiments'
+    name = 'machine_learning'

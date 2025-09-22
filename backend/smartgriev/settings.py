@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'authentication',
     'complaints',
     'chatbot',
-    'mlmodels',
+    'machine_learning',
     'analytics',  # Real-time analytics and dashboard
     'ml_experiments',  # A/B testing for ML models
     'geospatial',  # Geographic analytics

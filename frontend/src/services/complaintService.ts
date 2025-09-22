@@ -1,165 +1,492 @@
-import { apiService } from './api';
+import api from './api';
+import { BaseService, ServiceError } from './BaseService';
 import {
   Complaint,
   CreateComplaintData,
-  Department,
   PaginatedResponse,
+  ComplaintStatus,
+  ComplaintPriority,
+  Department,
   FilterParams,
 } from '@/types';
 
-export const complaintService = {
-  // Get paginated complaints
-  getComplaints: async (params?: FilterParams & {
-    page?: number;
-    page_size?: number;
-  }): Promise<PaginatedResponse<Complaint>> => {
-    return apiService.get<PaginatedResponse<Complaint>>('/complaints/', params);
-  },
+// Additional types for the service
+export interface UpdateComplaintData extends Partial<CreateComplaintData> {
+  status?: ComplaintStatus;
+  priority?: ComplaintPriority;
+  notes?: string;
+}
 
-  // Get single complaint by ID
-  getComplaint: async (id: number): Promise<Complaint> => {
-    return apiService.get<Complaint>(`/complaints/${id}/`);
-  },
+export interface ComplaintFilters extends FilterParams {
+  page?: number;
+  page_size?: number;
+  user?: number;
+  assigned_officer?: number;
+}
 
-  // Create new complaint
-  createComplaint: async (data: CreateComplaintData): Promise<Complaint> => {
-    // If there's a media file, use FormData
-    if (data.media) {
-      const formData = new FormData();
+export interface ComplaintComment {
+  id: number;
+  user: number;
+  user_name: string;
+  comment: string;
+  created_at: string;
+}
+
+/**
+ * Service class for complaint-related API operations
+ */
+export class ComplaintService extends BaseService {
+  constructor() {
+    super('/complaints');
+  }
+
+  /**
+   * Get paginated list of complaints with optional filters
+   */
+  async getComplaints(filters: ComplaintFilters = {}): Promise<PaginatedResponse<Complaint>> {
+    try {
+      this.log('getComplaints', filters);
       
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'media' && value instanceof File) {
-            formData.append(key, value);
-          } else {
-            formData.append(key, String(value));
-          }
-        }
-      });
+      const cacheKey = `complaints_${JSON.stringify(filters)}`;
+      const cached = this.getCached<PaginatedResponse<Complaint>>(cacheKey);
+      if (cached) {
+        this.log('Returning cached complaints');
+        return cached;
+      }
 
-      return apiService.upload<Complaint>('/complaints/', formData);
-    } else {
-      return apiService.post<Complaint>('/complaints/', data);
+      const queryString = this.buildQueryString(filters);
+      const response = await api.get<PaginatedResponse<Complaint>>(`${this.endpoint}/${queryString}`);
+      const data = this.transformPaginatedResponse(response);
+      
+      // Cache for 2 minutes
+      this.setCached(cacheKey, data, 2 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
     }
-  },
+  }
 
-  // Update complaint
-  updateComplaint: async (id: number, data: Partial<CreateComplaintData>): Promise<Complaint> => {
-    return apiService.patch<Complaint>(`/complaints/${id}/`, data);
-  },
+  /**
+   * Get a specific complaint by ID
+   */
+  async getComplaint(id: number): Promise<Complaint> {
+    try {
+      this.log('getComplaint', { id });
+      
+      const cacheKey = `complaint_${id}`;
+      const cached = this.getCached<Complaint>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Delete complaint
-  deleteComplaint: async (id: number): Promise<void> => {
-    return apiService.delete(`/complaints/${id}/`);
-  },
+      const response = await api.get<Complaint>(`${this.endpoint}/${id}/`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 5 minutes
+      this.setCached(cacheKey, data, 5 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get user's complaints
-  getUserComplaints: async (params?: {
+  /**
+   * Create a new complaint
+   */
+  async createComplaint(data: CreateComplaintData): Promise<Complaint> {
+    try {
+      this.log('createComplaint', data);
+      
+      // Validate required fields
+      this.validateRequest(data, ['title', 'description', 'category']);
+      
+      let requestData: FormData | CreateComplaintData;
+      
+      // Handle file uploads
+      if (data.media) {
+        requestData = this.createFormData(data);
+      } else {
+        requestData = data;
+      }
+
+      const response = await api.post<Complaint>(`${this.endpoint}/`, requestData, {
+        headers: {
+          'Content-Type': data.media ? 'multipart/form-data' : 'application/json',
+        },
+      });
+      
+      const newComplaint = this.transformResponse(response);
+      
+      // Clear complaints cache since we added a new complaint
+      this.clearCache('complaints_');
+      
+      return newComplaint;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Update an existing complaint
+   */
+  async updateComplaint(id: number, data: UpdateComplaintData): Promise<Complaint> {
+    try {
+      this.log('updateComplaint', { id, data });
+      
+      let requestData: FormData | UpdateComplaintData;
+      
+      // Handle file uploads
+      if (data.media) {
+        requestData = this.createFormData(data);
+      } else {
+        requestData = data;
+      }
+
+      const response = await api.patch<Complaint>(`${this.endpoint}/${id}/`, requestData, {
+        headers: {
+          'Content-Type': data.media ? 'multipart/form-data' : 'application/json',
+        },
+      });
+      
+      const updatedComplaint = this.transformResponse(response);
+      
+      // Clear relevant caches
+      this.clearCache('complaints_');
+      this.clearCache(`complaint_${id}`);
+      
+      return updatedComplaint;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Delete a complaint (soft delete)
+   */
+  async deleteComplaint(id: number): Promise<void> {
+    try {
+      this.log('deleteComplaint', { id });
+      
+      await api.delete(`${this.endpoint}/${id}/`);
+      
+      // Clear relevant caches
+      this.clearCache('complaints_');
+      this.clearCache(`complaint_${id}`);
+      this.clearCache(`complaint_comments_${id}`);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get user's complaints
+   */
+  async getUserComplaints(params?: {
     page?: number;
     page_size?: number;
     status?: string;
-  }): Promise<PaginatedResponse<Complaint>> => {
-    return apiService.get<PaginatedResponse<Complaint>>('/complaints/my/', params);
-  },
+  }): Promise<PaginatedResponse<Complaint>> {
+    try {
+      this.log('getUserComplaints', params);
+      
+      const cacheKey = `user_complaints_${JSON.stringify(params)}`;
+      const cached = this.getCached<PaginatedResponse<Complaint>>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get complaint statistics
-  getComplaintStats: async (): Promise<{
+      const queryString = this.buildQueryString(params || {});
+      const response = await api.get<PaginatedResponse<Complaint>>(`${this.endpoint}/my/${queryString}`);
+      const data = this.transformPaginatedResponse(response);
+      
+      // Cache for 1 minute
+      this.setCached(cacheKey, data, 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get complaint statistics
+   */
+  async getComplaintStats(): Promise<{
     total: number;
     pending: number;
     resolved: number;
     by_category: Array<{ category: string; count: number }>;
     by_status: Array<{ status: string; count: number }>;
-  }> => {
-    return apiService.get('/complaints/stats/');
-  },
+  }> {
+    try {
+      this.log('getComplaintStats');
+      
+      const cacheKey = 'complaint_stats';
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Update complaint status (for officers)
-  updateComplaintStatus: async (
-    id: number,
-    status: string,
-    notes?: string
-  ): Promise<Complaint> => {
-    return apiService.patch<Complaint>(`/complaints/${id}/status/`, {
-      status,
-      notes,
-    });
-  },
+      const response = await api.get(`${this.endpoint}/stats/`);
+      const stats = this.transformResponse(response);
+      
+      // Cache for 5 minutes
+      this.setCached(cacheKey, stats, 5 * 60 * 1000);
+      
+      return stats;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Assign complaint to officer
-  assignComplaint: async (id: number, officer_id: number): Promise<Complaint> => {
-    return apiService.patch<Complaint>(`/complaints/${id}/assign/`, {
-      officer_id,
-    });
-  },
+  /**
+   * Update complaint status (for officers)
+   */
+  async updateComplaintStatus(id: number, status: string, notes?: string): Promise<Complaint> {
+    try {
+      this.log('updateComplaintStatus', { id, status, notes });
+      
+      const response = await api.patch<Complaint>(`${this.endpoint}/${id}/status/`, {
+        status,
+        notes,
+      });
+      const updatedComplaint = this.transformResponse(response);
+      
+      // Clear relevant caches
+      this.clearCache('complaints_');
+      this.clearCache(`complaint_${id}`);
+      
+      return updatedComplaint;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Add comment to complaint
-  addComment: async (
-    complaint_id: number,
-    comment: string
-  ): Promise<{ id: number; comment: string; created_at: string }> => {
-    return apiService.post(`/complaints/${complaint_id}/comments/`, {
-      comment,
-    });
-  },
+  /**
+   * Assign complaint to an officer
+   */
+  async assignComplaint(id: number, officer_id: number): Promise<Complaint> {
+    try {
+      this.log('assignComplaint', { id, officer_id });
+      
+      const response = await api.patch<Complaint>(`${this.endpoint}/${id}/assign/`, {
+        officer_id,
+      });
+      const updatedComplaint = this.transformResponse(response);
+      
+      // Clear relevant caches
+      this.clearCache('complaints_');
+      this.clearCache(`complaint_${id}`);
+      
+      return updatedComplaint;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get complaint comments
-  getComments: async (complaint_id: number): Promise<Array<{
+  /**
+   * Add comment to complaint
+   */
+  async addComment(complaint_id: number, comment: string): Promise<{ id: number; comment: string; created_at: string }> {
+    try {
+      this.log('addComment', { complaint_id, comment });
+      
+      if (!comment.trim()) {
+        throw new ServiceError('Comment cannot be empty');
+      }
+
+      const response = await api.post(`${this.endpoint}/${complaint_id}/comments/`, {
+        comment: comment.trim(),
+      });
+      
+      const newComment = this.transformResponse(response);
+      
+      // Clear comments cache
+      this.clearCache(`complaint_comments_${complaint_id}`);
+      
+      return newComment;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get complaint comments
+   */
+  async getComments(complaint_id: number): Promise<Array<{
     id: number;
     user: number;
     user_name: string;
     comment: string;
     created_at: string;
-  }>> => {
-    return apiService.get(`/complaints/${complaint_id}/comments/`);
-  },
+  }>> {
+    try {
+      this.log('getComments', { complaint_id });
+      
+      const cacheKey = `complaint_comments_${complaint_id}`;
+      const cached = this.getCached<any[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get departments
-  getDepartments: async (): Promise<Department[]> => {
-    return apiService.get<Department[]>('/complaints/departments/');
-  },
+      const response = await api.get(`${this.endpoint}/${complaint_id}/comments/`);
+      const comments = this.transformResponse(response);
+      
+      // Cache for 1 minute
+      this.setCached(cacheKey, comments, 60 * 1000);
+      
+      return comments;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get complaint categories
-  getCategories: async (): Promise<string[]> => {
-    return apiService.get<string[]>('/complaints/categories/');
-  },
+  /**
+   * Get departments
+   */
+  async getDepartments(): Promise<Department[]> {
+    try {
+      this.log('getDepartments');
+      
+      const cacheKey = 'departments';
+      const cached = this.getCached<Department[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Search complaints
-  searchComplaints: async (query: string, filters?: FilterParams): Promise<Complaint[]> => {
-    return apiService.get<Complaint[]>('/complaints/search/', {
-      q: query,
-      ...filters,
-    });
-  },
+      const response = await api.get<Department[]>(`${this.endpoint}/departments/`);
+      const departments = this.transformResponse(response);
+      
+      // Cache for 10 minutes (departments don't change often)
+      this.setCached(cacheKey, departments, 10 * 60 * 1000);
+      
+      return departments;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Export complaints data
-  exportComplaints: async (format: 'csv' | 'excel', filters?: FilterParams): Promise<void> => {
-    const params = new URLSearchParams({
-      format,
-      ...filters,
-    } as any);
-    
-    return apiService.download(`/complaints/export/?${params.toString()}`, 
-      `complaints_${new Date().toISOString().split('T')[0]}.${format}`);
-  },
+  /**
+   * Get complaint categories
+   */
+  async getCategories(): Promise<string[]> {
+    try {
+      this.log('getCategories');
+      
+      const cacheKey = 'categories';
+      const cached = this.getCached<string[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get nearby complaints (geospatial)
-  getNearbyComplaints: async (
+      const response = await api.get<string[]>(`${this.endpoint}/categories/`);
+      const categories = this.transformResponse(response);
+      
+      // Cache for 10 minutes (categories don't change often)
+      this.setCached(cacheKey, categories, 10 * 60 * 1000);
+      
+      return categories;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Search complaints by text
+   */
+  async searchComplaints(query: string, filters?: FilterParams): Promise<Complaint[]> {
+    try {
+      this.log('searchComplaints', { query, filters });
+      
+      if (!query.trim()) {
+        return [];
+      }
+
+      const searchParams = {
+        q: query.trim(),
+        ...filters,
+      };
+      
+      const queryString = this.buildQueryString(searchParams);
+      const response = await api.get<Complaint[]>(`${this.endpoint}/search/${queryString}`);
+      
+      return this.transformResponse(response);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Export complaints data
+   */
+  async exportComplaints(format: 'csv' | 'excel', filters?: FilterParams): Promise<Blob> {
+    try {
+      this.log('exportComplaints', { format, filters });
+      
+      const params = {
+        format,
+        ...filters,
+      };
+      
+      const queryString = this.buildQueryString(params);
+      const response = await api.get(`${this.endpoint}/export/${queryString}`, {
+        responseType: 'blob',
+      });
+      
+      return response.data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get nearby complaints (geospatial)
+   */
+  async getNearbyComplaints(
     latitude: number,
     longitude: number,
     radius: number = 5000 // meters
-  ): Promise<Complaint[]> => {
-    return apiService.get<Complaint[]>('/complaints/nearby/', {
-      lat: latitude,
-      lon: longitude,
-      radius,
-    });
-  },
+  ): Promise<Complaint[]> {
+    try {
+      this.log('getNearbyComplaints', { latitude, longitude, radius });
+      
+      const queryString = this.buildQueryString({
+        lat: latitude,
+        lon: longitude,
+        radius,
+      });
+      const response = await api.get<Complaint[]>(`${this.endpoint}/nearby/${queryString}`);
+      
+      return this.transformResponse(response) as Complaint[];
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Report complaint (for inappropriate content)
-  reportComplaint: async (
-    id: number,
-    reason: string
-  ): Promise<{ message: string }> => {
-    return apiService.post(`/complaints/${id}/report/`, { reason });
-  },
-};
+  /**
+   * Report complaint (for inappropriate content)
+   */
+  async reportComplaint(id: number, reason: string): Promise<{ message: string }> {
+    try {
+      this.log('reportComplaint', { id, reason });
+      
+      if (!reason.trim()) {
+        throw new ServiceError('Report reason cannot be empty');
+      }
+      
+      const response = await api.post(`${this.endpoint}/${id}/report/`, { 
+        reason: reason.trim() 
+      });
+      
+      return this.transformResponse(response);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+}
+
+// Export singleton instance
+export const complaintService = new ComplaintService();
+export default complaintService;

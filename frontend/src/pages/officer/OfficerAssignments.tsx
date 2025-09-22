@@ -349,12 +349,11 @@ const OfficerAssignments: React.FC = () => {
   };
 
   const getStatusSteps = (status: string) => {
-    const steps = [
-      { title: 'Assigned', status: 'finish' },
-      { title: 'In Progress', status: status === 'pending' ? 'wait' : 'finish' },
-      { title: 'Completed', status: status === 'resolved' ? 'finish' : 'wait' },
+    return [
+      { title: 'Assigned', status: 'finish' as 'finish' },
+      { title: 'In Progress', status: (status === 'pending' ? 'wait' : 'finish') as 'wait' | 'finish' },
+      { title: 'Completed', status: (status === 'resolved' ? 'finish' : 'wait') as 'finish' | 'wait' },
     ];
-    return steps;
   };
 
   const filteredAssignments = assignments.filter(assignment => {
@@ -598,7 +597,7 @@ const OfficerAssignments: React.FC = () => {
             name="note"
             rules={[{ required: true, message: 'Please add an update note' }]}
           >
-            <TextArea rows={4} placeholder="Describe the current status and any actions taken..." />
+            <Input.TextArea rows={4} placeholder="Describe the current status and any actions taken..." />
           </Form.Item>
 
           <Form.Item label="Attachments">
@@ -608,17 +607,6 @@ const OfficerAssignments: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-
-      <style jsx>{`
-        .urgent-row {
-          background-color: #fff2f0;
-          border-left: 4px solid #ff4d4f;
-        }
-        .overdue-row {
-          background-color: #fffbe6;
-          border-left: 4px solid #faad14;
-        }
-      `}</style>
     </div>
   );
 };

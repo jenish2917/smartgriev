@@ -28,7 +28,8 @@ import {
   BarChartOutlined,
 } from '@ant-design/icons';
 import { Column, Line, Pie } from '@ant-design/plots';
-import type { ColumnsType, TabsProps } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
+import type { TabsProps } from 'antd/es/tabs';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;

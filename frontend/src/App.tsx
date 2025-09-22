@@ -12,26 +12,33 @@ const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'));
 // Page components (lazy loaded)
 const Login = lazy(() => import('@/pages/auth/Login'));
 const Register = lazy(() => import('@/pages/auth/Register'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Dashboard = lazy(() => import('@/pages/dashboard/Dashboard'));
 const Complaints = lazy(() => import('@/pages/complaints/Complaints'));
 const ComplaintDetail = lazy(() => import('@/pages/complaints/ComplaintDetail'));
 const CreateComplaint = lazy(() => import('@/pages/complaints/CreateComplaint'));
 const ComplaintTracking = lazy(() => import('@/pages/complaints/ComplaintTracking'));
-const Analytics = lazy(() => import('@/pages/Analytics'));
+const Analytics = lazy(() => import('@/pages/analytics/Analytics'));
 const PerformanceMetrics = lazy(() => import('@/pages/analytics/PerformanceMetrics'));
 const GeospatialAnalytics = lazy(() => import('@/pages/analytics/GeospatialAnalytics'));
-const Chatbot = lazy(() => import('@/pages/Chatbot'));
-const Notifications = lazy(() => import('@/pages/Notifications'));
-const MLModels = lazy(() => import('@/pages/MLModels'));
+const Chatbot = lazy(() => import('@/pages/chatbot/Chatbot'));
+const Notifications = lazy(() => import('@/pages/notifications/Notifications'));
+const MLModels = lazy(() => import('@/pages/ml-models/MLModels'));
 const OfficerDashboard = lazy(() => import('@/pages/officer/OfficerDashboard'));
 const OfficerAssignments = lazy(() => import('@/pages/officer/OfficerAssignments'));
 const OfficerAnalytics = lazy(() => import('@/pages/officer/OfficerAnalytics'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const Settings = lazy(() => import('@/pages/Settings'));
+const Profile = lazy(() => import('@/pages/profile/Profile'));
+const Settings = lazy(() => import('@/pages/settings/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
-// Route configuration
-const routesConfig = [
+// Route configuration with types
+interface RouteConfig {
+  path: string;
+  component: React.ComponentType;
+  layout: React.ComponentType<{ children: React.ReactNode }>;
+  auth: 'public' | 'protected';
+}
+
+const routesConfig: RouteConfig[] = [
   { path: '/login', component: Login, layout: AuthLayout, auth: 'public' },
   { path: '/register', component: Register, layout: AuthLayout, auth: 'public' },
   { path: '/dashboard', component: Dashboard, layout: AppLayout, auth: 'protected' },
@@ -52,7 +59,7 @@ const routesConfig = [
   { path: '/settings', component: Settings, layout: AppLayout, auth: 'protected' },
 ];
 
-const RouteWrapper = ({ component: Component, layout: Layout, auth }) => {
+const RouteWrapper: React.FC<RouteConfig> = ({ component: Component, layout: Layout, auth }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   if (auth === 'protected' && !isAuthenticated) {

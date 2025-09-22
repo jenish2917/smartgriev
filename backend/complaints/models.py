@@ -82,7 +82,7 @@ class Complaint(models.Model):
         )
 
 class IncidentLocationHistory(models.Model):
-    """Track location updates and validations for complaints""""
+    """Track location updates and validations for complaints"""
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='location_history')
     latitude = models.FloatField()
     longitude = models.FloatField()

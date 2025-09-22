@@ -436,3 +436,14 @@ code {
     background: white !important;
   }
 }
+
+/* Custom styles for officer assignments */
+.urgent-row {
+  background-color: #fff2f0;
+  border-left: 4px solid #ff4d4f;
+}
+
+.overdue-row {
+  background-color: #fffbe6;
+  border-left: 4px solid #faad14;
+}

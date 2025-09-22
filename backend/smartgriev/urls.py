@@ -53,9 +53,9 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/complaints/', include('complaints.urls')),
     path('api/chatbot/', include('chatbot.urls')),
-    path('api/ml/', include('mlmodels.urls')),
+    path('api/ml/', include('machine_learning.urls')),
     path('api/analytics/', include('analytics.urls')),
-    path('api/ml-experiments/', include('ml_experiments.urls')),
+
     path('api/geospatial/', include('geospatial.urls')),
     path('api/notifications/', include('notifications.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

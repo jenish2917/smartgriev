@@ -1,4 +1,5 @@
-import { apiService } from './api';
+import api from './api';
+import { BaseService, ServiceError } from './BaseService';
 import {
   ChatMessage,
   ChatRequest,
@@ -6,181 +7,416 @@ import {
   PaginatedResponse,
 } from '@/types';
 
-export const chatbotService = {
-  // Send message to chatbot
-  sendMessage: async (data: ChatRequest): Promise<{
-    response: string;
-    intent?: string;
-    confidence?: number;
-    suggestions?: string[];
-    escalate_to_human?: boolean;
-  }> => {
-    return apiService.post('/chatbot/chat/', data);
-  },
+// Chatbot-specific types
+export interface ChatSession {
+  id: string;
+  user_id: number;
+  title: string;
+  started_at: string;
+  last_activity: string;
+  message_count: number;
+  status: 'active' | 'completed' | 'escalated';
+  escalated_to_human?: boolean;
+  assigned_agent?: number;
+}
 
-  // Get chat history
-  getChatHistory: async (params?: {
-    page?: number;
-    page_size?: number;
-    start_date?: string;
-    end_date?: string;
-  }): Promise<PaginatedResponse<ChatMessage>> => {
-    return apiService.get<PaginatedResponse<ChatMessage>>('/chatbot/history/', params);
-  },
+export interface ChatResponse {
+  response: string;
+  intent?: string;
+  confidence?: number;
+  suggestions?: string[];
+  escalate_to_human?: boolean;
+}
 
-  // Get chat statistics
-  getChatStats: async (): Promise<ChatStats> => {
-    return apiService.get<ChatStats>('/chatbot/stats/');
-  },
+export interface ChatContext {
+  user_id: number;
+  session_id?: string;
+  conversation_history?: ChatMessage[];
+  user_profile?: {
+    language: string;
+    location?: string;
+    complaint_history?: any[];
+  };
+}
 
-  // Provide feedback on chat response
-  provideFeedback: async (
+export interface ChatFilters {
+  page?: number;
+  page_size?: number;
+  start_date?: string;
+  end_date?: string;
+  session_id?: string;
+  user_id?: number;
+  intent?: string;
+  escalated?: boolean;
+}
+
+/**
+ * Service class for chatbot and AI assistant operations
+ */
+export class ChatbotService extends BaseService {
+  constructor() {
+    super('/chatbot');
+  }
+
+  /**
+   * Send message to chatbot
+   */
+  async sendMessage(data: ChatRequest): Promise<ChatResponse> {
+    try {
+      this.log('sendMessage', data);
+      
+      // Validate required fields
+      this.validateRequest(data, ['message']);
+      
+      const response = await api.post<ChatResponse>(`${this.endpoint}/chat/`, data);
+      
+      return this.transformResponse(response);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get chat history
+   */
+  async getChatHistory(params: ChatFilters = {}): Promise<PaginatedResponse<ChatMessage>> {
+    try {
+      this.log('getChatHistory', params);
+      
+      const cacheKey = `chat_history_${JSON.stringify(params)}`;
+      const cached = this.getCached<PaginatedResponse<ChatMessage>>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const queryString = this.buildQueryString(params);
+      const response = await api.get<PaginatedResponse<ChatMessage>>(`${this.endpoint}/history/${queryString}`);
+      const data = this.transformPaginatedResponse(response);
+      
+      // Cache for 2 minutes
+      this.setCached(cacheKey, data, 2 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get chat statistics
+   */
+  async getChatStats(): Promise<ChatStats> {
+    try {
+      this.log('getChatStats');
+      
+      const cacheKey = 'chat_stats';
+      const cached = this.getCached<ChatStats>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const response = await api.get<ChatStats>(`${this.endpoint}/stats/`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 5 minutes
+      this.setCached(cacheKey, data, 5 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Provide feedback on chat response
+   */
+  async provideFeedback(
     chat_id: number,
     feedback: {
       rating: number; // 1-5
       is_helpful: boolean;
       comment?: string;
     }
-  ): Promise<{ message: string }> => {
-    return apiService.post(`/chatbot/feedback/${chat_id}/`, feedback);
-  },
+  ): Promise<{ message: string }> {
+    try {
+      this.log('provideFeedback', { chat_id, feedback });
+      
+      // Validate rating range
+      if (feedback.rating < 1 || feedback.rating > 5) {
+        throw new ServiceError('Rating must be between 1 and 5');
+      }
 
-  // Get suggested responses (for officers)
-  getSuggestedResponses: async (complaint_id: number): Promise<{
+      const response = await api.post(`${this.endpoint}/feedback/${chat_id}/`, feedback);
+      
+      return this.transformResponse(response);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Get suggested responses (for officers)
+   */
+  async getSuggestedResponses(complaint_id: number): Promise<{
     suggestions: Array<{
-      response: string;
+      text: string;
       confidence: number;
+      template_id?: number;
+    }>;
+    templates: Array<{
+      id: number;
+      title: string;
+      content: string;
       category: string;
     }>;
-  }> => {
-    return apiService.get(`/chatbot/suggestions/${complaint_id}/`);
-  },
+  }> {
+    try {
+      this.log('getSuggestedResponses', { complaint_id });
+      
+      const cacheKey = `suggested_responses_${complaint_id}`;
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Escalate chat to human agent
-  escalateToHuman: async (
-    chat_id: number,
-    reason?: string
-  ): Promise<{ message: string; ticket_id?: number }> => {
-    return apiService.post(`/chatbot/escalate/${chat_id}/`, { reason });
-  },
+      const response = await api.get(`${this.endpoint}/suggestions/${complaint_id}/`);
+      const data = this.transformResponse(response);
+      
+      // Cache for 10 minutes
+      this.setCached(cacheKey, data, 10 * 60 * 1000);
+      
+      return data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get chatbot configuration (for admins)
-  getConfiguration: async (): Promise<{
-    enabled_features: string[];
-    confidence_threshold: number;
-    max_conversation_length: number;
-    available_intents: string[];
-    fallback_responses: string[];
-  }> => {
-    return apiService.get('/chatbot/config/');
-  },
+  /**
+   * Start a new chat session
+   */
+  async startSession(context: Partial<ChatContext> = {}): Promise<ChatSession> {
+    try {
+      this.log('startSession', context);
+      
+      const response = await api.post<ChatSession>(`${this.endpoint}/sessions/`, context);
+      const session = this.transformResponse(response);
+      
+      // Cache the session
+      this.setCached(`chat_session_${session.id}`, session, 30 * 60 * 1000); // 30 minutes
+      
+      return session;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Update chatbot configuration (for admins)
-  updateConfiguration: async (config: {
-    enabled_features?: string[];
-    confidence_threshold?: number;
-    max_conversation_length?: number;
-    fallback_responses?: string[];
-  }): Promise<{ message: string }> => {
-    return apiService.patch('/chatbot/config/', config);
-  },
+  /**
+   * Get an existing chat session
+   */
+  async getSession(sessionId: string): Promise<ChatSession> {
+    try {
+      this.log('getSession', { sessionId });
+      
+      const cacheKey = `chat_session_${sessionId}`;
+      const cached = this.getCached<ChatSession>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Get training data for chatbot (for admins)
-  getTrainingData: async (params?: {
-    intent?: string;
-    confidence_min?: number;
-    confidence_max?: number;
-    page?: number;
-    page_size?: number;
-  }): Promise<PaginatedResponse<{
-    id: number;
+      const response = await api.get<ChatSession>(`${this.endpoint}/sessions/${sessionId}/`);
+      const session = this.transformResponse(response);
+      
+      // Cache for 10 minutes
+      this.setCached(cacheKey, session, 10 * 60 * 1000);
+      
+      return session;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * End a chat session
+   */
+  async endSession(
+    sessionId: string,
+    feedback?: {
+      rating: number;
+      comment?: string;
+      helpful: boolean;
+    }
+  ): Promise<{
+    ended: boolean;
+    session_summary: {
+      duration: number;
+      message_count: number;
+      resolved: boolean;
+      escalated: boolean;
+    };
+  }> {
+    try {
+      this.log('endSession', { sessionId, feedback });
+      
+      const requestData = feedback ? { feedback } : {};
+      
+      const response = await api.post(`${this.endpoint}/sessions/${sessionId}/end/`, requestData);
+      const result = this.transformResponse(response);
+      
+      // Clear all caches for this session
+      this.clearCache(`chat_session_${sessionId}`);
+      
+      return result;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Escalate session to human agent
+   */
+  async escalateToHuman(
+    sessionId: string,
+    reason: string,
+    priority: 'low' | 'medium' | 'high' = 'medium'
+  ): Promise<{
+    escalated: boolean;
+    ticket_id: string;
+    estimated_wait_time?: number;
     message: string;
-    intent: string;
-    confidence: number;
-    training_set: boolean;
-    created_at: string;
-  }>> => {
-    return apiService.get('/chatbot/training-data/', params);
-  },
+  }> {
+    try {
+      this.log('escalateToHuman', { sessionId, reason, priority });
+      
+      if (!reason.trim()) {
+        throw new ServiceError('Escalation reason cannot be empty');
+      }
 
-  // Add training data (for admins)
-  addTrainingData: async (data: {
-    message: string;
-    intent: string;
-    examples?: string[];
-  }): Promise<{ message: string }> => {
-    return apiService.post('/chatbot/training-data/', data);
-  },
+      const response = await api.post(`${this.endpoint}/sessions/${sessionId}/escalate/`, {
+        reason: reason.trim(),
+        priority,
+      });
+      
+      const result = this.transformResponse(response);
+      
+      // Clear session cache
+      this.clearCache(`chat_session_${sessionId}`);
+      
+      return result;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Retrain chatbot model (for admins)
-  retrainModel: async (): Promise<{
-    message: string;
-    task_id: string;
-    estimated_completion: string;
-  }> => {
-    return apiService.post('/chatbot/retrain/');
-  },
-
-  // Get model performance metrics
-  getModelPerformance: async (): Promise<{
-    accuracy: number;
-    precision: number;
-    recall: number;
-    f1_score: number;
-    intent_performance: Array<{
-      intent: string;
-      accuracy: number;
-      sample_count: number;
-    }>;
-    last_updated: string;
-  }> => {
-    return apiService.get('/chatbot/performance/');
-  },
-
-  // Get conversation analytics
-  getConversationAnalytics: async (params?: {
+  /**
+   * Get chatbot analytics
+   */
+  async getAnalytics(filters: {
     start_date?: string;
     end_date?: string;
     group_by?: 'day' | 'week' | 'month';
-  }): Promise<{
-    total_conversations: number;
-    avg_conversation_length: number;
-    resolution_rate: number;
+  } = {}): Promise<{
+    total_sessions: number;
+    total_messages: number;
+    avg_session_duration: number;
     escalation_rate: number;
+    resolution_rate: number;
+    user_satisfaction: number;
     top_intents: Array<{
       intent: string;
       count: number;
       avg_confidence: number;
     }>;
-    user_satisfaction: {
-      avg_rating: number;
-      rating_distribution: Array<{
-        rating: number;
-        count: number;
-      }>;
-    };
-    conversation_trends: Array<{
+    session_trends: Array<{
       date: string;
-      count: number;
-      avg_confidence: number;
+      sessions: number;
+      messages: number;
+      escalations: number;
     }>;
-  }> => {
-    return apiService.get('/chatbot/analytics/', params);
-  },
+  }> {
+    try {
+      this.log('getAnalytics', filters);
+      
+      const cacheKey = `chatbot_analytics_${JSON.stringify(filters)}`;
+      const cached = this.getCached<any>(cacheKey);
+      if (cached) {
+        return cached;
+      }
 
-  // Clear chat history for current user
-  clearChatHistory: async (): Promise<{ message: string }> => {
-    return apiService.delete('/chatbot/history/clear/');
-  },
+      const queryString = this.buildQueryString(filters);
+      const response = await api.get(`${this.endpoint}/analytics/${queryString}`);
+      const analytics = this.transformResponse(response);
+      
+      // Cache for 10 minutes
+      this.setCached(cacheKey, analytics, 10 * 60 * 1000);
+      
+      return analytics;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
 
-  // Get chatbot health status
-  getHealthStatus: async (): Promise<{
-    status: 'healthy' | 'degraded' | 'down';
-    model_loaded: boolean;
-    response_time_avg: number;
-    error_rate: number;
-    last_check: string;
-  }> => {
-    return apiService.get('/chatbot/health/');
-  },
-};
+  /**
+   * Get user's chat sessions
+   */
+  async getUserSessions(
+    userId?: number,
+    filters: {
+      page?: number;
+      page_size?: number;
+      status?: 'active' | 'completed' | 'escalated';
+      start_date?: string;
+      end_date?: string;
+    } = {}
+  ): Promise<PaginatedResponse<ChatSession>> {
+    try {
+      this.log('getUserSessions', { userId, filters });
+      
+      const endpoint = userId 
+        ? `${this.endpoint}/users/${userId}/sessions/`
+        : `${this.endpoint}/my-sessions/`;
+      
+      const queryString = this.buildQueryString(filters);
+      const response = await api.get<PaginatedResponse<ChatSession>>(`${endpoint}${queryString}`);
+      
+      return this.transformPaginatedResponse(response);
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+
+  /**
+   * Export chat data
+   */
+  async exportChatData(
+    filters: {
+      start_date?: string;
+      end_date?: string;
+      user_id?: number;
+      session_id?: string;
+      include_messages?: boolean;
+    },
+    format: 'csv' | 'json' | 'excel' = 'csv'
+  ): Promise<Blob> {
+    try {
+      this.log('exportChatData', { filters, format });
+      
+      const params = {
+        ...filters,
+        format,
+      };
+      
+      const queryString = this.buildQueryString(params);
+      const response = await api.get(`${this.endpoint}/export/${queryString}`, {
+        responseType: 'blob',
+      });
+      
+      return response.data;
+    } catch (error) {
+      this.handleError(error as any);
+    }
+  }
+}
+
+// Export singleton instance
+export const chatbotService = new ChatbotService();
+export default chatbotService;

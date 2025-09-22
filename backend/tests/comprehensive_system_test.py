@@ -18,7 +18,7 @@ django.setup()
 from django.contrib.auth import get_user_model
 from complaints.models import Department, Complaint, IncidentLocationHistory, GPSValidation
 from chatbot.models import ChatLog, ChatSession
-from mlmodels.models import MLModel, ModelPrediction
+from machine_learning.models import MLModel, ModelPrediction
 from analytics.models import RealTimeMetrics, UserActivity
 from notifications.models import NotificationTemplate, NotificationQueue
 from geospatial.models import GeospatialCluster, HeatmapData
