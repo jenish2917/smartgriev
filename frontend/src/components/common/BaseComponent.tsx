@@ -111,7 +111,7 @@ export const withBaseComponent = <P extends BaseComponentProps>(
     return (
       <div className={className} style={style}>
         {renderError()}
-        <WrappedComponent ref={ref} {...(restProps as P)} />
+        <WrappedComponent {...(props as any)} ref={ref} />
       </div>
     );
   });

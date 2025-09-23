@@ -52,10 +52,10 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/', include('authentication.urls')),
     path('api/complaints/', include('complaints.urls')),
-    path('api/chatbot/', include('chatbot.urls')),
-    path('api/ml/', include('machine_learning.urls')),
-    path('api/analytics/', include('analytics.urls')),
+    # path('api/chatbot/', include('chatbot.urls')),  # Temporarily disabled
+    # path('api/ml/', include('machine_learning.urls')),  # Temporarily disabled
+    # path('api/analytics/', include('analytics.urls')),  # Temporarily disabled
 
-    path('api/geospatial/', include('geospatial.urls')),
-    path('api/notifications/', include('notifications.urls')),
+    # path('api/geospatial/', include('geospatial.urls')),  # Temporarily disabled
+    # path('api/notifications/', include('notifications.urls')),  # Temporarily disabled
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

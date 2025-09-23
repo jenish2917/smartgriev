@@ -39,12 +39,11 @@ INSTALLED_APPS = [
     # Local apps
     'authentication',
     'complaints',
-    'chatbot',
-    'machine_learning',
-    'analytics',  # Real-time analytics and dashboard
-    'ml_experiments',  # A/B testing for ML models
-    'geospatial',  # Geographic analytics
-    'notifications',  # Advanced notification system
+    # 'chatbot',  # Temporarily disabled due to spaCy/Pydantic version conflicts
+    # 'machine_learning',  # Machine learning models and experiments
+    # 'analytics',  # Real-time analytics and dashboard - depends on chatbot
+    # 'geospatial',  # Geographic analytics - requires GDAL
+    # 'notifications',  # Advanced notification system
 ]
 
 MIDDLEWARE = [
@@ -56,9 +55,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'analytics.middleware.UserActivityMiddleware',  # Track user activity
-    'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers
-    'analytics.middleware.CacheControlMiddleware',  # Cache control
+    # 'analytics.middleware.UserActivityMiddleware',  # Track user activity - temporarily disabled
+    # 'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers - temporarily disabled
+    # 'analytics.middleware.CacheControlMiddleware',  # Cache control - temporarily disabled
 ]
 
 ROOT_URLCONF = 'smartgriev.urls'
@@ -290,7 +289,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'ml_experiments': {
+        'machine_learning': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': False,

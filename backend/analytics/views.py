@@ -1,8 +1,7 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.db.models import Count, Avg, Q, F
-from django.db.models.functions import TruncDate
+from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth import get_user_model
@@ -11,18 +10,17 @@ from django.conf import settings
 import csv
 from django.http import HttpResponse
 
-from .models import (
+from backend.analytics.models import (
     AnalyticsDashboard, RealTimeMetrics, UserActivity, 
     PerformanceMetrics, AlertRule, AlertInstance
 )
-from .serializers import (
+from backend.analytics.serializers import (
     AnalyticsDashboardSerializer, RealTimeMetricsSerializer,
     UserActivitySerializer, PerformanceMetricsSerializer,
     AlertRuleSerializer, AlertInstanceSerializer, DashboardStatsSerializer
 )
 from complaints.models import Complaint, Department
-from chatbot.models import ChatLog, ChatFeedback
-from .utils import get_satisfaction_score, get_department_performance, get_chatbot_stats, get_daily_trends, get_sentiment_distribution, get_resolution_rate, get_avg_resolution_time
+from backend.analytics.utils import get_satisfaction_score, get_department_performance, get_chatbot_stats, get_daily_trends, get_sentiment_distribution, get_resolution_rate, get_avg_resolution_time
 
 User = get_user_model()
 

@@ -4,14 +4,12 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from .models import (
     NotificationTemplate, NotificationRule, NotificationDeliveryLog,
-    NotificationPreference, NotificationQueue, NotificationAnalytics,
-    PushNotificationDevice
+    NotificationPreference, NotificationQueue, PushNotificationDevice
 )
 from .serializers import (
     NotificationTemplateSerializer, NotificationRuleSerializer,
     NotificationDeliveryLogSerializer, NotificationPreferenceSerializer,
-    NotificationQueueSerializer, NotificationAnalyticsSerializer,
-    PushNotificationDeviceSerializer
+    NotificationQueueSerializer, PushNotificationDeviceSerializer
 )
 
 User = get_user_model()

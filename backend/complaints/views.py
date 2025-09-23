@@ -2,10 +2,10 @@ from rest_framework import generics, permissions, filters, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.db.models import Q, Count
+from django.db.models import Q
 from math import cos, radians
-from .models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
-from .serializers import (
+from backend.complaints.models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
+from backend.complaints.serializers import (
     ComplaintSerializer,
     DepartmentSerializer,
     ComplaintStatusUpdateSerializer,
@@ -14,8 +14,8 @@ from .serializers import (
     GPSValidationSerializer,
     ComplaintLocationUpdateSerializer
 )
-from .services import ComplaintService, DepartmentService
-from .utils import perform_gps_validation
+from backend.complaints.services import ComplaintService
+from backend.complaints.utils import perform_gps_validation
 
 class IsOfficerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):

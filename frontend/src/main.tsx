@@ -5,8 +5,20 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider } from 'antd';
 import { store } from '@/store';
+import { initializeServices, performHealthCheck } from '@/core/bootstrap';
+import { AppErrorBoundary } from '@/components/common/ErrorBoundary';
 import App from './App';
 import './index.css';
+
+// Initialize clean architecture services
+initializeServices();
+
+// Perform health check
+performHealthCheck().then(isHealthy => {
+  if (!isHealthy) {
+    console.warn('⚠️ Some services are not fully operational');
+  }
+});
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -95,14 +107,16 @@ const antdTheme = {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <ConfigProvider theme={antdTheme}>
-            <App />
-          </ConfigProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </Provider>
+    <AppErrorBoundary>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ConfigProvider theme={antdTheme}>
+              <App />
+            </ConfigProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </Provider>
+    </AppErrorBoundary>
   </React.StrictMode>
 );
