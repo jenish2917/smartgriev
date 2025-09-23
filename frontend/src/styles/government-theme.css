@@ -1,0 +1,246 @@
+/* SmartGriev - Indian Government Color Palette - Enhanced */
+:root {
+  /* Primary Colors (Indian Flag Inspired) */
+  --saffron: #FF9933;
+  --white: #FFFFFF;
+  --green: #138808;
+  --navy-blue: #000080;
+  
+  /* Extended Palette */
+  --deep-saffron: #E6851A;
+  --light-saffron: #FFB366;
+  --dark-green: #0F6906;
+  --light-green: #4CAF50;
+  --royal-blue: #1A237E;
+  --light-navy: #3F51B5;
+  
+  /* Neutral Colors */
+  --charcoal: #2C2C2C;
+  --dark-grey: #424242;
+  --medium-grey: #757575;
+  --light-grey: #F5F5F5;
+  --warm-white: #FAFAFA;
+  --cream: #FFF8E1;
+  
+  /* Gradient Combinations */
+  --primary-gradient: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--navy-blue) 0%, var(--green) 100%);
+  --hero-gradient: linear-gradient(135deg, var(--saffron) 0%, var(--navy-blue) 50%, var(--green) 100%);
+  --flag-gradient: linear-gradient(90deg, var(--saffron) 0%, var(--white) 50%, var(--green) 100%);
+  
+  /* Semantic Colors */
+  --success: var(--green);
+  --warning: var(--saffron);
+  --error: #D32F2F;
+  --info: var(--navy-blue);
+  --text-primary: var(--charcoal);
+  --text-secondary: var(--medium-grey);
+  --background: var(--white);
+  --background-alt: var(--light-grey);
+  
+  /* Shadows */
+  --shadow-light: 0 2px 8px rgba(0,0,0,0.1);
+  --shadow-medium: 0 4px 16px rgba(0,0,0,0.15);
+  --shadow-strong: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* Override Ant Design theme */
+.ant-layout {
+  background: var(--background) !important;
+}
+
+.ant-layout-header {
+  background: var(--primary-gradient) !important;
+  border-bottom: 2px solid var(--green);
+}
+
+.ant-menu-horizontal {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.ant-menu-item {
+  color: var(--white) !important;
+  font-weight: 500;
+}
+
+.ant-menu-item:hover {
+  color: var(--muted-beige) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ant-menu-item-selected {
+  color: var(--white) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-bottom-color: var(--white) !important;
+}
+
+.ant-btn-primary {
+  background: var(--primary-gradient);
+  border: none;
+  box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+  font-weight: 600;
+}
+
+.ant-btn-primary:hover {
+  background: var(--secondary-gradient);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 153, 51, 0.4);
+}
+
+.ant-card {
+  border: 1px solid rgba(19, 136, 8, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+}
+
+.ant-card-head {
+  background: var(--light-grey);
+  border-bottom: 2px solid var(--green);
+}
+
+.ant-tag {
+  border-radius: 16px;
+  font-weight: 500;
+  padding: 4px 12px;
+}
+
+/* Custom gradient cards */
+.gradient-card {
+  background: var(--hero-gradient);
+  color: var(--white);
+  border: none;
+}
+
+.gradient-card .ant-card-body {
+  background: transparent;
+}
+
+/* Government official styling */
+.gov-header {
+  background: var(--hero-gradient);
+  color: var(--white);
+  text-align: center;
+  padding: 20px;
+  border-bottom: 3px solid var(--green);
+}
+
+.gov-logo {
+  background: var(--white);
+  color: var(--navy-blue);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 auto 10px;
+}
+
+/* Success states */
+.success-state {
+  color: var(--green);
+  background: rgba(19, 136, 8, 0.1);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Warning states */
+.warning-state {
+  color: var(--saffron);
+  background: rgba(255, 153, 51, 0.1);
+  border: 1px solid var(--saffron);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Info states */
+.info-state {
+  color: var(--navy-blue);
+  background: rgba(0, 0, 128, 0.1);
+  border: 1px solid var(--navy-blue);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Error states */
+.error-state {
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid #DC2626;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Neutral states */
+.neutral-state {
+  color: #6B7280;
+  background: #F5F5F5;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+/* Navigation sidebar */
+.ant-layout-sider {
+  background: var(--navy-blue) !important;
+}
+
+.ant-menu-dark {
+  background: var(--navy-blue) !important;
+}
+
+.ant-menu-dark .ant-menu-item {
+  color: var(--white) !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background: rgba(255, 153, 51, 0.2) !important;
+  color: var(--saffron) !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: var(--saffron) !important;
+  color: var(--white) !important;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+}
+
+.ant-typography-title {
+  color: var(--text-primary) !important;
+}
+
+/* Special Indian government styling */
+.tricolor-border {
+  border-left: 6px solid var(--saffron);
+  border-right: 6px solid var(--green);
+  border-top: 2px solid var(--navy-blue);
+  border-bottom: 2px solid var(--navy-blue);
+}
+
+.national-emblem {
+  background: var(--hero-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .gov-header {
+    padding: 15px;
+  }
+  
+  .gov-logo {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+}

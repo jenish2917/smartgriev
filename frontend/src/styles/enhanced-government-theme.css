@@ -1,0 +1,404 @@
+/* SmartGriev - Complete Indian Government Color Palette & Theme */
+
+/* === Color Variables === */
+:root {
+  /* Primary Indian Flag Colors */
+  --saffron: #FF9933;
+  --white: #FFFFFF;
+  --green: #138808;
+  --navy-blue: #000080;
+  
+  /* Extended Government Palette */
+  --deep-saffron: #E6851A;
+  --light-saffron: #FFB366;
+  --dark-green: #0F6906;
+  --light-green: #4CAF50;
+  --royal-blue: #1A237E;
+  --light-navy: #3F51B5;
+  
+  /* Neutral Tones */
+  --charcoal: #2C2C2C;
+  --dark-grey: #424242;
+  --medium-grey: #757575;
+  --light-grey: #F5F5F5;
+  --warm-white: #FAFAFA;
+  --cream: #FFF8E1;
+  --off-white: #FCFCFC;
+  
+  /* Functional Colors */
+  --success: var(--green);
+  --warning: var(--saffron);
+  --error: #D32F2F;
+  --info: var(--navy-blue);
+  
+  /* Gradients */
+  --flag-gradient: linear-gradient(90deg, var(--saffron) 0%, var(--white) 50%, var(--green) 100%);
+  --primary-gradient: linear-gradient(135deg, var(--saffron) 0%, var(--green) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--navy-blue) 0%, var(--green) 100%);
+  --hero-gradient: linear-gradient(135deg, var(--saffron) 0%, var(--navy-blue) 50%, var(--green) 100%);
+  --sunset-gradient: linear-gradient(135deg, var(--deep-saffron) 0%, var(--saffron) 100%);
+  --forest-gradient: linear-gradient(135deg, var(--dark-green) 0%, var(--light-green) 100%);
+  
+  /* Shadows */
+  --shadow-light: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-medium: 0 4px 16px rgba(0,0,0,0.12);
+  --shadow-strong: 0 8px 32px rgba(0,0,0,0.16);
+  --shadow-saffron: 0 4px 16px rgba(255,153,51,0.25);
+  --shadow-green: 0 4px 16px rgba(19,136,8,0.25);
+  --shadow-navy: 0 4px 16px rgba(0,0,128,0.25);
+}
+
+/* === Body & Layout === */
+body {
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif !important;
+  background: var(--off-white) !important;
+  color: var(--charcoal) !important;
+  line-height: 1.6 !important;
+}
+
+.ant-layout {
+  background: var(--off-white) !important;
+}
+
+/* === Government Header Component === */
+.gov-header {
+  background: var(--primary-gradient) !important;
+  padding: 20px !important;
+  text-align: center !important;
+  border-bottom: 3px solid var(--navy-blue) !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.gov-logo {
+  background: var(--white) !important;
+  color: var(--navy-blue) !important;
+  border-radius: 50% !important;
+  width: 70px !important;
+  height: 70px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 28px !important;
+  font-weight: bold !important;
+  margin: 0 auto 12px !important;
+  border: 3px solid var(--navy-blue) !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+/* === Buttons === */
+.ant-btn-primary, .primary-button {
+  background: var(--primary-gradient) !important;
+  border: 2px solid var(--navy-blue) !important;
+  color: var(--white) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-saffron) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.ant-btn-primary:hover, .primary-button:hover {
+  background: var(--secondary-gradient) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-strong) !important;
+  border-color: var(--deep-saffron) !important;
+}
+
+.ant-btn-primary:focus, .primary-button:focus {
+  background: var(--primary-gradient) !important;
+  border-color: var(--navy-blue) !important;
+  box-shadow: 0 0 0 3px rgba(255,153,51,0.2) !important;
+}
+
+.ant-btn-primary:active, .primary-button:active {
+  transform: translateY(0px) !important;
+}
+
+/* Secondary Buttons */
+.secondary-button {
+  background: var(--white) !important;
+  border: 2px solid var(--green) !important;
+  color: var(--green) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.secondary-button:hover {
+  background: var(--green) !important;
+  color: var(--white) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-green) !important;
+}
+
+/* === Input Fields === */
+.ant-input, .ant-input-affix-wrapper, .ant-select-selector {
+  border: 2px solid var(--light-grey) !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  font-size: 15px !important;
+  padding: 8px 12px !important;
+}
+
+.ant-input:focus, .ant-input-affix-wrapper:focus, .ant-select-focused .ant-select-selector {
+  border-color: var(--saffron) !important;
+  box-shadow: 0 0 0 3px rgba(255,153,51,0.15) !important;
+}
+
+.ant-input:hover, .ant-input-affix-wrapper:hover, .ant-select-selector:hover {
+  border-color: var(--green) !important;
+}
+
+/* TextArea */
+.ant-input {
+  resize: vertical !important;
+}
+
+/* === Cards === */
+.ant-card {
+  border: 2px solid var(--light-grey) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-light) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden !important;
+}
+
+.ant-card:hover {
+  border-color: var(--saffron) !important;
+  box-shadow: var(--shadow-medium) !important;
+  transform: translateY(-2px) !important;
+}
+
+.ant-card-head {
+  background: linear-gradient(135deg, var(--warm-white) 0%, var(--cream) 100%) !important;
+  border-bottom: 2px solid var(--light-grey) !important;
+  padding: 16px 24px !important;
+}
+
+.ant-card-head-title {
+  color: var(--charcoal) !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+.ant-card-body {
+  padding: 24px !important;
+}
+
+/* Feature Cards */
+.feature-card {
+  border: 2px solid var(--saffron) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.feature-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: var(--flag-gradient) !important;
+}
+
+.feature-card:hover {
+  border-color: var(--green) !important;
+  box-shadow: 0 8px 24px rgba(19,136,8,0.2) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* === Tags & States === */
+.success-state {
+  background: var(--success) !important;
+  color: var(--white) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  box-shadow: var(--shadow-light) !important;
+}
+
+.warning-state {
+  background: var(--warning) !important;
+  color: var(--white) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  box-shadow: var(--shadow-light) !important;
+}
+
+.info-state {
+  background: var(--info) !important;
+  color: var(--white) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  box-shadow: var(--shadow-light) !important;
+}
+
+.error-state {
+  background: var(--error) !important;
+  color: var(--white) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+  box-shadow: var(--shadow-light) !important;
+}
+
+.neutral-state {
+  background: var(--light-grey) !important;
+  color: var(--medium-grey) !important;
+  border: 1px solid var(--medium-grey) !important;
+  border-radius: 6px !important;
+  padding: 4px 12px !important;
+}
+
+/* === Menu & Navigation === */
+.ant-menu-horizontal {
+  background: transparent !important;
+  border-bottom: none !important;
+  font-weight: 500 !important;
+}
+
+.ant-menu-item {
+  color: var(--white) !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  border-radius: 6px !important;
+  margin: 0 4px !important;
+}
+
+.ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--white) !important;
+  transform: translateY(-1px) !important;
+}
+
+.ant-menu-item-selected {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: var(--white) !important;
+  border-bottom: 2px solid var(--white) !important;
+}
+
+/* === Typography === */
+.ant-typography h1, .ant-typography h2, .ant-typography h3, 
+.ant-typography h4, .ant-typography h5, .ant-typography h6,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--charcoal) !important;
+  font-weight: 600 !important;
+}
+
+.national-emblem {
+  background: var(--flag-gradient) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+}
+
+/* === Alerts === */
+.ant-alert-success {
+  background: rgba(19, 136, 8, 0.1) !important;
+  border: 1px solid var(--green) !important;
+  border-radius: 8px !important;
+}
+
+.ant-alert-warning {
+  background: rgba(255, 153, 51, 0.1) !important;
+  border: 1px solid var(--saffron) !important;
+  border-radius: 8px !important;
+}
+
+.ant-alert-info {
+  background: rgba(0, 0, 128, 0.1) !important;
+  border: 1px solid var(--navy-blue) !important;
+  border-radius: 8px !important;
+}
+
+.ant-alert-error {
+  background: rgba(211, 47, 47, 0.1) !important;
+  border: 1px solid var(--error) !important;
+  border-radius: 8px !important;
+}
+
+/* === Loading & Spinners === */
+.ant-spin-dot-item {
+  background: var(--saffron) !important;
+}
+
+.ant-spin-lg .ant-spin-dot {
+  font-size: 32px !important;
+}
+
+/* === Layout Overrides === */
+.ant-layout-sider {
+  background: var(--navy-blue) !important;
+  border-right: 3px solid var(--saffron) !important;
+}
+
+.ant-menu-dark {
+  background: var(--navy-blue) !important;
+}
+
+.ant-menu-dark .ant-menu-item {
+  color: var(--white) !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background: rgba(255, 153, 51, 0.2) !important;
+  color: var(--saffron) !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: var(--saffron) !important;
+  color: var(--white) !important;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .gov-header {
+    padding: 15px 10px !important;
+  }
+  
+  .gov-logo {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 20px !important;
+  }
+  
+  .ant-card {
+    margin: 8px !important;
+  }
+  
+  .ant-card-body {
+    padding: 16px !important;
+  }
+}
+
+/* === Custom Animations === */
+@keyframes patriotic-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 153, 51, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0); }
+}
+
+.pulse-animation {
+  animation: patriotic-pulse 2s infinite !important;
+}
+
+/* === Utility Classes === */
+.gov-text-saffron { color: var(--saffron) !important; }
+.gov-text-green { color: var(--green) !important; }
+.gov-text-navy { color: var(--navy-blue) !important; }
+.gov-bg-saffron { background: var(--saffron) !important; }
+.gov-bg-green { background: var(--green) !important; }
+.gov-bg-navy { background: var(--navy-blue) !important; }
+.gov-gradient-primary { background: var(--primary-gradient) !important; }
+.gov-gradient-secondary { background: var(--secondary-gradient) !important; }
+.gov-gradient-flag { background: var(--flag-gradient) !important; }

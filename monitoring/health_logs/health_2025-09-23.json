@@ -1,0 +1,99 @@
+[
+  {
+    "timestamp": "2025-09-23T16:47:57.817664",
+    "api": {
+      "/api/complaints/api/health/": {
+        "status": 200,
+        "response_time_ms": 177.09,
+        "healthy": true
+      },
+      "/api/complaints/departments/": {
+        "status": 200,
+        "response_time_ms": 14.16,
+        "healthy": true
+      },
+      "/api/complaints/": {
+        "status": 401,
+        "response_time_ms": 4.02,
+        "healthy": false
+      },
+      "/api/auth/verify-token/": {
+        "status": 404,
+        "response_time_ms": 15.0,
+        "healthy": false
+      }
+    },
+    "frontend": {
+      "status": "error",
+      "response_time_ms": null,
+      "healthy": false,
+      "error": "Cannot connect to host localhost:3000 ssl:default [The remote computer refused the network connection]"
+    },
+    "system_resources": {
+      "cpu": {
+        "usage_percent": 35.9,
+        "cores": 8,
+        "healthy": true
+      },
+      "memory": {
+        "usage_percent": 60.0,
+        "total_gb": 23.81,
+        "available_gb": 9.51,
+        "healthy": true
+      },
+      "disk": {
+        "usage_percent": 27.8,
+        "total_gb": 97.66,
+        "free_gb": 70.5,
+        "healthy": true
+      },
+      "network": {
+        "bytes_sent": 276111787,
+        "bytes_recv": 764069438,
+        "packets_sent": 354086,
+        "packets_recv": 561358
+      }
+    },
+    "database": {
+      "healthy": false,
+      "error": "'NoneType' object is not subscriptable"
+    },
+    "overall_score": 45,
+    "status": "unhealthy",
+    "alerts": [
+      {
+        "type": "error",
+        "category": "api",
+        "message": "API endpoint /api/complaints/ is unhealthy",
+        "details": {
+          "status": 401,
+          "response_time_ms": 4.02,
+          "healthy": false
+        },
+        "severity": "high"
+      },
+      {
+        "type": "error",
+        "category": "api",
+        "message": "API endpoint /api/auth/verify-token/ is unhealthy",
+        "details": {
+          "status": 404,
+          "response_time_ms": 15.0,
+          "healthy": false
+        },
+        "severity": "high"
+      },
+      {
+        "type": "error",
+        "category": "database",
+        "message": "Database is unhealthy",
+        "details": {
+          "healthy": false,
+          "error": "'NoneType' object is not subscriptable"
+        },
+        "severity": "high"
+      }
+    ],
+    "check_duration_ms": 3546.33
+  }
+]

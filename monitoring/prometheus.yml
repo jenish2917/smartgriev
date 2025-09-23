@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "django_rules.yml"
+
+scrape_configs:
+  - job_name: 'smartgriev-backend'
+    static_configs:
+      - targets: ['backend:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'smartgriev-frontend'
+    static_configs:
+      - targets: ['frontend:80']
+    metrics_path: '/health'
+    scrape_interval: 15s
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['db:5432']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']

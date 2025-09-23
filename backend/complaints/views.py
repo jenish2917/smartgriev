@@ -2,10 +2,12 @@ from rest_framework import generics, permissions, filters, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status as http_status
 from django.db.models import Q
 from math import cos, radians
-from backend.complaints.models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
-from backend.complaints.serializers import (
+from complaints.models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
+from complaints.serializers import (
     ComplaintSerializer,
     DepartmentSerializer,
     ComplaintStatusUpdateSerializer,
@@ -14,8 +16,9 @@ from backend.complaints.serializers import (
     GPSValidationSerializer,
     ComplaintLocationUpdateSerializer
 )
-from backend.complaints.services import ComplaintService
-from backend.complaints.utils import perform_gps_validation
+from complaints.services import ComplaintService
+from complaints.services.classification_service import complaint_classifier
+from complaints.utils import perform_gps_validation
 
 class IsOfficerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -68,6 +71,34 @@ class ComplaintListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Use service to create complaint with enhanced location tracking
         complaint_data = serializer.validated_data
+        
+        # Auto-classify complaint using AI before creation
+        classification_result = complaint_classifier.classify_complaint(
+            complaint_data.get('description', ''),
+            complaint_data.get('title', '')
+        )
+        
+        # Try to assign to the classified department
+        try:
+            from complaints.models import Department
+            classified_dept = Department.objects.filter(
+                name__icontains=classification_result['department_name']
+            ).first()
+            
+            if classified_dept:
+                complaint_data['department'] = classified_dept
+                # Add classification metadata
+                complaint_data['ai_classification'] = {
+                    'department': classification_result['department'],
+                    'confidence': classification_result['confidence'],
+                    'reasoning': classification_result['reasoning']
+                }
+        except Exception as e:
+            # Log but don't fail if classification assignment fails
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Auto-classification failed: {str(e)}")
+        
         complaint = self.complaint_service.create_complaint_with_location(
             complaint_data, 
             created_by=self.request.user
@@ -276,7 +307,71 @@ def validate_gps_location(request, complaint_id):
         return Response(serializer.data)
         
     except Complaint.DoesNotExist:
-        return Response({'error': 'Complaint not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Complaint not found'}, status=http_status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([])  # Make it publicly accessible for testing
+def classify_complaint_text(request):
+    """Classify complaint text using AI to determine appropriate department"""
+    try:
+        complaint_text = request.data.get('text', '')
+        complaint_title = request.data.get('title', '')
+        
+        if not complaint_text:
+            return Response(
+                {'error': 'Complaint text is required'}, 
+                status=http_status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Add logging for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Classification request - Title: {complaint_title}, Text: {complaint_text[:100]}...")
+        
+        # Get classification from AI service
+        classification_result = complaint_classifier.classify_complaint(
+            complaint_text, 
+            complaint_title
+        )
+        
+        logger.info(f"Classification result: {classification_result}")
+        
+        # Get available departments
+        from complaints.models import Department
+        departments = Department.objects.all()
+        
+        # Find matching department
+        suggested_department = None
+        for dept in departments:
+            if classification_result['department_name'].lower() in dept.name.lower():
+                suggested_department = {
+                    'id': dept.id,
+                    'name': dept.name,
+                    'description': dept.description
+                }
+                break
+        
+        response_data = {
+            'classification': classification_result,
+            'suggested_department': suggested_department,
+            'all_departments': [
+                {'id': dept.id, 'name': dept.name, 'description': dept.description}
+                for dept in departments
+            ]
+        }
+        
+        return Response(response_data, status=http_status.HTTP_200_OK)
+        
+    except Exception as e:
+        import logging
+        import traceback
+        logger = logging.getLogger(__name__)
+        logger.error(f"Classification failed: {str(e)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return Response(
+            {'error': f'Classification failed: {str(e)}'}, 
+            status=http_status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

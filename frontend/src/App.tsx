@@ -30,6 +30,15 @@ const Profile = lazy(() => import('@/pages/profile/Profile'));
 const Settings = lazy(() => import('@/pages/settings/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
+// AI Classification Test Component
+const AIClassifierTest = lazy(() => import('@/components/features/AIComplaintClassifier'));
+const LandingPage = lazy(() => import('@/pages/LandingPage'));
+const SimpleComplaint = lazy(() => import('@/pages/SimpleComplaint'));
+
+// New Enhanced Complaint Components
+const ComplaintSubmissionFlow = lazy(() => import('@/components/complaint/ComplaintSubmissionFlow'));
+const ComplaintDashboard = lazy(() => import('@/components/complaint/ComplaintDashboard'));
+
 // Route configuration with types
 interface RouteConfig {
   path: string;
@@ -39,8 +48,13 @@ interface RouteConfig {
 }
 
 const routesConfig: RouteConfig[] = [
+  { path: '/', component: LandingPage, layout: AuthLayout, auth: 'public' }, // Landing page - always accessible
+  { path: '/complaint', component: SimpleComplaint, layout: AuthLayout, auth: 'public' }, // Simple complaint form
+  { path: '/complaint-flow', component: ComplaintSubmissionFlow, layout: AuthLayout, auth: 'public' }, // Enhanced complaint flow
+  { path: '/complaint-dashboard', component: ComplaintDashboard, layout: AuthLayout, auth: 'public' }, // Complaint dashboard
   { path: '/login', component: Login, layout: AuthLayout, auth: 'public' },
   { path: '/register', component: Register, layout: AuthLayout, auth: 'public' },
+  { path: '/ai-test', component: AIClassifierTest, layout: AuthLayout, auth: 'public' }, // Add AI test route
   { path: '/dashboard', component: Dashboard, layout: AppLayout, auth: 'protected' },
   { path: '/complaints', component: Complaints, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/new', component: CreateComplaint, layout: AppLayout, auth: 'protected' },
@@ -59,14 +73,24 @@ const routesConfig: RouteConfig[] = [
   { path: '/settings', component: Settings, layout: AppLayout, auth: 'protected' },
 ];
 
-const RouteWrapper: React.FC<RouteConfig> = ({ component: Component, layout: Layout, auth }) => {
+const ProtectedRoute: React.FC<{ route: RouteConfig }> = ({ route }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { component: Component, layout: Layout, auth, path } = route;
+
+  // Special handling for public pages - always allow access
+  if (path === '/' || path === '/ai-test' || path === '/complaint' || path === '/complaint-flow' || path === '/complaint-dashboard') {
+    return (
+      <Layout>
+        <Component />
+      </Layout>
+    );
+  }
 
   if (auth === 'protected' && !isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (auth === 'public' && isAuthenticated) {
+  if (auth === 'public' && isAuthenticated && path !== '/ai-test' && path !== '/' && path !== '/complaint' && path !== '/complaint-flow' && path !== '/complaint-dashboard') {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -92,12 +116,11 @@ const App = () => {
       <Layout style={{ minHeight: '100vh' }}>
         <Suspense fallback={<Spin size="large" style={{ margin: 'auto' }} />}>
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             {routesConfig.map((route, index) => (
               <Route
                 key={index}
                 path={route.path}
-                element={<RouteWrapper {...route} />}
+                element={<ProtectedRoute route={route} />}
               />
             ))}
             <Route path="*" element={<NotFound />} />

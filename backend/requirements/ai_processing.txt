@@ -1,0 +1,73 @@
+# Multi-Modal AI Processing Dependencies for SmartGriev
+
+# Core AI and ML libraries
+torch>=2.0.0
+transformers>=4.30.0
+datasets>=2.12.0
+accelerate>=0.20.0
+
+# Audio processing
+librosa>=0.10.0
+soundfile>=0.12.1
+pydub>=0.25.1
+
+# Image processing
+opencv-python>=4.8.0
+Pillow>=10.0.0
+pytesseract>=0.3.10
+
+# Computer Vision and OCR
+transformers[vision]>=4.30.0
+easyocr>=1.7.0
+
+# Speech processing
+openai-whisper>=20230314
+whisper>=1.1.10
+
+# Additional ML utilities
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Text processing
+nltk>=3.8.1
+spacy>=3.6.0
+textblob>=0.17.1
+
+# API and HTTP clients
+groq>=0.4.0
+requests>=2.31.0
+httpx>=0.24.0
+
+# File handling
+python-magic>=0.4.27
+mutagen>=1.47.0
+
+# Progress and logging
+tqdm>=4.65.0
+loguru>=0.7.0
+
+# Async support
+aiofiles>=23.1.0
+asyncio-throttle>=1.0.2
+
+# Government and location services
+geopy>=2.3.0
+phonenumbers>=8.13.0
+
+# SMS and Email services
+twilio>=8.5.0
+sendgrid>=6.10.0
+
+# Django specific for AI
+django-cors-headers>=4.2.0
+django-extensions>=3.2.0
+celery>=5.3.0
+redis>=4.6.0
+
+# Development and testing
+pytest>=7.4.0
+pytest-django>=4.5.2
+pytest-asyncio>=0.21.0
+black>=23.7.0
+flake8>=6.0.0

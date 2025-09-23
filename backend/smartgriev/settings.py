@@ -296,3 +296,17 @@ LOGGING = {
         },
     },
 }
+
+# AI/ML Configuration
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+if not GROQ_API_KEY:
+    import warnings
+    warnings.warn("GROQ_API_KEY not set in environment variables. AI features will be disabled.")
+
+# Complaint Classification Settings
+COMPLAINT_CLASSIFICATION = {
+    'ENABLED': True,
+    'AUTO_CLASSIFY': True,
+    'MODEL': 'llama3-8b-8192',
+    'CONFIDENCE_THRESHOLD': 0.7
+}

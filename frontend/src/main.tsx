@@ -9,8 +9,10 @@ import { initializeServices, performHealthCheck } from '@/core/bootstrap';
 import { AppErrorBoundary } from '@/components/common/ErrorBoundary';
 import App from './App';
 import './index.css';
+import './styles/government-theme.css';
+import './styles/enhanced-government-theme.css';
 
-// Initialize clean architecture services
+// Initialize services
 initializeServices();
 
 // Perform health check
@@ -120,3 +122,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </AppErrorBoundary>
   </React.StrictMode>
 );
+
+console.log('📡 Backend URL:', import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/complaints/api');
+console.log('🔧 Environment:', import.meta.env.MODE);
+console.log('🚀 SmartGriev App Started');

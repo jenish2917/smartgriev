@@ -2,6 +2,19 @@ from django.db import models
 from django.conf import settings
 from collections import namedtuple
 
+class ComplaintCategory(models.Model):
+    """Categories for complaints"""
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = "Complaint Categories"
+    
+    def __str__(self):
+        return self.name
+
 class Department(models.Model):
     name = models.CharField(max_length=100)
     zone = models.CharField(max_length=100)
@@ -12,10 +25,12 @@ class Department(models.Model):
 
 class Complaint(models.Model):
     STATUS_CHOICES = [
+        ('submitted', 'Submitted'),
         ('pending', 'Pending'),
         ('in_progress', 'In Progress'),
         ('resolved', 'Resolved'),
-        ('rejected', 'Rejected')
+        ('rejected', 'Rejected'),
+        ('closed', 'Closed')
     ]
     PRIORITY_CHOICES = [
         ('low', 'Low'),
@@ -23,18 +38,36 @@ class Complaint(models.Model):
         ('high', 'High'),
         ('urgent', 'Urgent')
     ]
+    URGENCY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'), 
+        ('high', 'High'),
+        ('critical', 'Critical')
+    ]
     
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='complaints')
+    # Basic complaint fields
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    media = models.ImageField(upload_to='complaints/', null=True, blank=True)
-    category = models.CharField(max_length=100)
-    sentiment = models.FloatField(null=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='complaints')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    category = models.ForeignKey(ComplaintCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='complaints')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    urgency_level = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='medium')
     
-    # Enhanced GPS location fields for incident location
+    # Multi-modal input support
+    audio_file = models.FileField(upload_to='complaints/audio/', null=True, blank=True, help_text="Audio complaint file")
+    image_file = models.ImageField(upload_to='complaints/images/', null=True, blank=True, help_text="Image complaint file")
+    media = models.ImageField(upload_to='complaints/', null=True, blank=True)  # Legacy field
+    
+    # AI processing results
+    ai_confidence_score = models.FloatField(default=0.0, help_text="AI processing confidence score")
+    sentiment = models.FloatField(null=True, help_text="Sentiment analysis score")
+    department_classification = models.JSONField(default=dict, blank=True, help_text="AI department classification results")
+    ai_processed_text = models.TextField(blank=True, help_text="AI enhanced/processed complaint text")
+    
+    # Location fields
+    location = models.CharField(max_length=500, blank=True, help_text="Location description or address")
     incident_latitude = models.FloatField(null=True, blank=True, help_text="Latitude where the incident occurred")
     incident_longitude = models.FloatField(null=True, blank=True, help_text="Longitude where the incident occurred")
     incident_address = models.TextField(null=True, blank=True, help_text="Full address of incident location")
@@ -61,8 +94,12 @@ class Complaint(models.Model):
     location_lat = models.FloatField(null=True, blank=True)
     location_lon = models.FloatField(null=True, blank=True)
     
+    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
     
     def __str__(self):
         return f"{self.title} - {self.status}"
@@ -80,6 +117,31 @@ class Complaint(models.Model):
             accuracy=self.gps_accuracy,
             method=self.location_method
         )
+
+class ComplaintStatus(models.Model):
+    """Track status changes for complaints"""
+    STATUS_CHOICES = [
+        ('submitted', 'Submitted'),
+        ('acknowledged', 'Acknowledged'),
+        ('assigned', 'Assigned'),
+        ('in_progress', 'In Progress'),
+        ('pending_review', 'Pending Review'),
+        ('resolved', 'Resolved'),
+        ('closed', 'Closed'),
+        ('rejected', 'Rejected')
+    ]
+    
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='status_history')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    notes = models.TextField(blank=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.complaint.title} - {self.status}"
 
 class IncidentLocationHistory(models.Model):
     """Track location updates and validations for complaints"""
