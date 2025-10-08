@@ -22,6 +22,13 @@ from .api_views import (
     process_complaint_simple,
     health_check
 )
+from .multimodal_views import (
+    MultimodalComplaintCreateView,
+    QuickComplaintSubmitView,
+    ComplaintMediaUploadView,
+    ComplaintListView,
+    ComplaintDetailView as MultimodalComplaintDetailView
+)
 
 urlpatterns = [
     # Advanced Multi-Modal API endpoints
@@ -31,6 +38,13 @@ urlpatterns = [
     path('api/departments/', DepartmentListView.as_view(), name='api-departments'),
     path('api/simple/', process_complaint_simple, name='api-process-simple'),
     path('api/health/', health_check, name='api-health-check'),
+    
+    # New Multimodal Complaint Submission Endpoints
+    path('submit/', MultimodalComplaintCreateView.as_view(), name='multimodal-complaint-create'),
+    path('submit/quick/', QuickComplaintSubmitView.as_view(), name='quick-complaint-submit'),
+    path('<int:complaint_id>/media/', ComplaintMediaUploadView.as_view(), name='complaint-media-upload'),
+    path('my-complaints/', ComplaintListView.as_view(), name='my-complaints-list'),
+    path('view/<int:pk>/', MultimodalComplaintDetailView.as_view(), name='multimodal-complaint-detail'),
     
     # Original complaint management endpoints
     path('', ComplaintListCreateView.as_view(), name='complaint-list-create'),

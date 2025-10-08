@@ -8,9 +8,17 @@ import logging
 import json
 import os
 from typing import Dict, Any, Optional, List
-from groq import Groq
 
+# Try to import Groq, but make it optional
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    
 logger = logging.getLogger(__name__)
+if not GROQ_AVAILABLE:
+    logger.warning("Groq library not available. Department classification will use fallback methods.")
 
 
 class GovernmentDepartmentClassifier:
@@ -21,10 +29,15 @@ class GovernmentDepartmentClassifier:
     def __init__(self):
         """Initialize the department classifier"""
         try:
-            # Initialize Groq client
-            self.groq_client = Groq(
-                api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
-            )
+            # Initialize Groq client if available
+            if GROQ_AVAILABLE and os.getenv('GROQ_API_KEY'):
+                self.groq_client = Groq(
+                    api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
+                )
+                self.use_ai = True
+            else:
+                self.groq_client = None
+                self.use_ai = False
             
             # Government department mapping
             self.departments = {
@@ -186,7 +199,11 @@ Return valid JSON only."""
             if location:
                 user_prompt += f"\nLocation: {location}"
             
-            # Call Groq API
+            # Call Groq API if available
+            if not self.use_ai or not self.groq_client:
+                logger.warning("AI not available, using keyword-based classification")
+                return self._get_keyword_classification(complaint_text)
+            
             response = self.groq_client.chat.completions.create(
                 model="llama3-8b-8192",
                 messages=[

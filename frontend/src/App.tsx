@@ -1,18 +1,21 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy, useState, useCallback } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout, ConfigProvider, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getProfileAsync } from '@/store/slices/authSlice';
 import { TokenManager } from '@/services/api';
+import Navbar from './components/Navbar';
 
 // Layout components
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'));
 const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'));
 
-// Page components (lazy loaded)
-const Login = lazy(() => import('@/pages/auth/Login'));
-const Register = lazy(() => import('@/pages/auth/Register'));
-const Dashboard = lazy(() => import('@/pages/dashboard/Dashboard'));
+// New Blue Theme Pages
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Complaints = lazy(() => import('@/pages/complaints/Complaints'));
 const ComplaintDetail = lazy(() => import('@/pages/complaints/ComplaintDetail'));
 const CreateComplaint = lazy(() => import('@/pages/complaints/CreateComplaint'));
@@ -39,6 +42,10 @@ const SimpleComplaint = lazy(() => import('@/pages/SimpleComplaint'));
 const ComplaintSubmissionFlow = lazy(() => import('@/components/complaint/ComplaintSubmissionFlow'));
 const ComplaintDashboard = lazy(() => import('@/components/complaint/ComplaintDashboard'));
 
+// Multimodal Complaint Components
+const MultimodalComplaintSubmit = lazy(() => import('./components/MultimodalComplaintSubmit'));
+const MyComplaintsList = lazy(() => import('./components/MyComplaintsList'));
+
 // Route configuration with types
 interface RouteConfig {
   path: string;
@@ -48,14 +55,18 @@ interface RouteConfig {
 }
 
 const routesConfig: RouteConfig[] = [
-  { path: '/', component: LandingPage, layout: AuthLayout, auth: 'public' }, // Landing page - always accessible
+  { path: '/', component: Home, layout: React.Fragment, auth: 'public' }, // New Home page
+  { path: '/login', component: Login, layout: React.Fragment, auth: 'public' },
+  { path: '/register', component: Register, layout: React.Fragment, auth: 'public' },
+  { path: '/forgot-password', component: ForgotPassword, layout: React.Fragment, auth: 'public' },
+  { path: '/dashboard', component: Dashboard, layout: React.Fragment, auth: 'protected' }, // New Dashboard
   { path: '/complaint', component: SimpleComplaint, layout: AuthLayout, auth: 'public' }, // Simple complaint form
   { path: '/complaint-flow', component: ComplaintSubmissionFlow, layout: AuthLayout, auth: 'public' }, // Enhanced complaint flow
   { path: '/complaint-dashboard', component: ComplaintDashboard, layout: AuthLayout, auth: 'public' }, // Complaint dashboard
-  { path: '/login', component: Login, layout: AuthLayout, auth: 'public' },
-  { path: '/register', component: Register, layout: AuthLayout, auth: 'public' },
+  { path: '/multimodal-submit', component: MultimodalComplaintSubmit, layout: React.Fragment, auth: 'public' }, // Multimodal complaint submission
+  { path: '/my-complaints', component: MyComplaintsList, layout: React.Fragment, auth: 'protected' }, // User's complaints list
   { path: '/ai-test', component: AIClassifierTest, layout: AuthLayout, auth: 'public' }, // Add AI test route
-  { path: '/dashboard', component: Dashboard, layout: AppLayout, auth: 'protected' },
+  { path: '/old-dashboard', component: Complaints, layout: AppLayout, auth: 'protected' },
   { path: '/complaints', component: Complaints, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/new', component: CreateComplaint, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/track', component: ComplaintTracking, layout: AppLayout, auth: 'protected' },
@@ -63,7 +74,7 @@ const routesConfig: RouteConfig[] = [
   { path: '/analytics', component: Analytics, layout: AppLayout, auth: 'protected' },
   { path: '/analytics/performance', component: PerformanceMetrics, layout: AppLayout, auth: 'protected' },
   { path: '/analytics/geospatial', component: GeospatialAnalytics, layout: AppLayout, auth: 'protected' },
-  { path: '/chatbot', component: Chatbot, layout: AppLayout, auth: 'protected' },
+  { path: '/chatbot', component: Chatbot, layout: React.Fragment, auth: 'public' },
   { path: '/notifications', component: Notifications, layout: AppLayout, auth: 'protected' },
   { path: '/ml-models', component: MLModels, layout: AppLayout, auth: 'protected' },
   { path: '/officer', component: OfficerDashboard, layout: AppLayout, auth: 'protected' },
@@ -73,12 +84,17 @@ const routesConfig: RouteConfig[] = [
   { path: '/settings', component: Settings, layout: AppLayout, auth: 'protected' },
 ];
 
-const ProtectedRoute: React.FC<{ route: RouteConfig }> = ({ route }) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+const ProtectedRoute: React.FC<{ route: RouteConfig; user: any }> = ({ route, user }) => {
   const { component: Component, layout: Layout, auth, path } = route;
+  const isAuthenticated = !!localStorage.getItem('token');
 
-  // Special handling for public pages - always allow access
-  if (path === '/' || path === '/ai-test' || path === '/complaint' || path === '/complaint-flow' || path === '/complaint-dashboard') {
+  // Public pages - always accessible
+  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/ai-test', '/complaint', '/complaint-flow', '/complaint-dashboard', '/multimodal-submit', '/chatbot'];
+  
+  if (publicPaths.includes(path)) {
+    if (Layout === React.Fragment) {
+      return <Component />;
+    }
     return (
       <Layout>
         <Component />
@@ -86,14 +102,16 @@ const ProtectedRoute: React.FC<{ route: RouteConfig }> = ({ route }) => {
     );
   }
 
+  // Protected pages - require authentication
   if (auth === 'protected' && !isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (auth === 'public' && isAuthenticated && path !== '/ai-test' && path !== '/' && path !== '/complaint' && path !== '/complaint-flow' && path !== '/complaint-dashboard') {
-    return <Navigate to="/dashboard" replace />;
+  // Render with layout
+  if (Layout === React.Fragment) {
+    return <Component />;
   }
-
+  
   return (
     <Layout>
       <Component />
@@ -103,30 +121,77 @@ const ProtectedRoute: React.FC<{ route: RouteConfig }> = ({ route }) => {
 
 const App = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user: reduxUser } = useAppSelector((state) => state.auth);
+  const [user, setUser] = useState<any>(null);
+
+  // Load user from localStorage
+  const loadUser = useCallback(() => {
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (storedUser && token) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        setUser(null);
+        // Clear invalid data
+        localStorage.removeItem('user');
+      }
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   useEffect(() => {
-    if (TokenManager.isAuthenticated() && !user) {
+    // Initial load
+    loadUser();
+
+    // Listen for user changes (login/logout events)
+    const handleUserChange = (event: Event) => {
+      loadUser();
+    };
+
+    window.addEventListener('userChange', handleUserChange as EventListener);
+
+    return () => {
+      window.removeEventListener('userChange', handleUserChange as EventListener);
+    };
+  }, [loadUser]);
+
+  useEffect(() => {
+    if (TokenManager.isAuthenticated() && !reduxUser) {
       dispatch(getProfileAsync());
     }
-  }, [dispatch, user]);
+  }, [dispatch, reduxUser]);
 
   return (
     <ConfigProvider>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Suspense fallback={<Spin size="large" style={{ margin: 'auto' }} />}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#F5F5F5' }}>
+        <Navbar user={user} />
+        <Suspense fallback={
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            minHeight: '100vh' 
+          }}>
+            <Spin size="large" />
+          </div>
+        }>
           <Routes>
             {routesConfig.map((route, index) => (
               <Route
                 key={index}
                 path={route.path}
-                element={<ProtectedRoute route={route} />}
+                element={<ProtectedRoute route={route} user={user} />}
               />
             ))}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </Layout>
+      </div>
     </ConfigProvider>
   );
 };

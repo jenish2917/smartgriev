@@ -53,7 +53,7 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/complaints/', include('complaints.urls')),
     # path('api/chatbot/', include('chatbot.urls')),  # Temporarily disabled
-    # path('api/ml/', include('machine_learning.urls')),  # Temporarily disabled
+    path('api/ml/', include('machine_learning.urls')),  # OCR and ML endpoints enabled
     # path('api/analytics/', include('analytics.urls')),  # Temporarily disabled
 
     # path('api/geospatial/', include('geospatial.urls')),  # Temporarily disabled

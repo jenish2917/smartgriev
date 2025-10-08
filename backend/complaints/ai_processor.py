@@ -9,8 +9,24 @@ import os
 import tempfile
 import json
 from typing import Dict, Any, Optional, List
-from groq import Groq
-import speech_recognition as sr
+
+# Try to import Groq, but make it optional
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Groq library not available. AI enhancement features will be limited.")
+
+# Try to import speech_recognition, but make it optional
+try:
+    import speech_recognition as sr
+    SR_AVAILABLE = True
+except ImportError:
+    SR_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("speech_recognition library not available. Audio processing will be disabled.")
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +39,27 @@ class AdvancedAIProcessor:
     def __init__(self):
         """Initialize the AI processor with Groq client"""
         try:
-            # Initialize Groq client
-            self.groq_client = Groq(
-                api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
-            )
+            # Initialize Groq client if available
+            if GROQ_AVAILABLE and os.getenv('GROQ_API_KEY'):
+                self.groq_client = Groq(
+                    api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
+                )
+                self.use_ai = True
+                logger.info("AdvancedAIProcessor initialized with Groq AI")
+            else:
+                self.groq_client = None
+                self.use_ai = False
+                if not GROQ_AVAILABLE:
+                    logger.warning("Groq library not available. Using fallback methods.")
+                else:
+                    logger.warning("GROQ_API_KEY not set. Using fallback methods.")
             
             # Initialize speech recognition
-            self.speech_recognizer = sr.Recognizer()
+            if SR_AVAILABLE:
+                self.speech_recognizer = sr.Recognizer()
+            else:
+                self.speech_recognizer = None
+                logger.warning("Speech recognition not available")
             
             # Configuration
             self.max_audio_duration = 300  # 5 minutes
@@ -40,7 +70,13 @@ class AdvancedAIProcessor:
             
         except Exception as e:
             logger.error(f"Failed to initialize AdvancedAIProcessor: {e}")
-            raise
+            # Don't raise, allow fallback operation
+            self.groq_client = None
+            self.use_ai = False
+            self.speech_recognizer = None if not SR_AVAILABLE else sr.Recognizer()
+            self.max_audio_duration = 300
+            self.supported_audio_formats = ['.wav', '.mp3', '.flac', '.ogg']
+            self.supported_image_formats = ['.jpg', '.jpeg', '.png', '.bmp']
     
     async def process_audio_to_text(self, audio_file_path: str, language: str = 'hi-IN') -> Optional[str]:
         """
@@ -48,6 +84,10 @@ class AdvancedAIProcessor:
         Supports multiple languages including Hindi and English
         """
         try:
+            if not SR_AVAILABLE or not self.speech_recognizer:
+                logger.warning("Speech recognition not available")
+                return None
+            
             if not os.path.exists(audio_file_path):
                 logger.error(f"Audio file not found: {audio_file_path}")
                 return None
@@ -154,7 +194,11 @@ Return only the enhanced complaint text, nothing else."""
             if context:
                 user_prompt += f"\nAdditional context: {json.dumps(context)}"
             
-            # Call Groq API
+            # Call Groq API if available, otherwise return original
+            if not self.use_ai or not self.groq_client:
+                logger.warning("AI enhancement not available, returning original text")
+                return original_text
+            
             response = self.groq_client.chat.completions.create(
                 model="llama3-8b-8192",
                 messages=[
@@ -195,6 +239,10 @@ Return a JSON with these categories:
 
 Return valid JSON only."""
             
+            if not self.use_ai or not self.groq_client:
+                logger.warning("AI entity extraction not available, returning empty dict")
+                return {}
+            
             response = self.groq_client.chat.completions.create(
                 model="llama3-8b-8192",
                 messages=[
@@ -232,6 +280,15 @@ Return JSON with:
 - confidence: 0.0-1.0
 
 Return valid JSON only."""
+            
+            if not self.use_ai or not self.groq_client:
+                logger.warning("AI sentiment analysis not available, returning default")
+                return {
+                    "sentiment": "neutral",
+                    "urgency": "medium",
+                    "emotion": "concerned",
+                    "confidence": 0.5
+                }
             
             response = self.groq_client.chat.completions.create(
                 model="llama3-8b-8192",
@@ -337,20 +394,26 @@ Return valid JSON only."""
     async def health_check(self) -> Dict[str, Any]:
         """Check if the AI processor is working correctly"""
         try:
-            # Test Groq API
-            test_response = self.groq_client.chat.completions.create(
-                model="llama3-8b-8192",
-                messages=[{"role": "user", "content": "Hello, this is a test."}],
-                max_tokens=10
-            )
+            groq_status = "unavailable"
             
-            groq_status = "available" if test_response else "unavailable"
+            # Test Groq API if available
+            if self.use_ai and self.groq_client:
+                try:
+                    test_response = self.groq_client.chat.completions.create(
+                        model="llama3-8b-8192",
+                        messages=[{"role": "user", "content": "Hello, this is a test."}],
+                        max_tokens=10
+                    )
+                    groq_status = "available" if test_response else "unavailable"
+                except Exception as e:
+                    logger.warning(f"Groq API test failed: {e}")
+                    groq_status = "unavailable"
             
             return {
                 "groq_api": groq_status,
                 "speech_recognition": "available",
                 "image_processing": "basic",
-                "status": "healthy",
+                "status": "healthy" if groq_status == "available" else "degraded",
                 "timestamp": asyncio.get_event_loop().time()
             }
             

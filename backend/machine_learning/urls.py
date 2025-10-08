@@ -22,4 +22,19 @@ urlpatterns = [
     # Feature importance
     path('features/', views.FeatureImportanceView.as_view(), name='feature-importance'),
     path('features/<int:model_id>/', views.FeatureImportanceDetailView.as_view(), name='feature-importance-detail'),
+    
+    # OCR (Optical Character Recognition) endpoints
+    path('ocr/', views.OCRImageProcessView.as_view(), name='ocr-process'),
+    path('ocr/complaint/', views.ComplaintImageOCRView.as_view(), name='ocr-complaint'),
+    path('ocr/health/', views.OCRHealthCheckView.as_view(), name='ocr-health'),
+    
+    # Enhanced OCR endpoints
+    path('ocr/enhanced/', views.EnhancedOCRImageProcessView.as_view(), name='ocr-enhanced'),
+    path('ocr/batch/', views.OCRBatchProcessView.as_view(), name='ocr-batch'),
+    path('ocr/stats/', views.OCRPerformanceStatsView.as_view(), name='ocr-stats'),
+    
+    # Multimodal Analysis endpoints
+    path('multimodal/video/', views.MultimodalVideoAnalysisView.as_view(), name='multimodal-video'),
+    path('multimodal/audio/', views.AudioTranscriptionView.as_view(), name='multimodal-audio'),
+    path('multimodal/visual/', views.VisualObjectDetectionView.as_view(), name='multimodal-visual'),
 ]

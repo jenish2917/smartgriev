@@ -34,13 +34,13 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'corsheaders',
-    'storages',
-    'channels',  # WebSocket support
+    # 'storages',  # Temporarily disabled for quick startup
+    # 'channels',  # Temporarily disabled for quick startup
     # Local apps
     'authentication',
     'complaints',
     # 'chatbot',  # Temporarily disabled due to spaCy/Pydantic version conflicts
-    # 'machine_learning',  # Machine learning models and experiments
+    'machine_learning',  # Machine learning models and experiments - OCR enabled
     # 'analytics',  # Real-time analytics and dashboard - depends on chatbot
     # 'geospatial',  # Geographic analytics - requires GDAL
     # 'notifications',  # Advanced notification system
