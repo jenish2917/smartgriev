@@ -11,6 +11,7 @@ import App from './App';
 import './index.css';
 import './styles/government-theme.css';
 import './styles/enhanced-government-theme.css';
+import './styles/components.css';
 
 // Initialize services
 initializeServices();

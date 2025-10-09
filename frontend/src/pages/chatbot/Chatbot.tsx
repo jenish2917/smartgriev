@@ -24,6 +24,7 @@ import {
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+import './chatbot.css';
 
 interface Message {
   id: string;
@@ -37,19 +38,19 @@ interface Message {
 const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      text: 'Hello! I\'m your AI assistant for SmartGriev. I can help you with filing complaints, checking status, or answering questions about the grievance process. How can I assist you today?',
+      id: 'welcome',
+      text: "Hi — I'm your SmartGriev AI assistant. I can help you file complaints, check status, or answer questions. Ready to start?",
       sender: 'bot',
       timestamp: new Date(),
       type: 'text',
       suggestions: [
-        'How do I file a complaint?',
-        'Check complaint status',
-        'What are the complaint categories?',
-        'How long does resolution take?',
+        'File a complaint',
+        'Track complaint',
+        'What documents do I need?',
       ],
     },
   ]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -82,7 +83,7 @@ const Chatbot: React.FC = () => {
       const botResponse = generateBotResponse(text);
       setMessages(prev => [...prev, botResponse]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    }, 800 + Math.random() * 1200);
   };
 
   const generateBotResponse = (userText: string): Message => {
@@ -143,9 +144,9 @@ const Chatbot: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className="chat-page">
       <Row gutter={[24, 24]}>
-        <Col span={18}>
+        <Col span={24}>
           <Card
             title={
               <Space>
@@ -155,86 +156,46 @@ const Chatbot: React.FC = () => {
               </Space>
             }
             extra={
-              <Space>
+              <span className="export-clear-space">
                 <Tooltip title="Clear Chat">
                   <Button icon={<ClearOutlined />} onClick={clearChat} />
                 </Tooltip>
                 <Tooltip title="Export Chat">
                   <Button icon={<DownloadOutlined />} onClick={exportChat} />
                 </Tooltip>
-              </Space>
+              </span>
             }
-            style={{ height: '70vh', display: 'flex', flexDirection: 'column' }}
-            bodyStyle={{ 
-              flex: 1, 
-              display: 'flex', 
-              flexDirection: 'column',
-              padding: 0,
-            }}
+            className="chat-card"
+            bodyStyle={{ padding: 0 }}
           >
-            <div
-              style={{
-                flex: 1,
-                overflow: 'auto',
-                padding: '16px',
-                maxHeight: 'calc(70vh - 120px)',
-              }}
-            >
+            <div className="chat-messages">
               <List
                 dataSource={messages}
                 renderItem={(message) => (
-                  <List.Item style={{ border: 'none', padding: '8px 0' }}>
-                    <div
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                      }}
-                    >
-                      <div
-                        style={{
-                          maxWidth: '70%',
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '8px',
-                          flexDirection: message.sender === 'user' ? 'row-reverse' : 'row',
-                        }}
-                      >
+                  <List.Item className="chat-list-item">
+                    <div className={`message-row ${message.sender}`}>
+                      <div className={`message-content ${message.sender}`}>
                         <Avatar
                           icon={message.sender === 'user' ? <UserOutlined /> : <RobotOutlined />}
-                          style={{
-                            backgroundColor: message.sender === 'user' ? '#1890ff' : '#FF6600',
-                          }}
+                          className={`avatar ${message.sender}`}
                         />
                         <div>
-                          <div
-                            style={{
-                              padding: '12px 16px',
-                              borderRadius: '12px',
-                              backgroundColor: message.sender === 'user' ? '#1890ff' : '#f5f5f5',
-                              color: message.sender === 'user' ? 'white' : 'black',
-                              marginBottom: '4px',
-                              whiteSpace: 'pre-line',
-                            }}
-                          >
-                            {message.text}
-                          </div>
-                          <Text type="secondary" style={{ fontSize: '12px' }}>
-                            {message.timestamp.toLocaleTimeString()}
-                          </Text>
+                          <div className={`bubble ${message.sender}`}>{message.text}</div>
+                          <Text className="timestamp">{message.timestamp.toLocaleTimeString()}</Text>
                           {message.suggestions && (
-                            <div style={{ marginTop: '8px' }}>
+                            <div className="suggestions">
                               <Space wrap>
-                                {message.suggestions.map((suggestion, index) => (
-                                  <Button
-                                    key={index}
-                                    size="small"
-                                    onClick={() => handleSuggestionClick(suggestion)}
-                                    style={{ borderRadius: '20px' }}
-                                  >
-                                    {suggestion}
+                                {message.id === 'welcome' && !showSuggestions ? (
+                                  <Button size="small" onClick={() => setShowSuggestions(true)}>
+                                    Start here
                                   </Button>
-                                ))}
+                                ) : (
+                                  message.suggestions.map((suggestion, index) => (
+                                    <Button key={index} size="small" onClick={() => handleSuggestionClick(suggestion)}>
+                                      {suggestion}
+                                    </Button>
+                                  ))
+                                )}
                               </Space>
                             </div>
                           )}
@@ -245,97 +206,35 @@ const Chatbot: React.FC = () => {
                 )}
               />
               {isTyping && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '16px 0' }}>
-                  <Avatar icon={<RobotOutlined />} style={{ backgroundColor: '#FF6600' }} />
-                  <div
-                    style={{
-                      padding: '12px 16px',
-                      borderRadius: '12px',
-                      backgroundColor: '#f5f5f5',
-                    }}
-                  >
-                    <Text type="secondary">AI is typing...</Text>
-                  </div>
+                <div className="typing-indicator">
+                  <Avatar icon={<RobotOutlined />} className="avatar bot" />
+                  <div className="bubble bot"> <Text style={{ color: 'inherit' }}>AI is typing...</Text> </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
-            
-            <Divider style={{ margin: 0 }} />
-            
-            <div style={{ padding: '16px' }}>
+            <div className="chat-input-area">
               <Input.Group compact>
                 <TextArea
+                  className="chat-textarea"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Type your message here..."
-                  autoSize={{ minRows: 1, maxRows: 3 }}
+                  autoSize={{ minRows: 1, maxRows: 4 }}
                   onPressEnter={(e) => {
                     if (!e.shiftKey) {
                       e.preventDefault();
                       handleSendMessage(inputText);
                     }
                   }}
-                  style={{ resize: 'none' }}
                 />
-                <Button
-                  type="primary"
-                  icon={<SendOutlined />}
-                  onClick={() => handleSendMessage(inputText)}
-                  disabled={!inputText.trim() || isTyping}
-                  style={{ height: 'auto' }}
-                >
-                  Send
-                </Button>
+                <Button type="primary" icon={<SendOutlined />} onClick={() => handleSendMessage(inputText)} disabled={!inputText.trim() || isTyping} />
               </Input.Group>
               <Text type="secondary" style={{ fontSize: '12px', marginTop: '8px', display: 'block' }}>
                 Press Enter to send, Shift+Enter for new line
               </Text>
             </div>
           </Card>
-        </Col>
-        
-        <Col span={6}>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Card title="Quick Actions" size="small">
-              <Space direction="vertical" style={{ width: '100%' }}>
-                <Button block onClick={() => handleSendMessage('How do I file a complaint?')}>
-                  File a Complaint
-                </Button>
-                <Button block onClick={() => handleSendMessage('Check complaint status')}>
-                  Track Complaint
-                </Button>
-                <Button block onClick={() => handleSendMessage('What are complaint categories?')}>
-                  View Categories
-                </Button>
-                <Button block onClick={() => handleSendMessage('Talk to human agent')}>
-                  Human Support
-                </Button>
-              </Space>
-            </Card>
-            
-            <Card title="Help Topics" size="small">
-              <List
-                size="small"
-                dataSource={[
-                  'Filing Process',
-                  'Required Documents',
-                  'Status Meanings',
-                  'Resolution Times',
-                  'Escalation Process',
-                  'Contact Information',
-                ]}
-                renderItem={(item) => (
-                  <List.Item
-                    style={{ padding: '4px 0', cursor: 'pointer' }}
-                    onClick={() => handleSendMessage(`Help with ${item}`)}
-                  >
-                    <Text>{item}</Text>
-                  </List.Item>
-                )}
-              />
-            </Card>
-          </Space>
         </Col>
       </Row>
     </div>
