@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import axios from 'axios';
@@ -237,6 +238,7 @@ const PasswordStrength = styled.div<{ $strength: number }>`
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -310,7 +312,7 @@ const Register: React.FC = () => {
         language: 'en' // Default language
       });
 
-      setSuccess('Registration successful! Redirecting to login...');
+      setSuccess(t('register.success'));
       setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -328,10 +330,10 @@ const Register: React.FC = () => {
         } else if (errorData.detail) {
           setError(errorData.detail);
         } else {
-          setError('Registration failed. Please try again.');
+          setError(t('register.error'));
         }
       } else {
-        setError('Registration failed. Please try again.');
+        setError(t('register.error'));
       }
     } finally {
       setLoading(false);
@@ -343,8 +345,8 @@ const Register: React.FC = () => {
       <RegisterBox>
         <Logo>
           <LogoIcon>SG</LogoIcon>
-          <Title>Create Account</Title>
-          <Subtitle>Join SmartGriev to manage your complaints</Subtitle>
+          <Title>{t('register.title')}</Title>
+          <Subtitle>{t('register.subtitle')}</Subtitle>
         </Logo>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -353,12 +355,12 @@ const Register: React.FC = () => {
         <Form onSubmit={handleSubmit}>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">{t('register.firstName')}</Label>
               <Input
                 type="text"
                 id="firstName"
                 name="firstName"
-                placeholder="John"
+                placeholder={t('register.firstNamePlaceholder')}
                 value={formData.firstName}
                 onChange={handleChange}
                 required
@@ -366,12 +368,12 @@ const Register: React.FC = () => {
             </FormGroup>
 
             <FormGroup>
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">{t('register.lastName')}</Label>
               <Input
                 type="text"
                 id="lastName"
                 name="lastName"
-                placeholder="Doe"
+                placeholder={t('register.lastNamePlaceholder')}
                 value={formData.lastName}
                 onChange={handleChange}
                 required
@@ -380,12 +382,12 @@ const Register: React.FC = () => {
           </FormRow>
 
           <FormGroup>
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">{t('register.email')}</Label>
             <Input
               type="email"
               id="email"
               name="email"
-              placeholder="john.doe@example.com"
+              placeholder={t('register.emailPlaceholder')}
               value={formData.email}
               onChange={handleChange}
               required
@@ -393,12 +395,12 @@ const Register: React.FC = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t('register.username')}</Label>
             <Input
               type="text"
               id="username"
               name="username"
-              placeholder="johndoe"
+              placeholder={t('register.usernamePlaceholder')}
               value={formData.username}
               onChange={handleChange}
               required
@@ -406,24 +408,24 @@ const Register: React.FC = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="phone">Phone Number (Optional)</Label>
+            <Label htmlFor="phone">{t('register.phone')}</Label>
             <Input
               type="tel"
               id="phone"
               name="phone"
-              placeholder="+91 1234567890"
+              placeholder={t('register.phonePlaceholder')}
               value={formData.phone}
               onChange={handleChange}
             />
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('register.password')}</Label>
             <Input
               type="password"
               id="password"
               name="password"
-              placeholder="Enter a strong password"
+              placeholder={t('register.passwordPlaceholder')}
               value={formData.password}
               onChange={handleChange}
               required
@@ -432,12 +434,12 @@ const Register: React.FC = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('register.confirmPassword')}</Label>
             <Input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
-              placeholder="Re-enter your password"
+              placeholder={t('register.confirmPasswordPlaceholder')}
               value={formData.confirmPassword}
               onChange={handleChange}
               required
@@ -445,16 +447,16 @@ const Register: React.FC = () => {
           </FormGroup>
 
           <Button type="submit" $loading={loading}>
-            {loading ? '🔄 Creating Account...' : '✨ Create Account'}
+            {loading ? `🔄 ${t('register.creating')}` : `✨ ${t('register.createAccount')}`}
           </Button>
         </Form>
 
         <Divider>
-          <span>OR</span>
+          <span>{t('common.or')}</span>
         </Divider>
 
         <LoginLink>
-          Already have an account? <Link to="/login">Sign in</Link>
+          {t('register.haveAccount')} <Link to="/login">{t('login.signIn')}</Link>
         </LoginLink>
       </RegisterBox>
     </RegisterContainer>
