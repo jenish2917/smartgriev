@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Form,
   Input,
@@ -39,6 +40,7 @@ const CreateComplaint: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation('complaints');
 
   const categories = [
     'Infrastructure',
@@ -70,10 +72,10 @@ const CreateComplaint: React.FC = () => {
     setLoading(true);
     try {
       await dispatch(createComplaint(values)).unwrap();
-      message.success('Complaint submitted successfully!');
+      message.success(t('create.successMessage'));
       navigate('/complaints');
     } catch (error) {
-      message.error('Failed to submit complaint. Please try again.');
+      message.error(t('create.errorMessage'));
     } finally {
       setLoading(false);
     }
@@ -95,7 +97,7 @@ const CreateComplaint: React.FC = () => {
 
   return (
     <BasePage
-      title="Create New Complaint"
+      title={t('create.title')}
       loading={loading}
       error={null}
     >
@@ -105,7 +107,7 @@ const CreateComplaint: React.FC = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate('/complaints')}
           >
-            Back to Complaints
+            {t('create.backButton')}
           </Button>
         </Space>
 
@@ -119,23 +121,23 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24} lg={12}>
               <Form.Item
                 name="title"
-                label="Complaint Title"
+                label={t('create.titleLabel')}
                 rules={[
-                  { required: true, message: 'Please enter a title' },
-                  { min: 10, message: 'Title must be at least 10 characters' }
+                  { required: true, message: t('create.titleRequired') },
+                  { min: 10, message: t('create.titleMinLength') }
                 ]}
               >
-                <Input placeholder="Brief summary of your complaint" />
+                <Input placeholder={t('create.titlePlaceholder')} />
               </Form.Item>
             </Col>
 
             <Col xs={24} lg={12}>
               <Form.Item
                 name="category"
-                label="Category"
-                rules={[{ required: true, message: 'Please select a category' }]}
+                label={t('create.categoryLabel')}
+                rules={[{ required: true, message: t('create.categoryRequired') }]}
               >
-                <Select placeholder="Select complaint category">
+                <Select placeholder={t('create.categoryPlaceholder')}>
                   {categories.map(category => (
                     <Option key={category} value={category}>
                       {category}
@@ -148,10 +150,10 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24} lg={12}>
               <Form.Item
                 name="department"
-                label="Department"
-                rules={[{ required: true, message: 'Please select a department' }]}
+                label={t('create.departmentLabel')}
+                rules={[{ required: true, message: t('create.departmentRequired') }]}
               >
-                <Select placeholder="Select responsible department">
+                <Select placeholder={t('create.departmentPlaceholder')}>
                   {departments.map(dept => (
                     <Option key={dept.id} value={dept.id}>
                       {dept.name}
@@ -164,10 +166,10 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24} lg={12}>
               <Form.Item
                 name="priority"
-                label="Priority"
-                rules={[{ required: true, message: 'Please select priority' }]}
+                label={t('create.priorityLabel')}
+                rules={[{ required: true, message: t('create.priorityRequired') }]}
               >
-                <Select placeholder="Select priority level">
+                <Select placeholder={t('create.priorityPlaceholder')}>
                   {priorities.map(priority => (
                     <Option key={priority.value} value={priority.value}>
                       <span style={{ color: priority.color }}>
@@ -182,24 +184,24 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24} lg={12}>
               <Form.Item
                 name="location"
-                label="Location (Optional)"
+                label={t('create.locationLabel')}
               >
-                <Input placeholder="Specific location or address" />
+                <Input placeholder={t('create.locationPlaceholder')} />
               </Form.Item>
             </Col>
 
             <Col xs={24}>
               <Form.Item
                 name="description"
-                label="Detailed Description"
+                label={t('create.descriptionLabel')}
                 rules={[
-                  { required: true, message: 'Please provide a description' },
-                  { min: 50, message: 'Description must be at least 50 characters' }
+                  { required: true, message: t('create.descriptionRequired') },
+                  { min: 50, message: t('create.descriptionMinLength') }
                 ]}
               >
                 <TextArea
                   rows={6}
-                  placeholder="Provide detailed information about your complaint, including when it occurred, what happened, and any relevant context..."
+                  placeholder={t('create.descriptionPlaceholder')}
                 />
               </Form.Item>
             </Col>
@@ -207,11 +209,11 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24}>
               <Form.Item
                 name="expectedResolutionDate"
-                label="Expected Resolution Date (Optional)"
+                label={t('create.expectedDateLabel')}
               >
                 <DatePicker
                   style={{ width: '100%' }}
-                  placeholder="When do you expect this to be resolved?"
+                  placeholder={t('create.expectedDatePlaceholder')}
                 />
               </Form.Item>
             </Col>
@@ -219,18 +221,17 @@ const CreateComplaint: React.FC = () => {
             <Col xs={24}>
               <Form.Item
                 name="attachments"
-                label="Attachments (Optional)"
+                label={t('create.attachmentsLabel')}
               >
                 <Dragger {...uploadProps}>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>
                   <p className="ant-upload-text">
-                    Click or drag files to this area to upload
+                    {t('create.uploadText')}
                   </p>
                   <p className="ant-upload-hint">
-                    Support for images, documents, and other relevant files.
-                    Maximum 10MB per file.
+                    {t('create.uploadHint')}
                   </p>
                 </Dragger>
               </Form.Item>
@@ -245,14 +246,14 @@ const CreateComplaint: React.FC = () => {
                     loading={loading}
                     size="large"
                   >
-                    Submit Complaint
+                    {t('create.submitButton')}
                   </Button>
                   <Button
                     onClick={() => form.resetFields()}
                     disabled={loading}
                     size="large"
                   >
-                    Reset Form
+                    {t('create.resetButton')}
                   </Button>
                 </Space>
               </Form.Item>
