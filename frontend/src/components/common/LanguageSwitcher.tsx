@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select, Space, Typography } from 'antd';
+import { Select, Space, Typography, message } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { SUPPORTED_LANGUAGES, changeLanguage, getCurrentLanguage } from '@/i18n';
+import axios from 'axios';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -27,24 +28,39 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     try {
       await changeLanguage(languageCode);
       
-      // Store user preference
+      // Store user preference in localStorage
       localStorage.setItem('smartgriev_language', languageCode);
       
       // Update user profile if logged in
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          // TODO: Call API to update user language preference
-          // await updateUserProfile({ preferred_language: languageCode });
-        } catch (error) {
-          console.error('Failed to update user language preference:', error);
+          const response = await axios.post(
+            'http://127.0.0.1:8000/api/users/update-language/',
+            { language: languageCode },
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          
+          if (response.status === 200) {
+            message.success(`Language changed to ${SUPPORTED_LANGUAGES[languageCode as keyof typeof SUPPORTED_LANGUAGES].nativeName}`);
+          }
+        } catch (apiError) {
+          console.error('Failed to update user language preference:', apiError);
+          // Still show success since language changed in UI
+          message.warning('Language changed locally. Please log in again to persist your preference.');
         }
+      } else {
+        // Show success for unauthenticated users
+        message.success(`Language changed to ${SUPPORTED_LANGUAGES[languageCode as keyof typeof SUPPORTED_LANGUAGES].nativeName}`);
       }
-      
-      // Show success message
-      console.log(`Language changed to ${SUPPORTED_LANGUAGES[languageCode as keyof typeof SUPPORTED_LANGUAGES].nativeName}`);
     } catch (error) {
       console.error('Failed to change language:', error);
+      message.error('Failed to change language. Please try again.');
     }
   };
 
