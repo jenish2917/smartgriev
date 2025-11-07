@@ -1,0 +1,123 @@
+{
+  "app": {
+    "name": "स्मार्टग्रीव",
+    "tagline": "नागरिक तक्रार व्यवस्थापन प्रणाली",
+    "description": "AI-आधारित तक्रार व्यवस्थापन व्यासपीठ"
+  },
+  "nav": {
+    "home": "मुख्यपृष्ठ",
+    "dashboard": "डॅशबोर्ड",
+    "complaints": "तक्रारी",
+    "submit": "तक्रार सबमिट करा",
+    "myComplaints": "माझ्या तक्रारी",
+    "tracking": "ट्रॅकिंग",
+    "analytics": "विश्लेषण",
+    "chatbot": "AI चॅटबॉट",
+    "notifications": "सूचना",
+    "profile": "प्रोफाइल",
+    "settings": "सेटिंग्ज",
+    "logout": "लॉगआउट",
+    "login": "लॉगिन",
+    "register": "नोंदणी"
+  },
+  "actions": {
+    "submit": "सबमिट करा",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "edit": "संपादित करा",
+    "delete": "हटवा",
+    "view": "पहा",
+    "download": "डाउनलोड",
+    "upload": "अपलोड",
+    "search": "शोधा",
+    "filter": "फिल्टर",
+    "clear": "साफ करा",
+    "apply": "लागू करा",
+    "confirm": "पुष्टी करा",
+    "close": "बंद करा",
+    "back": "मागे",
+    "next": "पुढे",
+    "previous": "मागील",
+    "refresh": "रिफ्रेश",
+    "export": "एक्सपोर्ट",
+    "print": "प्रिंट"
+  },
+  "status": {
+    "pending": "प्रलंबित",
+    "inProgress": "प्रगतीपथावर",
+    "resolved": "सोडवले",
+    "rejected": "नाकारले",
+    "closed": "बंद"
+  },
+  "priority": {
+    "low": "कमी",
+    "medium": "मध्यम",
+    "high": "उच्च",
+    "urgent": "तातडीचे"
+  },
+  "common": {
+    "loading": "लोड होत आहे...",
+    "error": "त्रुटी",
+    "success": "यश",
+    "warning": "चेतावणी",
+    "info": "माहिती",
+    "noData": "डेटा नाही",
+    "notFound": "सापडले नाही",
+    "unauthorized": "अनधिकृत",
+    "forbidden": "निषिद्ध",
+    "serverError": "सर्व्हर त्रुटी",
+    "networkError": "नेटवर्क त्रुटी",
+    "tryAgain": "पुन्हा प्रयत्न करा",
+    "contactSupport": "समर्थनाशी संपर्क साधा"
+  },
+  "form": {
+    "required": "हे फील्ड आवश्यक आहे",
+    "invalidEmail": "अवैध ईमेल पत्ता",
+    "invalidPhone": "अवैध फोन नंबर",
+    "passwordMismatch": "पासवर्ड जुळत नाही",
+    "minLength": "किमान लांबी {{min}} अक्षरे",
+    "maxLength": "कमाल लांबी {{max}} अक्षरे",
+    "invalidFormat": "अवैध स्वरूप",
+    "selectOption": "एक पर्याय निवडा"
+  },
+  "messages": {
+    "saveSuccess": "यशस्वीरित्या जतन केले",
+    "updateSuccess": "यशस्वीरित्या अद्यतनित केले",
+    "deleteSuccess": "यशस्वीरित्या हटवले",
+    "submitSuccess": "यशस्वीरित्या सबमिट केले",
+    "uploadSuccess": "यशस्वीरित्या अपलोड केले",
+    "saveFailed": "जतन अयशस्वी",
+    "updateFailed": "अद्यतन अयशस्वी",
+    "deleteFailed": "हटवणे अयशस्वी",
+    "submitFailed": "सबमिट अयशस्वी",
+    "uploadFailed": "अपलोड अयशस्वी",
+    "confirmDelete": "तुम्हाला खात्री आहे का की तुम्ही हे हटवू इच्छिता?",
+    "unsavedChanges": "तुमचे न जतन केलेले बदल आहेत"
+  },
+  "time": {
+    "just_now": "आत्ताच",
+    "minutes_ago": "{{count}} मिनिटांपूर्वी",
+    "hours_ago": "{{count}} तासांपूर्वी",
+    "days_ago": "{{count}} दिवसांपूर्वी",
+    "weeks_ago": "{{count}} आठवड्यांपूर्वी",
+    "months_ago": "{{count}} महिन्यांपूर्वी",
+    "years_ago": "{{count}} वर्षांपूर्वी",
+    "today": "आज",
+    "yesterday": "काल",
+    "tomorrow": "उद्या"
+  },
+  "pagination": {
+    "showing": "दाखवत आहे",
+    "of": "च्या",
+    "results": "परिणाम",
+    "page": "पृष्ठ",
+    "perPage": "प्रति पृष्ठ"
+  },
+  "fileUpload": {
+    "dragDrop": "फाइल ड्रॅग करा किंवा क्लिक करा",
+    "supported": "समर्थित स्वरूप",
+    "maxSize": "कमाल आकार",
+    "uploading": "अपलोड होत आहे...",
+    "uploadComplete": "अपलोड पूर्ण झाले"
+  }
+}

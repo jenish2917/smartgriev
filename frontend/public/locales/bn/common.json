@@ -1,0 +1,123 @@
+{
+  "app": {
+    "name": "স্মার্টগ্রিভ",
+    "tagline": "নাগরিক অভিযোগ ব্যবস্থাপনা সিস্টেম",
+    "description": "এআই-চালিত অভিযোগ ব্যবস্থাপনা প্ল্যাটফর্ম"
+  },
+  "nav": {
+    "home": "হোম",
+    "dashboard": "ড্যাশবোর্ড",
+    "complaints": "অভিযোগসমূহ",
+    "submit": "অভিযোগ জমা দিন",
+    "myComplaints": "আমার অভিযোগ",
+    "tracking": "ট্র্যাকিং",
+    "analytics": "বিশ্লেষণ",
+    "chatbot": "এআই চ্যাটবট",
+    "notifications": "বিজ্ঞপ্তি",
+    "profile": "প্রোফাইল",
+    "settings": "সেটিংস",
+    "logout": "লগআউট",
+    "login": "লগইন",
+    "register": "নিবন্ধন"
+  },
+  "actions": {
+    "submit": "জমা দিন",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ",
+    "edit": "সম্পাদনা",
+    "delete": "মুছুন",
+    "view": "দেখুন",
+    "download": "ডাউনলোড",
+    "upload": "আপলোড",
+    "search": "অনুসন্ধান",
+    "filter": "ফিল্টার",
+    "clear": "পরিষ্কার",
+    "apply": "প্রয়োগ করুন",
+    "confirm": "নিশ্চিত করুন",
+    "close": "বন্ধ করুন",
+    "back": "পিছনে",
+    "next": "পরবর্তী",
+    "previous": "পূর্ববর্তী",
+    "refresh": "রিফ্রেশ",
+    "export": "এক্সপোর্ট",
+    "print": "প্রিন্ট"
+  },
+  "status": {
+    "pending": "অপেক্ষমান",
+    "inProgress": "প্রক্রিয়াধীন",
+    "resolved": "সমাধান হয়েছে",
+    "rejected": "প্রত্যাখ্যাত",
+    "closed": "বন্ধ"
+  },
+  "priority": {
+    "low": "নিম্ন",
+    "medium": "মাঝারি",
+    "high": "উচ্চ",
+    "urgent": "জরুরি"
+  },
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "success": "সফল",
+    "warning": "সতর্কতা",
+    "info": "তথ্য",
+    "noData": "কোন ডেটা নেই",
+    "notFound": "পাওয়া যায়নি",
+    "unauthorized": "অননুমোদিত",
+    "forbidden": "নিষিদ্ধ",
+    "serverError": "সার্ভার ত্রুটি",
+    "networkError": "নেটওয়ার্ক ত্রুটি",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "contactSupport": "সহায়তায় যোগাযোগ করুন"
+  },
+  "form": {
+    "required": "এই ক্ষেত্রটি প্রয়োজনীয়",
+    "invalidEmail": "অবৈধ ইমেইল ঠিকানা",
+    "invalidPhone": "অবৈধ ফোন নম্বর",
+    "passwordMismatch": "পাসওয়ার্ড মিলছে না",
+    "minLength": "ন্যূনতম দৈর্ঘ্য {{min}} অক্ষর",
+    "maxLength": "সর্বোচ্চ দৈর্ঘ্য {{max}} অক্ষর",
+    "invalidFormat": "অবৈধ বিন্যাস",
+    "selectOption": "একটি বিকল্প নির্বাচন করুন"
+  },
+  "messages": {
+    "saveSuccess": "সফলভাবে সংরক্ষিত হয়েছে",
+    "updateSuccess": "সফলভাবে আপডেট হয়েছে",
+    "deleteSuccess": "সফলভাবে মুছে ফেলা হয়েছে",
+    "submitSuccess": "সফলভাবে জমা দেওয়া হয়েছে",
+    "uploadSuccess": "সফলভাবে আপলোড হয়েছে",
+    "saveFailed": "সংরক্ষণ ব্যর্থ হয়েছে",
+    "updateFailed": "আপডেট ব্যর্থ হয়েছে",
+    "deleteFailed": "মুছে ফেলা ব্যর্থ হয়েছে",
+    "submitFailed": "জমা দেওয়া ব্যর্থ হয়েছে",
+    "uploadFailed": "আপলোড ব্যর্থ হয়েছে",
+    "confirmDelete": "আপনি কি নিশ্চিত যে আপনি এটি মুছতে চান?",
+    "unsavedChanges": "আপনার অসংরক্ষিত পরিবর্তন আছে"
+  },
+  "time": {
+    "just_now": "এইমাত্র",
+    "minutes_ago": "{{count}} মিনিট আগে",
+    "hours_ago": "{{count}} ঘন্টা আগে",
+    "days_ago": "{{count}} দিন আগে",
+    "weeks_ago": "{{count}} সপ্তাহ আগে",
+    "months_ago": "{{count}} মাস আগে",
+    "years_ago": "{{count}} বছর আগে",
+    "today": "আজ",
+    "yesterday": "গতকাল",
+    "tomorrow": "আগামীকাল"
+  },
+  "pagination": {
+    "showing": "দেখানো হচ্ছে",
+    "of": "এর",
+    "results": "ফলাফল",
+    "page": "পৃষ্ঠা",
+    "perPage": "প্রতি পৃষ্ঠায়"
+  },
+  "fileUpload": {
+    "dragDrop": "ফাইল টেনে আনুন বা ক্লিক করুন",
+    "supported": "সমর্থিত ফরম্যাট",
+    "maxSize": "সর্বোচ্চ আকার",
+    "uploading": "আপলোড হচ্ছে...",
+    "uploadComplete": "আপলোড সম্পন্ন"
+  }
+}

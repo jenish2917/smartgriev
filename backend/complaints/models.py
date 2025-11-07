@@ -45,6 +45,21 @@ class Complaint(models.Model):
         ('critical', 'Critical')
     ]
     
+    LANGUAGE_CHOICES = [
+        ('en', 'English'),
+        ('hi', 'Hindi'),
+        ('bn', 'Bengali'),
+        ('te', 'Telugu'),
+        ('mr', 'Marathi'),
+        ('ta', 'Tamil'),
+        ('gu', 'Gujarati'),
+        ('kn', 'Kannada'),
+        ('ml', 'Malayalam'),
+        ('pa', 'Punjabi'),
+        ('or', 'Odia'),
+        ('as', 'Assamese'),
+    ]
+    
     # Basic complaint fields
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
     title = models.CharField(max_length=200)
@@ -55,6 +70,26 @@ class Complaint(models.Model):
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
     urgency_level = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='medium')
     
+    # Multi-lingual support
+    submitted_language = models.CharField(
+        max_length=10,
+        choices=LANGUAGE_CHOICES,
+        default='en',
+        help_text='Language in which the complaint was originally submitted'
+    )
+    original_text = models.TextField(
+        blank=True,
+        help_text='Original complaint text before translation (if submitted in non-English)'
+    )
+    translated_text = models.TextField(
+        blank=True,
+        help_text='English translation of the complaint for AI processing'
+    )
+    auto_translated = models.BooleanField(
+        default=False,
+        help_text='Whether the complaint was automatically translated'
+    )
+    
     # Multi-modal input support
     audio_file = models.FileField(upload_to='complaints/audio/', null=True, blank=True, help_text="Audio complaint file")
     image_file = models.ImageField(upload_to='complaints/images/', null=True, blank=True, help_text="Image complaint file")
@@ -62,6 +97,11 @@ class Complaint(models.Model):
     
     # Multimodal analysis results
     audio_transcription = models.TextField(blank=True, help_text="Transcribed text from audio files")
+    audio_language_detected = models.CharField(
+        max_length=10,
+        blank=True,
+        help_text='Language detected in audio transcription'
+    )
     image_ocr_text = models.TextField(blank=True, help_text="Text extracted from images via OCR")
     detected_objects = models.JSONField(default=list, blank=True, help_text="Objects detected in images")
     

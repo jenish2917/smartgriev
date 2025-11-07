@@ -1,0 +1,19 @@
+{
+  "title": "அறிவிப்புகள்",
+  "markAllRead": "அனைத்தையும் படித்ததாகக் குறிக்கவும்",
+  "noNotifications": "அறிவிப்புகள் இல்லை",
+  "types": {
+    "complaint": "புகார் புதுப்பிப்பு",
+    "assignment": "புதிய பணி",
+    "resolution": "தீர்க்கப்பட்டது",
+    "comment": "புதிய கருத்து",
+    "escalation": "உயர்த்தப்பட்டது",
+    "system": "கணினி அறிவிப்பு"
+  },
+  "messages": {
+    "complaintUpdated": "புகார் #{{id}} புதுப்பிக்கப்பட்டது",
+    "complaintAssigned": "உங்களுக்கு புகார் #{{id}} ஒதுக்கப்பட்டது",
+    "complaintResolved": "புகார் #{{id}} தீர்க்கப்பட்டது",
+    "newComment": "புகார் #{{id}}ல் புதிய கருத்து"
+  }
+}

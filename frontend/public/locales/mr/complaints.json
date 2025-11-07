@@ -1,0 +1,66 @@
+{
+  "title": "तक्रार व्यवस्थापन",
+  "submit": "नवीन तक्रार सबमिट करा",
+  "myComplaints": "माझ्या तक्रारी",
+  "status": {
+    "pending": "प्रलंबित",
+    "in_progress": "प्रगतीपथावर",
+    "resolved": "सोडवले",
+    "rejected": "नाकारले",
+    "closed": "बंद"
+  },
+  "priority": {
+    "low": "कमी",
+    "medium": "मध्यम",
+    "high": "उच्च",
+    "urgent": "तातडीचे"
+  },
+  "category": {
+    "roads": "रस्ते आणि वाहतूक",
+    "water": "पाणी पुरवठा",
+    "electricity": "वीज",
+    "sanitation": "स्वच्छता",
+    "health": "आरोग्य सेवा",
+    "education": "शिक्षण",
+    "pollution": "प्रदूषण",
+    "security": "सुरक्षा",
+    "other": "इतर"
+  },
+  "form": {
+    "title": "शीर्षक",
+    "description": "वर्णन",
+    "category": "श्रेणी",
+    "priority": "प्राधान्य",
+    "location": "स्थान",
+    "attachments": "संलग्नक",
+    "submit": "तक्रार सबमिट करा",
+    "draft": "मसुदा म्हणून जतन करा"
+  },
+  "details": {
+    "complaintId": "तक्रार ID",
+    "submittedBy": "सबमिट केलेले",
+    "submittedOn": "सबमिट केल्याची तारीख",
+    "lastUpdate": "शेवटचे अद्यतन",
+    "assignedTo": "नियुक्त केलेले",
+    "department": "विभाग"
+  },
+  "actions": {
+    "view": "तपशील पहा",
+    "edit": "संपादित करा",
+    "delete": "हटवा",
+    "track": "ट्रॅक करा",
+    "escalate": "वाढवा"
+  },
+  "messages": {
+    "submitSuccess": "तक्रार यशस्वीरित्या सबमिट केली",
+    "updateSuccess": "तक्रार यशस्वीरित्या अद्यतनित केली",
+    "deleteSuccess": "तक्रार यशस्वीरित्या हटवली",
+    "noComplaints": "कोणत्याही तक्रारी सापडल्या नाहीत"
+  },
+  "ai": {
+    "classification": "AI वर्गीकरण",
+    "sentiment": "भावना विश्लेषण",
+    "priority": "सुचवलेले प्राधान्य",
+    "department": "सुचवलेला विभाग"
+  }
+}

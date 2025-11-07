@@ -3,13 +3,70 @@ from django.db import models
 from django.utils import timezone
 
 class User(AbstractUser):
+    # Language choices for India
+    LANGUAGE_CHOICES = [
+        ('en', 'English'),
+        ('hi', 'Hindi - हिन्दी'),
+        ('bn', 'Bengali - বাংলা'),
+        ('te', 'Telugu - తెలుగు'),
+        ('mr', 'Marathi - मराठी'),
+        ('ta', 'Tamil - தமிழ்'),
+        ('gu', 'Gujarati - ગુજરાતી'),
+        ('kn', 'Kannada - ಕನ್ನಡ'),
+        ('ml', 'Malayalam - മലയാളം'),
+        ('pa', 'Punjabi - ਪੰਜਾਬੀ'),
+        ('or', 'Odia - ଓଡ଼ିଆ'),
+        ('as', 'Assamese - অসমীয়া'),
+    ]
+    
     mobile = models.CharField(max_length=15, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    language = models.CharField(max_length=10, default='en')
+    
+    # Multi-lingual preferences
+    language = models.CharField(
+        max_length=10, 
+        choices=LANGUAGE_CHOICES, 
+        default='en',
+        help_text='Preferred language for UI and communications'
+    )
+    preferred_language = models.CharField(
+        max_length=10, 
+        choices=LANGUAGE_CHOICES, 
+        default='en',
+        help_text='Primary language preference (same as language, for backward compatibility)'
+    )
+    voice_language_preference = models.CharField(
+        max_length=10, 
+        choices=LANGUAGE_CHOICES, 
+        default='en',
+        help_text='Preferred language for voice input/output'
+    )
+    
+    # Accessibility settings
+    accessibility_mode = models.BooleanField(
+        default=False,
+        help_text='Enable accessibility features like screen reader support'
+    )
+    high_contrast_mode = models.BooleanField(
+        default=False,
+        help_text='Enable high contrast visual theme'
+    )
+    text_size_preference = models.CharField(
+        max_length=10,
+        choices=[('small', 'Small'), ('medium', 'Medium'), ('large', 'Large'), ('xlarge', 'Extra Large')],
+        default='medium',
+        help_text='Preferred text size'
+    )
+    
+    # User role
     is_officer = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
+    
+    def get_display_language(self):
+        """Get the language name in both English and native script"""
+        return dict(self.LANGUAGE_CHOICES).get(self.language, 'English')
 
 
 class OTPVerification(models.Model):

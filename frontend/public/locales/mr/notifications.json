@@ -1,0 +1,19 @@
+{
+  "title": "सूचना",
+  "markAllRead": "सर्व वाचलेले म्हणून चिन्हांकित करा",
+  "noNotifications": "सूचना नाहीत",
+  "types": {
+    "complaint": "तक्रार अद्यतन",
+    "assignment": "नवीन नियुक्ती",
+    "resolution": "सोडवले",
+    "comment": "नवीन टिप्पणी",
+    "escalation": "वाढवले",
+    "system": "सिस्टम सूचना"
+  },
+  "messages": {
+    "complaintUpdated": "तक्रार #{{id}} अद्यतनित केली",
+    "complaintAssigned": "तुम्हाला तक्रार #{{id}} नियुक्त केली",
+    "complaintResolved": "तक्रार #{{id}} सोडवली",
+    "newComment": "तक्रार #{{id}} वर नवीन टिप्पणी"
+  }
+}

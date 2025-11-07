@@ -1,0 +1,31 @@
+{
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "markAsRead": "Mark as Read",
+  "markAllAsRead": "Mark All as Read",
+  "deleteNotification": "Delete Notification",
+  "deleteAll": "Delete All",
+  "unread": "Unread",
+  "read": "Read",
+  "types": {
+    "complaintSubmitted": "Complaint Submitted",
+    "complaintAssigned": "Complaint Assigned",
+    "statusUpdated": "Status Updated",
+    "complaintResolved": "Complaint Resolved",
+    "newComment": "New Comment",
+    "escalation": "Escalation",
+    "reminder": "Reminder",
+    "systemAlert": "System Alert"
+  },
+  "messages": {
+    "complaintSubmitted": "Your complaint #{{id}} has been submitted successfully",
+    "complaintAssigned": "Complaint #{{id}} has been assigned to {{officer}}",
+    "statusUpdated": "Complaint #{{id}} status updated to {{status}}",
+    "complaintResolved": "Your complaint #{{id}} has been resolved",
+    "newComment": "New comment on complaint #{{id}}",
+    "escalated": "Complaint #{{id}} has been escalated",
+    "dueReminder": "Complaint #{{id}} is due for resolution",
+    "overdueAlert": "Complaint #{{id}} is overdue",
+    "assignmentReceived": "You have been assigned complaint #{{id}}"
+  }
+}

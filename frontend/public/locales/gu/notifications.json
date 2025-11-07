@@ -1,0 +1,19 @@
+{
+  "title": "સૂચનાઓ",
+  "markAllRead": "બધાને વાંચેલા તરીકે ચિહ્નિત કરો",
+  "noNotifications": "કોઈ સૂચનાઓ નથી",
+  "types": {
+    "complaint": "ફરિયાદ અપડેટ",
+    "assignment": "નવું સોંપણી",
+    "resolution": "ઉકેલાઈ ગયું",
+    "comment": "નવી ટિપ્પણી",
+    "escalation": "એસ્કેલેટ થયું",
+    "system": "સિસ્ટમ સૂચના"
+  },
+  "messages": {
+    "complaintUpdated": "ફરિયાદ #{{id}} અપડેટ થઈ",
+    "complaintAssigned": "તમને ફરિયાદ #{{id}} સોંપવામાં આવી",
+    "complaintResolved": "ફરિયાદ #{{id}} ઉકેલાઈ ગઈ",
+    "newComment": "ફરિયાદ #{{id}} પર નવી ટિપ્પણી"
+  }
+}

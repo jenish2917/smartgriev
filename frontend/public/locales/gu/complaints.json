@@ -1,0 +1,66 @@
+{
+  "title": "ફરિયાદ વ્યવસ્થાપન",
+  "submit": "નવી ફરિયાદ સબમિટ કરો",
+  "myComplaints": "મારી ફરિયાદો",
+  "status": {
+    "pending": "પેન્ડિંગ",
+    "in_progress": "પ્રગતિમાં",
+    "resolved": "ઉકેલાયેલ",
+    "rejected": "નકારેલ",
+    "closed": "બંધ"
+  },
+  "priority": {
+    "low": "ઓછું",
+    "medium": "મધ્યમ",
+    "high": "ઊંચું",
+    "urgent": "તાકીદનું"
+  },
+  "category": {
+    "roads": "રસ્તાઓ અને પરિવહન",
+    "water": "પાણી પુરવઠો",
+    "electricity": "વીજળી",
+    "sanitation": "સ્વચ્છતા",
+    "health": "આરોગ્ય સેવાઓ",
+    "education": "શિક્ષણ",
+    "pollution": "પ્રદૂષણ",
+    "security": "સુરક્ષા",
+    "other": "અન્ય"
+  },
+  "form": {
+    "title": "શીર્ષક",
+    "description": "વર્ણન",
+    "category": "કેટેગરી",
+    "priority": "પ્રાધાન્યતા",
+    "location": "સ્થાન",
+    "attachments": "જોડાણો",
+    "submit": "ફરિયાદ સબમિટ કરો",
+    "draft": "ડ્રાફ્ટ તરીકે સાચવો"
+  },
+  "details": {
+    "complaintId": "ફરિયાદ ID",
+    "submittedBy": "સબમિટ કર્યું",
+    "submittedOn": "સબમિટ તારીખ",
+    "lastUpdate": "છેલ્લું અપડેટ",
+    "assignedTo": "સોંપેલ",
+    "department": "વિભાગ"
+  },
+  "actions": {
+    "view": "વિગતો જુઓ",
+    "edit": "સંપાદિત કરો",
+    "delete": "કાઢી નાખો",
+    "track": "ટ્રૅક કરો",
+    "escalate": "એસ્કેલેટ કરો"
+  },
+  "messages": {
+    "submitSuccess": "ફરિયાદ સફળતાપૂર્વક સબમિટ થઈ",
+    "updateSuccess": "ફરિયાદ સફળતાપૂર્વક અપડેટ થઈ",
+    "deleteSuccess": "ફરિયાદ સફળતાપૂર્વક કાઢી નાખી",
+    "noComplaints": "કોઈ ફરિયાદો મળી નથી"
+  },
+  "ai": {
+    "classification": "AI વર્ગીકરણ",
+    "sentiment": "સેન્ટિમેન્ટ વિશ્લેષણ",
+    "priority": "સૂચવેલ પ્રાધાન્યતા",
+    "department": "સૂચવેલ વિભાગ"
+  }
+}
