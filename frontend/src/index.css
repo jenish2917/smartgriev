@@ -5,6 +5,16 @@
   box-sizing: border-box;
 }
 
+/* Design tokens (global theme variables) */
+:root {
+  --sg-saffron: #FF6600;
+  --sg-deep-blue: #1E40AF;
+  --sg-deep-blue-2: #0F172A;
+  --sg-bg-muted: #FFF6ED;
+  --sg-page-bg: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,252,0.8));
+  --sg-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
 /* Root and container styles for proper viewport */
 #root {
   min-height: 100vh;
