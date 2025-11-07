@@ -58,14 +58,12 @@ class Complaint(models.Model):
     # Multi-modal input support
     audio_file = models.FileField(upload_to='complaints/audio/', null=True, blank=True, help_text="Audio complaint file")
     image_file = models.ImageField(upload_to='complaints/images/', null=True, blank=True, help_text="Image complaint file")
-    video_file = models.FileField(upload_to='complaints/videos/', null=True, blank=True, help_text="Video complaint file")
     media = models.ImageField(upload_to='complaints/', null=True, blank=True)  # Legacy field
     
     # Multimodal analysis results
-    video_analysis = models.JSONField(default=dict, blank=True, help_text="Video multimodal analysis results")
-    audio_transcription = models.TextField(blank=True, help_text="Transcribed text from audio/video")
+    audio_transcription = models.TextField(blank=True, help_text="Transcribed text from audio files")
     image_ocr_text = models.TextField(blank=True, help_text="Text extracted from images via OCR")
-    detected_objects = models.JSONField(default=list, blank=True, help_text="Objects detected in images/video")
+    detected_objects = models.JSONField(default=list, blank=True, help_text="Objects detected in images")
     
     # AI processing results
     ai_confidence_score = models.FloatField(default=0.0, help_text="AI processing confidence score")
@@ -100,6 +98,12 @@ class Complaint(models.Model):
     # Legacy fields (keeping for backward compatibility)
     location_lat = models.FloatField(null=True, blank=True)
     location_lon = models.FloatField(null=True, blank=True)
+    
+    # Escalation tracking
+    escalated_at = models.DateTimeField(null=True, blank=True, help_text="When the complaint was last escalated")
+    escalation_count = models.IntegerField(default=0, help_text="Number of times this complaint has been escalated")
+    admin_notes = models.TextField(blank=True, help_text="Internal admin notes and escalation history")
+    internal_notes = models.TextField(blank=True, help_text="Internal notes for tracking")
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

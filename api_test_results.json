@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-10-30T12:20:40.718561",
+  "total_tests": 7,
+  "passed": 5,
+  "failed": 2,
+  "tests": [
+    {
+      "name": "Backend Server Connection",
+      "status": "\u2705 PASS",
+      "message": "Server is running (Status: 200)",
+      "details": null
+    },
+    {
+      "name": "CORS Configuration",
+      "status": "\u2705 PASS",
+      "message": "CORS headers are configured",
+      "details": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "DELETE, GET, OPTIONS, PATCH, POST, PUT",
+        "Access-Control-Allow-Headers": "accept, authorization, content-type, user-agent, x-csrftoken, x-requested-with"
+      }
+    },
+    {
+      "name": "User Registration",
+      "status": "\u2705 PASS",
+      "message": "Registration endpoint works correctly",
+      "details": {
+        "user": "testuser_1761807040.988582"
+      }
+    },
+    {
+      "name": "User Login (JWT)",
+      "status": "\u274c FAIL",
+      "message": "Login failed (Status: 401)",
+      "details": {
+        "detail": "No active account found with the given credentials"
+      }
+    },
+    {
+      "name": "Complaints List API",
+      "status": "\u2705 PASS",
+      "message": "Complaints endpoint requires authentication (as expected)",
+      "details": {
+        "requires_auth": true
+      }
+    },
+    {
+      "name": "Chatbot API",
+      "status": "\u274c FAIL",
+      "message": "Chatbot test failed (Status: 404)",
+      "details": null
+    },
+    {
+      "name": "Streaming Chatbot API",
+      "status": "\u2705 PASS",
+      "message": "Streaming endpoint not found (may need URL configuration)",
+      "details": {
+        "streaming_enabled": false
+      }
+    }
+  ]
+}

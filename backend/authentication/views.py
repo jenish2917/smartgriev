@@ -12,8 +12,14 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
-        if request.data.get('password') != request.data.get('confirm_password'):
-            return Response({"password": "Password fields didn't match."})
+        confirm_password = request.data.get('confirm_password')
+        password = request.data.get('password')
+        
+        if confirm_password and password != confirm_password:
+            return Response(
+                {"password": ["Password fields didn't match."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         return super().create(request, *args, **kwargs)
 
 class UserLoginView(TokenObtainPairView):

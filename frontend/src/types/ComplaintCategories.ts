@@ -347,7 +347,6 @@ export const URGENCY_LEVELS = [
 
 export const EVIDENCE_TYPES = [
   { id: 'photo', name: 'Photograph', icon: '📷', description: 'Visual evidence of the issue' },
-  { id: 'video', name: 'Video', icon: '🎥', description: 'Video documentation' },
   { id: 'document', name: 'Document', icon: '📄', description: 'Bills, receipts, official papers' },
   { id: 'audio', name: 'Audio Recording', icon: '🎵', description: 'Audio evidence or voice note' },
   { id: 'witness', name: 'Witness Statement', icon: '👥', description: 'Contact details of witnesses' }

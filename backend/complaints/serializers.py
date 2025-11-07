@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
 from django.contrib.auth import get_user_model
+import logging
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 class UserMiniSerializer(serializers.ModelSerializer):
@@ -35,10 +37,10 @@ class ComplaintSerializer(serializers.ModelSerializer):
         model = Complaint
         fields = ('id', 'user', 'title', 'description', 'media', 'category',
                  'sentiment', 'department', 'department_id', 'status', 'priority',
-                 # Multimodal input fields
-                 'audio_file', 'image_file', 'video_file',
-                 # Multimodal analysis results
-                 'video_analysis', 'audio_transcription', 'image_ocr_text', 'detected_objects',
+                 # Multimodal input fields (video removed)
+                 'audio_file', 'image_file',
+                 # Multimodal analysis results (video removed)
+                 'audio_transcription', 'image_ocr_text', 'detected_objects',
                  # Location fields
                  'incident_latitude', 'incident_longitude', 'incident_address', 
                  'incident_landmark', 'gps_accuracy', 'location_method', 'area_type',
@@ -177,7 +179,7 @@ class ComplaintLocationUpdateSerializer(serializers.ModelSerializer):
 class MultimodalComplaintSerializer(serializers.ModelSerializer):
     """
     Specialized serializer for creating complaints with multimodal inputs
-    (text, audio, image, video)
+    (text, audio, image) - Video upload removed as per requirements
     """
     user = UserMiniSerializer(read_only=True)
     process_multimodal = serializers.BooleanField(write_only=True, default=True, required=False,
@@ -186,8 +188,8 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = ('id', 'user', 'title', 'description',
-                 # Multimodal inputs
-                 'audio_file', 'image_file', 'video_file',
+                 # Multimodal inputs (video removed)
+                 'audio_file', 'image_file',
                  # Optional text inputs
                  'category', 'priority', 'urgency_level',
                  # Location
@@ -195,14 +197,14 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
                  'incident_landmark', 'area_type', 'location_method',
                  # Processing flag
                  'process_multimodal',
-                 # Read-only processed results
-                 'audio_transcription', 'image_ocr_text', 'video_analysis',
+                 # Read-only processed results (video removed)
+                 'audio_transcription', 'image_ocr_text',
                  'detected_objects', 'ai_processed_text', 'department_classification',
                  'ai_confidence_score', 'sentiment', 'department',
                  # Timestamps
                  'created_at', 'updated_at')
         read_only_fields = ('user', 'created_at', 'updated_at',
-                           'audio_transcription', 'image_ocr_text', 'video_analysis',
+                           'audio_transcription', 'image_ocr_text',
                            'detected_objects', 'ai_processed_text', 'department_classification',
                            'ai_confidence_score', 'sentiment', 'department')
     
@@ -211,21 +213,16 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
         description = data.get('description', '').strip()
         audio_file = data.get('audio_file')
         image_file = data.get('image_file')
-        video_file = data.get('video_file')
         
-        # At least one input method must be provided
-        if not any([description, audio_file, image_file, video_file]):
+        # At least one input method must be provided (video removed)
+        if not any([description, audio_file, image_file]):
             raise serializers.ValidationError(
-                "Please provide at least one of: description text, audio file, image file, or video file"
+                "Please provide at least one of: description text, audio file, or image file"
             )
         
         # Validate file sizes
-        max_video_size = 100 * 1024 * 1024  # 100MB
         max_audio_size = 25 * 1024 * 1024   # 25MB
         max_image_size = 10 * 1024 * 1024   # 10MB
-        
-        if video_file and video_file.size > max_video_size:
-            raise serializers.ValidationError(f"Video file too large. Maximum size is 100MB")
         
         if audio_file and audio_file.size > max_audio_size:
             raise serializers.ValidationError(f"Audio file too large. Maximum size is 25MB")
@@ -239,8 +236,14 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
         # Remove process_multimodal flag from data
         process_multimodal = validated_data.pop('process_multimodal', True)
         
-        # Set user
-        validated_data['user'] = self.context['request'].user
+        # Set user if authenticated, otherwise set to None (anonymous complaint)
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['user'] = request.user
+        else:
+            # For anonymous complaints, user field should be nullable
+            # Make sure to handle this in the model if needed
+            validated_data['user'] = None
         
         # Create complaint
         complaint = super().create(validated_data)
@@ -252,17 +255,13 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
         return complaint
     
     def _process_multimodal_inputs(self, complaint):
-        """Process uploaded files with AI analysis"""
+        """Process uploaded files with AI analysis (video removed)"""
         import logging
         logger = logging.getLogger(__name__)
         
         try:
-            # Process video if uploaded
-            if complaint.video_file:
-                self._process_video(complaint)
-            
             # Process image if uploaded
-            elif complaint.image_file:
+            if complaint.image_file:
                 self._process_image(complaint)
             
             # Process audio if uploaded
@@ -275,52 +274,153 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
             logger.error(f"Multimodal processing failed: {str(e)}")
             # Don't fail the complaint creation, just log the error
     
-    def _process_video(self, complaint):
-        """Process video complaint"""
-        try:
-            from machine_learning.multimodal_analyzer import get_multimodal_analyzer
-            import os
-            
-            analyzer = get_multimodal_analyzer(os.environ.get('GROQ_API_KEY'))
-            result = analyzer.analyze_video_complaint(complaint.video_file.path)
-            
-            if result.get('success'):
-                complaint.video_analysis = result
-                complaint.audio_transcription = result.get('transcription', '')
-                complaint.detected_objects = result.get('detected_objects', [])
-                complaint.ai_processed_text = result.get('ai_response', '')
-                complaint.ai_confidence_score = result.get('confidence', 0.0)
-                
-                # Auto-classify department if detected
-                if result.get('suggested_department'):
-                    self._auto_assign_department(complaint, result['suggested_department'])
-                    
-        except Exception as e:
-            import logging
-            logging.getLogger(__name__).warning(f"Video processing failed: {str(e)}")
-    
     def _process_image(self, complaint):
-        """Process image complaint with OCR"""
+        """Process image complaint with YOLO, OCR, and multiple AI models"""
+        import logging
+        import json
+        logger = logging.getLogger(__name__)
+        
+        try:
+            # Use advanced multi-model image processor
+            from machine_learning.advanced_image_processor import get_image_processor
+            
+            logger.info(f"Processing image with advanced multi-model analysis: {complaint.image_file.path}")
+            
+            # Get the advanced image processor
+            image_processor = get_image_processor()
+            
+            # Run comprehensive analysis with YOLO, OCR, CLIP, ResNet, etc.
+            analysis_result = image_processor.analyze_image(complaint.image_file.path)
+            
+            if analysis_result.get('success'):
+                logger.info(f"Advanced image analysis completed successfully. Models used: {analysis_result.get('models_used', [])}")
+                
+                # Extract OCR text from multiple OCR engines
+                if 'ocr_extraction' in analysis_result:
+                    ocr_data = analysis_result['ocr_extraction']
+                    if ocr_data.get('text_found'):
+                        complaint.image_ocr_text = ocr_data.get('extracted_text', '')
+                        logger.info(f"OCR text extracted ({len(complaint.image_ocr_text)} chars) using: {ocr_data.get('methods_used', [])}")
+                
+                # Extract detected objects from YOLO
+                detected_objects_list = []
+                if 'yolo_detection' in analysis_result:
+                    yolo_data = analysis_result['yolo_detection']
+                    if yolo_data.get('success'):
+                        yolo_objects = yolo_data.get('object_classes', [])
+                        detected_objects_list.extend(yolo_objects)
+                        logger.info(f"YOLO detected {len(yolo_objects)} object types: {yolo_objects}")
+                
+                # Add scene classification from CLIP
+                if 'scene_analysis' in analysis_result:
+                    scene_data = analysis_result['scene_analysis']
+                    if scene_data.get('success'):
+                        primary_scene = scene_data.get('primary_scene', '')
+                        if primary_scene:
+                            detected_objects_list.append(f"Scene: {primary_scene}")
+                            logger.info(f"CLIP identified scene: {primary_scene} (confidence: {scene_data.get('primary_confidence', 0):.2f})")
+                
+                # Add ResNet classification
+                if 'image_classification' in analysis_result:
+                    resnet_data = analysis_result['image_classification']
+                    if resnet_data.get('success'):
+                        primary_class = resnet_data.get('primary_class', '')
+                        if primary_class:
+                            detected_objects_list.append(f"Type: {primary_class}")
+                            logger.info(f"ResNet classification: {primary_class}")
+                
+                # Store all detected objects
+                complaint.detected_objects = list(set(detected_objects_list))
+                
+                # Extract complaint-specific analysis
+                if 'complaint_analysis' in analysis_result:
+                    comp_data = analysis_result['complaint_analysis']
+                    
+                    # Auto-assign category
+                    category = comp_data.get('category', 'general')
+                    complaint.department_classification = {
+                        'category': category,
+                        'severity': comp_data.get('severity', 'low'),
+                        'keywords': comp_data.get('keywords', []),
+                        'damage_detected': comp_data.get('damage_detected', False),
+                        'waste_detected': comp_data.get('waste_detected', False),
+                        'infrastructure_issue': comp_data.get('infrastructure_issue', False)
+                    }
+                    logger.info(f"Complaint classified as: {category} (severity: {comp_data.get('severity')})")
+                
+                # Get analysis summary
+                if 'summary' in analysis_result:
+                    summary_data = analysis_result['summary']
+                    
+                    # Set AI confidence score
+                    complaint.ai_confidence_score = summary_data.get('overall_confidence', 0.0)
+                    
+                    # Auto-set priority based on recommendation
+                    recommended_priority = summary_data.get('recommended_priority', 'medium')
+                    if not complaint.priority or complaint.priority == 'medium':
+                        complaint.priority = recommended_priority
+                    
+                    # Generate AI processed text summary
+                    summary_parts = []
+                    if summary_data.get('detected_items'):
+                        summary_parts.append(f"Detected: {', '.join(summary_data['detected_items'][:5])}")
+                    if summary_data.get('extracted_text_summary'):
+                        summary_parts.append(f"Text: {summary_data['extracted_text_summary']}")
+                    if summary_data.get('analysis_notes'):
+                        summary_parts.append(' | '.join(summary_data['analysis_notes']))
+                    
+                    complaint.ai_processed_text = ' | '.join(summary_parts)
+                    
+                    logger.info(f"Analysis summary generated. Confidence: {complaint.ai_confidence_score:.2f}, Priority: {recommended_priority}")
+                
+                # Image quality check
+                if 'image_quality' in analysis_result:
+                    quality = analysis_result['image_quality']
+                    if not quality.get('is_acceptable', True):
+                        logger.warning(f"Image quality is low (score: {quality.get('quality_score', 0):.1f})")
+                
+                logger.info("Multi-model image processing completed successfully")
+            else:
+                logger.error(f"Advanced image analysis failed: {analysis_result.get('error', 'Unknown error')}")
+                # Fallback to basic processing
+                self._process_image_fallback(complaint)
+                
+        except Exception as e:
+            logger.error(f"Advanced image processing failed: {str(e)}")
+            # Try fallback processing
+            try:
+                self._process_image_fallback(complaint)
+            except Exception as fallback_error:
+                logger.error(f"Fallback processing also failed: {str(fallback_error)}")
+    
+    def _process_image_fallback(self, complaint):
+        """Fallback image processing using legacy methods"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         try:
             from machine_learning.ocr_processor import get_ocr_processor
             from machine_learning.visual_analyzer import get_visual_analyzer
             from PIL import Image
             
-            # Extract text from image
+            logger.info("Using fallback image processing methods")
+            
+            # Extract text from image using OCR
             ocr_processor = get_ocr_processor()
             image = Image.open(complaint.image_file.path)
             ocr_result = ocr_processor.extract_text_advanced(image)
             complaint.image_ocr_text = ocr_result.get('extracted_text', '')
             
-            # Detect objects
+            # Detect objects using visual analyzer
             visual_analyzer = get_visual_analyzer()
             visual_result = visual_analyzer.analyze_image(complaint.image_file.path)
             if visual_result.get('success'):
                 complaint.detected_objects = visual_result.get('detected_objects', [])
+            
+            logger.info("Fallback processing completed")
                 
         except Exception as e:
-            import logging
-            logging.getLogger(__name__).warning(f"Image processing failed: {str(e)}")
+            logger.warning(f"Fallback image processing failed: {str(e)}")
     
     def _process_audio(self, complaint):
         """Process audio complaint"""

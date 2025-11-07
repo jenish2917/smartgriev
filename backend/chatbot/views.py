@@ -5,12 +5,12 @@ from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Q, Count, Avg, Prefetch
 from django.utils import timezone
 import uuid
-from backend.chatbot.models import ChatLog, ChatFeedback, QuickReplyTemplate, ChatSession, ChatNotification
-from backend.chatbot.serializers import (
+from .models import ChatLog, ChatFeedback, QuickReplyTemplate, ChatSession, ChatNotification
+from .serializers import (
     ChatMessageSerializer, ChatHistorySerializer, ChatFeedbackSerializer,
     QuickReplyTemplateSerializer, ChatSessionSerializer, ChatNotificationSerializer
 )
-from backend.chatbot.utils import (
+from .utils import (
     get_sentiment_analyzer, get_nlp_model, translate_text, detect_language, 
     process_message_with_context, get_quick_replies_for_intent, should_escalate, 
     get_escalation_message, manage_conversation_flow, analyze_sentiment,

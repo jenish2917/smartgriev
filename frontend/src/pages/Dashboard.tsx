@@ -420,7 +420,7 @@ const Dashboard: React.FC = () => {
               <ActionIcon>📝</ActionIcon>
               <ActionTitle>Submit New Complaint</ActionTitle>
               <ActionDescription>
-                Create a new complaint with video, image, or audio evidence using our multimodal system.
+                Create a new complaint with image or audio evidence using our multimodal system.
               </ActionDescription>
             </ActionCard>
 

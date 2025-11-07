@@ -1,6 +1,6 @@
 """
 Multimodal Complaint Submission Views
-Handles video, image, and audio complaint submissions with AI processing
+Handles image and audio complaint submissions with AI processing
 """
 
 import logging
@@ -18,24 +18,24 @@ logger = logging.getLogger(__name__)
 
 class MultimodalComplaintCreateView(generics.CreateAPIView):
     """
-    Create complaint with multimodal inputs (text, audio, image, video).
+    Create complaint with multimodal inputs (text, audio, image).
     
     This endpoint accepts:
     - Text description
     - Audio file (transcribed automatically)
     - Image file (OCR + object detection)
-    - Video file (complete multimodal analysis)
     
     Files are processed with AI to extract text, detect objects, and classify the complaint.
     """
     queryset = Complaint.objects.all()
     serializer_class = MultimodalComplaintSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Allow public complaint submission
     parser_classes = [MultiPartParser, FormParser]
     
     def create(self, request, *args, **kwargs):
         """Create complaint with multimodal processing"""
-        logger.info(f"Multimodal complaint submission from user: {request.user.username}")
+        username = request.user.username if request.user.is_authenticated else "Anonymous"
+        logger.info(f"Multimodal complaint submission from user: {username}")
         
         try:
             serializer = self.get_serializer(data=request.data)
@@ -49,7 +49,6 @@ class MultimodalComplaintCreateView(generics.CreateAPIView):
                 'message': 'Complaint created successfully',
                 'complaint': response_serializer.data,
                 'processing_status': {
-                    'video_processed': bool(complaint.video_file and complaint.video_analysis),
                     'image_processed': bool(complaint.image_file and complaint.image_ocr_text),
                     'audio_processed': bool(complaint.audio_file and complaint.audio_transcription),
                     'ai_classified': bool(complaint.department_classification)
@@ -117,7 +116,7 @@ class QuickComplaintSubmitView(APIView):
 
 class ComplaintMediaUploadView(APIView):
     """
-    Upload additional media (images/videos/audio) to existing complaint.
+    Upload additional media (images/audio) to existing complaint.
     """
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
@@ -136,15 +135,6 @@ class ComplaintMediaUploadView(APIView):
                     serializer._process_image(complaint)
                 except Exception as e:
                     logger.warning(f"Image processing failed: {str(e)}")
-            
-            if 'video' in request.FILES:
-                complaint.video_file = request.FILES['video']
-                # Process video
-                try:
-                    serializer = MultimodalComplaintSerializer()
-                    serializer._process_video(complaint)
-                except Exception as e:
-                    logger.warning(f"Video processing failed: {str(e)}")
             
             if 'audio' in request.FILES:
                 complaint.audio_file = request.FILES['audio']

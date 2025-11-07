@@ -314,7 +314,7 @@ const Home: React.FC = () => {
               </Message>
               <Message $isBot>
                 ✅ Great! I've identified this as a Public Works issue. Would you like to upload 
-                a photo or video of the damage?
+                a photo of the damage?
               </Message>
             </ChatMessages>
           </ChatbotPreview>

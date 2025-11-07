@@ -1,5 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
+import styles from './MultimodalComplaintSubmit.module.css';
 
 interface FormData {
   title: string;
@@ -13,13 +14,11 @@ interface FormData {
 }
 
 interface FileState {
-  video: File | null;
   image: File | null;
   audio: File | null;
 }
 
 interface PreviewState {
-  video: string | null;
   image: string | null;
   audio: string | null;
 }
@@ -30,14 +29,20 @@ interface ResultState {
     status: string;
   };
   processing_status?: {
-    video_processed: boolean;
     image_processed: boolean;
     audio_processed: boolean;
     ai_classified: boolean;
   };
 }
 
+interface ChatMessage {
+  type: 'user' | 'bot';
+  message: string;
+  timestamp: Date;
+}
+
 const MultimodalComplaintSubmit = () => {
+  // Existing state
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -50,13 +55,11 @@ const MultimodalComplaintSubmit = () => {
   });
   
   const [files, setFiles] = useState<FileState>({
-    video: null,
     image: null,
     audio: null
   });
   
   const [previews, setPreviews] = useState<PreviewState>({
-    video: null,
     image: null,
     audio: null
   });
@@ -65,6 +68,22 @@ const MultimodalComplaintSubmit = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResultState | null>(null);
+
+  // AI Chatbot state
+  const [showChatbot, setShowChatbot] = useState<boolean>(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      type: 'bot',
+      message: 'Hello! I\'m your AI assistant. How can I help you file a complaint today?',
+      timestamp: new Date()
+    }
+  ]);
+  const [chatInput, setChatInput] = useState<string>('');
+  const [chatLoading, setChatLoading] = useState<boolean>(false);
+
+  // Human support state
+  const [showHumanSupport, setShowHumanSupport] = useState<boolean>(false);
+  const SUPPORT_PHONE = '+91 8141415113';
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -123,6 +142,61 @@ const MultimodalComplaintSubmit = () => {
     }
   };
 
+  // AI Chatbot functions
+  const sendChatMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessage: ChatMessage = {
+      type: 'user',
+      message: chatInput,
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev, userMessage]);
+    setChatInput('');
+    setChatLoading(true);
+
+    try {
+      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000'
+        : `http://${window.location.hostname}:8000`;
+
+      const response = await axios.post(`${apiUrl}/api/chatbot/chat/`, {
+        message: chatInput,
+        conversation_history: chatMessages.slice(-10).map(msg => ({
+          type: msg.type,
+          message: msg.message
+        }))
+      });
+
+      if (response.data.success) {
+        const botMessage: ChatMessage = {
+          type: 'bot',
+          message: response.data.response,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, botMessage]);
+      }
+    } catch (err) {
+      console.error('Chat error:', err);
+      const errorMessage: ChatMessage = {
+        type: 'bot',
+        message: 'Sorry, I encountered an error. Please try again or contact human support.',
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleChatKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -131,9 +205,11 @@ const MultimodalComplaintSubmit = () => {
 
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Please login to submit a complaint');
-      }
+      // Allow anonymous submissions - token is optional
+
+      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000'
+        : `http://${window.location.hostname}:8000`;
 
       const submitData = new FormData();
       
@@ -147,19 +223,22 @@ const MultimodalComplaintSubmit = () => {
       });
 
       // Add files
-      if (files.video) submitData.append('video_file', files.video);
       if (files.image) submitData.append('image_file', files.image);
       if (files.audio) submitData.append('audio_file', files.audio);
 
+      // Prepare headers - only add Authorization if token exists
+      const headers: any = {
+        'Content-Type': 'multipart/form-data'
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/complaints/submit/',
+        `${apiUrl}/api/complaints/submit/`,
         submitData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        }
+        { headers }
       );
 
       setSuccess(true);
@@ -176,8 +255,8 @@ const MultimodalComplaintSubmit = () => {
         incident_latitude: null,
         incident_longitude: null
       });
-      setFiles({ video: null, image: null, audio: null });
-      setPreviews({ video: null, image: null, audio: null });
+      setFiles({ image: null, audio: null });
+      setPreviews({ image: null, audio: null });
 
     } catch (err) {
       const error = err as any;
@@ -188,43 +267,165 @@ const MultimodalComplaintSubmit = () => {
   };
 
   return (
-    <div className="multimodal-complaint-container" style={{
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h2 style={{
-        color: '#FF671F',
-        borderBottom: '3px solid #046A38',
-        paddingBottom: '10px'
-      }}>
+    <div className={styles.container}>
+      {/* Professional Header */}
+      <div className={styles.professionalHeader}>
+        <h1 className={styles.mainTitle}>SmartGriev Complaint Submission</h1>
+        <p className={styles.subtitle}>AI-Powered Grievance Management System</p>
+      </div>
+
+      {/* Support Options Bar */}
+      <div className={styles.supportBar}>
+        <button 
+          className={styles.supportButton}
+          onClick={() => setShowChatbot(!showChatbot)}
+          title="Chat with AI Assistant"
+        >
+          🤖 AI Assistant
+          {showChatbot && <span className={styles.activeDot}></span>}
+        </button>
+        
+        <button 
+          className={styles.supportButton}
+          onClick={() => setShowHumanSupport(!showHumanSupport)}
+          title="Contact Human Support"
+        >
+          👤 Human Support
+          {showHumanSupport && <span className={styles.activeDot}></span>}
+        </button>
+
+        <a 
+          href={`tel:${SUPPORT_PHONE}`}
+          className={styles.phoneButton}
+          title="Call Support"
+        >
+          📞 {SUPPORT_PHONE}
+        </a>
+      </div>
+
+      {/* AI Chatbot Panel */}
+      {showChatbot && (
+        <div className={styles.chatbotPanel}>
+          <div className={styles.chatHeader}>
+            <h3>🤖 AI Assistant</h3>
+            <button 
+              onClick={() => setShowChatbot(false)}
+              className={styles.closeButton}
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className={styles.chatMessages}>
+            {chatMessages.map((msg, index) => (
+              <div 
+                key={index}
+                className={msg.type === 'user' ? styles.userMessage : styles.botMessage}
+              >
+                <div className={styles.messageContent}>
+                  {msg.message}
+                </div>
+                <div className={styles.messageTime}>
+                  {msg.timestamp.toLocaleTimeString()}
+                </div>
+              </div>
+            ))}
+            {chatLoading && (
+              <div className={styles.botMessage}>
+                <div className={styles.messageContent}>
+                  <span className={styles.typing}>AI is typing...</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.chatInput}>
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyPress={handleChatKeyPress}
+              placeholder="Ask anything about filing complaints..."
+              className={styles.chatInputField}
+              disabled={chatLoading}
+            />
+            <button
+              onClick={sendChatMessage}
+              disabled={chatLoading || !chatInput.trim()}
+              className={styles.chatSendButton}
+            >
+              📤
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Human Support Panel */}
+      {showHumanSupport && (
+        <div className={styles.humanSupportPanel}>
+          <div className={styles.chatHeader}>
+            <h3>👤 Human Support</h3>
+            <button 
+              onClick={() => setShowHumanSupport(false)}
+              className={styles.closeButton}
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className={styles.supportContent}>
+            <div className={styles.supportIcon}>📞</div>
+            <h4>Need Human Assistance?</h4>
+            <p>Our support team is ready to help you!</p>
+            
+            <div className={styles.contactInfo}>
+              <div className={styles.contactMethod}>
+                <strong>📞 Phone Support</strong>
+                <a href={`tel:${SUPPORT_PHONE}`} className={styles.phoneLink}>
+                  {SUPPORT_PHONE}
+                </a>
+                <button 
+                  onClick={() => window.location.href = `tel:${SUPPORT_PHONE}`}
+                  className={styles.callButton}
+                >
+                  📱 Call Now
+                </button>
+              </div>
+
+              <div className={styles.supportHours}>
+                <strong>⏰ Available Hours</strong>
+                <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                <p>Saturday: 10:00 AM - 4:00 PM</p>
+                <p>Sunday: Closed</p>
+              </div>
+
+              <div className={styles.supportNote}>
+                <p><strong>💡 Tip:</strong> Have your complaint details ready when calling for faster assistance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <h2 className={styles.header}>
         🎥 Submit Multimodal Complaint
       </h2>
       
-      <p style={{ color: '#666', marginBottom: '20px' }}>
-        Submit your complaint using text, images, videos, or audio. AI will process your submission automatically.
+      <p className={styles.description}>
+        Submit your complaint using text, images, or audio. AI will process your submission automatically.
       </p>
 
       {success && result && (
-        <div style={{
-          backgroundColor: '#d4edda',
-          color: '#155724',
-          padding: '15px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          border: '1px solid #c3e6cb'
-        }}>
+        <div className={styles.successAlert}>
           <h3>✅ Complaint Submitted Successfully!</h3>
           <p><strong>Complaint ID:</strong> {result.complaint?.id}</p>
           <p><strong>Status:</strong> {result.complaint?.status}</p>
           <p><strong>Tracking Number:</strong> COMP-{String(result.complaint?.id).padStart(6, '0')}</p>
           
           {result.processing_status && (
-            <div style={{ marginTop: '10px', fontSize: '14px' }}>
+            <div className={styles.processingStatus}>
               <p><strong>Processing Status:</strong></p>
               <ul>
-                {result.processing_status.video_processed && <li>✅ Video analyzed</li>}
                 {result.processing_status.image_processed && <li>✅ Image processed with OCR</li>}
                 {result.processing_status.audio_processed && <li>✅ Audio transcribed</li>}
                 {result.processing_status.ai_classified && <li>✅ Auto-classified by AI</li>}
@@ -235,154 +436,72 @@ const MultimodalComplaintSubmit = () => {
       )}
 
       {error && (
-        <div style={{
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          padding: '15px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          border: '1px solid #f5c6cb'
-        }}>
+        <div className={styles.errorAlert}>
           <strong>❌ Error:</strong> {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         {/* Title */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className={styles.formGroup}>
+          <label htmlFor="title" className={styles.label}>
             Complaint Title *
           </label>
           <input
+            id="title"
             type="text"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
             required
             placeholder="Brief title for your complaint"
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxSizing: 'border-box'
-            }}
+            className={styles.input}
+            title="Enter a brief title for your complaint"
           />
         </div>
 
         {/* Description */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className={styles.formGroup}>
+          <label htmlFor="description" className={styles.label}>
             Description (optional if uploading media)
           </label>
           <textarea
+            id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             rows={4}
             placeholder="Describe your complaint in detail..."
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxSizing: 'border-box',
-              resize: 'vertical'
-            }}
+            className={styles.textarea}
+            title="Describe your complaint in detail"
           />
         </div>
 
         {/* Media Upload Section */}
-        <div style={{
-          backgroundColor: '#f8f9fa',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          border: '2px dashed #ddd'
-        }}>
-          <h3 style={{ marginTop: 0, color: '#046A38' }}>📎 Upload Media (Optional)</h3>
+        <div className={styles.mediaSection}>
+          <h3 className={styles.sectionTitle}>📎 Upload Media (Optional)</h3>
           
-          {/* Video Upload */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              🎥 Video Evidence
-            </label>
-            {!previews.video ? (
-              <input
-                type="file"
-                accept="video/*"
-                onChange={(e) => handleFileChange(e, 'video')}
-                style={{
-                  display: 'block',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  width: '100%',
-                  boxSizing: 'border-box'
-                }}
-              />
-            ) : (
-              <div style={{ position: 'relative' }}>
-                <video controls src={previews.video} style={{ width: '100%', borderRadius: '8px' }} />
-                <button
-                  type="button"
-                  onClick={() => removeFile('video')}
-                  style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '5px 10px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
-            )}
-          </div>
-
           {/* Image Upload */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+          <div className={styles.fileInputWrapper}>
+            <label htmlFor="imageUpload" className={styles.fileInputLabel}>
               📷 Image Evidence
             </label>
             {!previews.image ? (
               <input
+                id="imageUpload"
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleFileChange(e, 'image')}
-                style={{
-                  display: 'block',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  width: '100%',
-                  boxSizing: 'border-box'
-                }}
+                className={styles.fileInput}
+                title="Upload an image as evidence"
               />
             ) : (
-              <div style={{ position: 'relative' }}>
-                <img src={previews.image} alt="Preview" style={{ width: '100%', borderRadius: '8px' }} />
+              <div className={styles.previewContainer}>
+                <img src={previews.image} alt="Complaint evidence preview" className={styles.previewImage} />
                 <button
                   type="button"
                   onClick={() => removeFile('image')}
-                  style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '5px 10px',
-                    cursor: 'pointer'
-                  }}
+                  className={styles.removeButton}
                 >
                   Remove
                 </button>
@@ -391,39 +510,26 @@ const MultimodalComplaintSubmit = () => {
           </div>
 
           {/* Audio Upload */}
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+          <div className={styles.fileInputWrapper}>
+            <label htmlFor="audioUpload" className={styles.fileInputLabel}>
               🎤 Audio Recording
             </label>
             {!previews.audio ? (
               <input
+                id="audioUpload"
                 type="file"
                 accept="audio/*"
                 onChange={(e) => handleFileChange(e, 'audio')}
-                style={{
-                  display: 'block',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  width: '100%',
-                  boxSizing: 'border-box'
-                }}
+                className={styles.fileInput}
+                title="Upload an audio recording"
               />
             ) : (
-              <div style={{ position: 'relative' }}>
-                <audio controls src={previews.audio} style={{ width: '100%' }} />
+              <div className={styles.previewContainer}>
+                <audio controls src={previews.audio} className={styles.previewAudio} />
                 <button
                   type="button"
                   onClick={() => removeFile('audio')}
-                  style={{
-                    marginTop: '10px',
-                    backgroundColor: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '5px 10px',
-                    cursor: 'pointer'
-                  }}
+                  className={styles.removeButton}
                 >
                   Remove
                 </button>
@@ -433,22 +539,18 @@ const MultimodalComplaintSubmit = () => {
         </div>
 
         {/* Priority & Urgency */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className={styles.gridRow}>
+          <div className={styles.formGroup}>
+            <label htmlFor="priority" className={styles.label}>
               Priority
             </label>
             <select
+              id="priority"
               name="priority"
               value={formData.priority}
               onChange={handleInputChange}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}
+              className={styles.select}
+              title="Select complaint priority"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -457,21 +559,17 @@ const MultimodalComplaintSubmit = () => {
             </select>
           </div>
 
-          <div>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+          <div className={styles.formGroup}>
+            <label htmlFor="urgency_level" className={styles.label}>
               Urgency Level
             </label>
             <select
+              id="urgency_level"
               name="urgency_level"
               value={formData.urgency_level}
               onChange={handleInputChange}
-              style={{
-                width: '100%',
-                padding: '10px',
-                fontSize: '16px',
-                border: '1px solid #ddd',
-                borderRadius: '4px'
-              }}
+              className={styles.select}
+              title="Select urgency level"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -482,43 +580,29 @@ const MultimodalComplaintSubmit = () => {
         </div>
 
         {/* Location */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+        <div className={styles.formGroup}>
+          <label htmlFor="incident_address" className={styles.label}>
             📍 Incident Address
           </label>
           <input
+            id="incident_address"
             type="text"
             name="incident_address"
             value={formData.incident_address}
             onChange={handleInputChange}
             placeholder="Enter incident address or location"
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxSizing: 'border-box',
-              marginBottom: '10px'
-            }}
+            className={styles.input}
+            title="Enter the location where the incident occurred"
           />
           <button
             type="button"
             onClick={getLocation}
-            style={{
-              backgroundColor: '#046A38',
-              color: 'white',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
+            className={styles.actionButton}
           >
             📍 Get My Current Location
           </button>
           {formData.incident_latitude && formData.incident_longitude && (
-            <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+            <p className={styles.infoText}>
               📍 Location captured: {formData.incident_latitude.toFixed(6)}, {formData.incident_longitude.toFixed(6)}
             </p>
           )}
@@ -528,31 +612,14 @@ const MultimodalComplaintSubmit = () => {
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '15px',
-            backgroundColor: loading ? '#ccc' : '#FF671F',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.3s'
-          }}
+          className={styles.submitButton}
         >
           {loading ? '⏳ Processing...' : '📤 Submit Complaint'}
         </button>
       </form>
 
-      <div style={{
-        marginTop: '30px',
-        padding: '15px',
-        backgroundColor: '#fff3cd',
-        borderRadius: '8px',
-        border: '1px solid #ffc107'
-      }}>
-        <p style={{ margin: 0, fontSize: '14px' }}>
+      <div className={styles.infoBox}>
+        <p className={styles.infoBoxText}>
           <strong>💡 Note:</strong> AI will automatically analyze your uploaded media to extract text, detect objects, and classify your complaint to the appropriate department.
         </p>
       </div>

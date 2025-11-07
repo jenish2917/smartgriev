@@ -21,7 +21,8 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
 # Set this in your .env file for production
 # For example: DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Allow all hosts for global access (development only)
+ALLOWED_HOSTS = ['*']  # Allow global access
 
 # Application definition
 INSTALLED_APPS = [
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     # Local apps
     'authentication',
     'complaints',
-    # 'chatbot',  # Temporarily disabled due to spaCy/Pydantic version conflicts
+    'chatbot',  # ✅ ENABLED - Google AI chatbot now working!
     'machine_learning',  # Machine learning models and experiments - OCR enabled
     # 'analytics',  # Real-time analytics and dashboard - depends on chatbot
     # 'geospatial',  # Geographic analytics - requires GDAL
@@ -138,9 +139,9 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = DEBUG
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+# CORS settings - Allow global access
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for global access
+CORS_ALLOW_CREDENTIALS = True
 
 # Redis settings
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
@@ -298,10 +299,16 @@ LOGGING = {
 }
 
 # AI/ML Configuration
+GOOGLE_AI_API_KEY = os.getenv('GOOGLE_AI_API_KEY')
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+
+if not GOOGLE_AI_API_KEY:
+    import warnings
+    warnings.warn("GOOGLE_AI_API_KEY not set. Some AI features may be limited.")
+
 if not GROQ_API_KEY:
     import warnings
-    warnings.warn("GROQ_API_KEY not set in environment variables. AI features will be disabled.")
+    warnings.warn("GROQ_API_KEY not set. AI features will use fallback methods.")
 
 # Complaint Classification Settings
 COMPLAINT_CLASSIFICATION = {

@@ -52,7 +52,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/', include('authentication.urls')),
     path('api/complaints/', include('complaints.urls')),
-    # path('api/chatbot/', include('chatbot.urls')),  # Temporarily disabled
+    path('api/chatbot/', include('chatbot.urls')),  # ✅ ENABLED for chatbot
     path('api/ml/', include('machine_learning.urls')),  # OCR and ML endpoints enabled
     # path('api/analytics/', include('analytics.urls')),  # Temporarily disabled
 

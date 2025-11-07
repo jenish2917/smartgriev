@@ -243,8 +243,12 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', {
-        username: formData.email,
+      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000'
+        : `http://${window.location.hostname}:8000`;
+      
+      const response = await axios.post(`${apiUrl}/api/auth/login/`, {
+        username: formData.email,  // API expects username, we use email field
         password: formData.password
       });
 

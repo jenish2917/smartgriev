@@ -3,8 +3,8 @@ from django.db import models
 from django.utils import timezone
 
 class User(AbstractUser):
-    mobile = models.CharField(max_length=15)
-    address = models.TextField()
+    mobile = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     language = models.CharField(max_length=10, default='en')
     is_officer = models.BooleanField(default=False)
 

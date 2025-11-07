@@ -294,19 +294,45 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/register/', {
+      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://127.0.0.1:8000'
+        : `http://${window.location.hostname}:8000`;
+      
+      const response = await axios.post(`${apiUrl}/api/auth/register/`, {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        confirm_password: formData.confirmPassword,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        phone: formData.phone
+        mobile: formData.phone || '', // Backend expects 'mobile', not 'phone'
+        address: '', // Optional field
+        language: 'en' // Default language
       });
 
       setSuccess('Registration successful! Redirecting to login...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
-      setError(err.response?.data?.detail || err.response?.data?.email?.[0] || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
+      // More detailed error handling
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        if (errorData.email) {
+          setError(errorData.email[0]);
+        } else if (errorData.username) {
+          setError(errorData.username[0]);
+        } else if (errorData.mobile) {
+          setError(errorData.mobile[0]);
+        } else if (errorData.password) {
+          setError(errorData.password[0]);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else {
+          setError('Registration failed. Please try again.');
+        }
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
