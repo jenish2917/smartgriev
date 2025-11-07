@@ -28,3 +28,24 @@ class UserSerializer(serializers.ModelSerializer):
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, validators=[validate_password])
+
+class UpdateLanguageSerializer(serializers.Serializer):
+    """Serializer for updating user's preferred language"""
+    language = serializers.ChoiceField(
+        choices=[
+            ('en', 'English'),
+            ('hi', 'Hindi'),
+            ('bn', 'Bengali'),
+            ('te', 'Telugu'),
+            ('mr', 'Marathi'),
+            ('ta', 'Tamil'),
+            ('gu', 'Gujarati'),
+            ('kn', 'Kannada'),
+            ('ml', 'Malayalam'),
+            ('pa', 'Punjabi'),
+            ('or', 'Odia'),
+            ('as', 'Assamese'),
+        ],
+        required=True,
+        help_text="User's preferred language for interface"
+    )
