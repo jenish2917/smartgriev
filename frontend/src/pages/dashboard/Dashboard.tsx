@@ -19,6 +19,7 @@ import {
   ClockCircleOutlined,
 } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
@@ -57,6 +58,7 @@ const mockDashboardData = {
 };
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(mockDashboardData);
 
@@ -76,9 +78,9 @@ const Dashboard: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { color: 'orange', text: 'Pending' },
-      in_progress: { color: 'blue', text: 'In Progress' },
-      resolved: { color: 'green', text: 'Resolved' },
+      pending: { color: 'orange', text: t('citizen.pending') },
+      in_progress: { color: 'blue', text: t('citizen.inProgress') },
+      resolved: { color: 'green', text: t('citizen.resolved') },
       rejected: { color: 'red', text: 'Rejected' },
     };
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
@@ -106,8 +108,8 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: '24px' }}>
-        <Title level={2}>Dashboard Overview</Title>
-        <Text type="secondary">Welcome to SmartGriev Management System</Text>
+        <Title level={2}>{t('overview')}</Title>
+        <Text type="secondary">{t('welcome', { name: 'User' })}</Text>
       </div>
 
       {/* Statistics Cards */}
@@ -115,7 +117,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card className="stat-card">
             <Statistic
-              title="Total Complaints"
+              title={t('citizen.totalComplaints')}
               value={data.stats.totalComplaints}
               prefix={<FileTextOutlined />}
               valueStyle={{ color: '#1890ff' }}
@@ -125,7 +127,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card className="stat-card">
             <Statistic
-              title="Pending"
+              title={t('citizen.pending')}
               value={data.stats.pendingComplaints}
               prefix={<ClockCircleOutlined />}
               valueStyle={{ color: '#faad14' }}
@@ -135,7 +137,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card className="stat-card">
             <Statistic
-              title="Resolved"
+              title={t('citizen.resolved')}
               value={data.stats.resolvedComplaints}
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#52c41a' }}
@@ -145,7 +147,7 @@ const Dashboard: React.FC = () => {
         <Col xs={24} sm={12} md={6}>
           <Card className="stat-card">
             <Statistic
-              title="Resolution Rate"
+              title={t('resolutionRate')}
               value={data.stats.resolutionRate}
               suffix="%"
               prefix={<ArrowUpOutlined />}
@@ -158,10 +160,10 @@ const Dashboard: React.FC = () => {
       {/* Progress Indicators */}
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
         <Col xs={24} md={12}>
-          <Card title="Resolution Performance">
+          <Card title={t('performanceMetrics')}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div>
-                <Text>Resolution Rate</Text>
+                <Text>{t('resolutionRate')}</Text>
                 <Progress
                   percent={data.stats.resolutionRate}
                   status="active"
@@ -169,7 +171,7 @@ const Dashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <Text>Avg. Resolution Time: {data.stats.avgResolutionTime} days</Text>
+                <Text>{t('averageResolutionTime')}: {data.stats.avgResolutionTime} {t('timeframe.today')}</Text>
                 <Progress
                   percent={75}
                   status="active"
@@ -177,7 +179,7 @@ const Dashboard: React.FC = () => {
                 />
               </div>
               <div>
-                <Text>Satisfaction Score: {data.stats.satisfactionScore}/5.0</Text>
+                <Text>{t('satisfactionScore')}: {data.stats.satisfactionScore}/5.0</Text>
                 <Progress
                   percent={(data.stats.satisfactionScore / 5) * 100}
                   status="active"
@@ -188,7 +190,7 @@ const Dashboard: React.FC = () => {
           </Card>
         </Col>
         <Col xs={24} md={12}>
-          <Card title="Complaint Categories">
+          <Card title={t('complaintsByCategory')}>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -213,7 +215,7 @@ const Dashboard: React.FC = () => {
       {/* Charts and Recent Activity */}
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={14}>
-          <Card title="Complaint Trends" extra={<Button type="link">View Details</Button>}>
+          <Card title={t('trendingIssues')} extra={<Button type="link">{t('citizen.viewMyComplaints')}</Button>}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data.trends}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -225,14 +227,14 @@ const Dashboard: React.FC = () => {
                   dataKey="complaints"
                   stroke="#1890ff"
                   strokeWidth={2}
-                  name="New Complaints"
+                  name={t('citizen.totalComplaints')}
                 />
                 <Line
                   type="monotone"
                   dataKey="resolved"
                   stroke="#52c41a"
                   strokeWidth={2}
-                  name="Resolved"
+                  name={t('citizen.resolved')}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -240,8 +242,8 @@ const Dashboard: React.FC = () => {
         </Col>
         <Col xs={24} lg={10}>
           <Card
-            title="Recent Complaints"
-            extra={<Button type="link">View All</Button>}
+            title={t('recentComplaints')}
+            extra={<Button type="link">{t('recentActivity')}</Button>}
           >
             <List
               dataSource={data.recentComplaints}
@@ -276,7 +278,7 @@ const Dashboard: React.FC = () => {
                             textTransform: 'capitalize',
                           }}
                         >
-                          {item.priority} Priority
+                          {item.priority}
                         </Text>
                       </Space>
                     }
