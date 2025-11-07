@@ -1,8 +1,46 @@
 # SmartGriev - India Multi-Lingual AI-Powered Complaint System
 **Generated:** November 7, 2025  
-**Target Audience:** Indian Citizens (22 Official Languages + English)  
+**Target Audience:** Indian Citizens (8 Major Languages + English)  
 **Priority:** CRITICAL for Production Deployment in India  
-**Core Innovation:** AI Chatbot-Driven Complaint Submission (No Traditional Forms)
+**Core Innovation:** AI Chatbot-Driven Complaint Submission (No Traditional Forms)  
+**Architecture:** Simplified Citizen-Focused Platform
+
+---
+
+## 📋 Architecture Simplification (November 2025)
+
+### **🎯 Citizen-Focused Design Philosophy**
+SmartGriev has been streamlined to focus on what Indian citizens need most - a simple, accessible way to report and track grievances. We've removed complex technical features that were not relevant for local users.
+
+### **✂️ Removed Features (Not Relevant for Citizens):**
+- ❌ **Advanced Analytics Dashboard** - Too technical, not needed by citizens
+- ❌ **ML Models Management UI** - Internal tool, citizens don't need to see this
+- ❌ **Geospatial Analytics** - Complex visualization, not useful for average users
+- ❌ **Performance Metrics** - Administrative feature, moved to backend admin
+- ❌ **Officer-Specific Dashboards** - Officers use Django admin panel
+- ❌ **AI Classifier Testing Tools** - Development/testing only
+- ❌ **Example Components** - Development scaffolding removed
+
+### **✅ Retained Core Features (Citizen Essentials):**
+- ✅ **AI Chatbot Interface** - Primary way to submit complaints (Gemini API)
+- ✅ **Simple Dashboard** - View my complaints, status, and basic stats
+- ✅ **Complaint Tracking** - Track complaint status and updates
+- ✅ **Multi-Lingual Support** - 8 Indian languages with native scripts
+- ✅ **Voice Input** - Speak your complaint in your language
+- ✅ **Notifications** - Get updates on your complaints
+- ✅ **Profile Management** - Update language preference and personal info
+- ✅ **Authentication** - Secure login/register
+
+### **🎨 Simplified User Journey:**
+```
+1. Citizen Opens App → Chatbot Greeting in Preferred Language
+2. Citizen Describes Problem (Voice/Text) → AI Understands & Asks Questions
+3. AI Extracts Details → Creates Complaint Automatically
+4. Citizen Gets Complaint Number → Can Track on Simple Dashboard
+5. Notifications Keep Citizen Updated → SMS + App Notifications
+```
+
+**Result:** Cleaner codebase, faster load times, easier maintenance, better user experience for Indian citizens.
 
 ---
 

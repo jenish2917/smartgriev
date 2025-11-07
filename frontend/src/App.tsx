@@ -20,21 +20,11 @@ const Complaints = lazy(() => import('@/pages/complaints/Complaints'));
 const ComplaintDetail = lazy(() => import('@/pages/complaints/ComplaintDetail'));
 const CreateComplaint = lazy(() => import('@/pages/complaints/CreateComplaint'));
 const ComplaintTracking = lazy(() => import('@/pages/complaints/ComplaintTracking'));
-const Analytics = lazy(() => import('@/pages/analytics/Analytics'));
-const PerformanceMetrics = lazy(() => import('@/pages/analytics/PerformanceMetrics'));
-const GeospatialAnalytics = lazy(() => import('@/pages/analytics/GeospatialAnalytics'));
 const Chatbot = lazy(() => import('@/pages/chatbot/Chatbot'));
 const Notifications = lazy(() => import('@/pages/notifications/Notifications'));
-const MLModels = lazy(() => import('@/pages/ml-models/MLModels'));
-const OfficerDashboard = lazy(() => import('@/pages/officer/OfficerDashboard'));
-const OfficerAssignments = lazy(() => import('@/pages/officer/OfficerAssignments'));
-const OfficerAnalytics = lazy(() => import('@/pages/officer/OfficerAnalytics'));
 const Profile = lazy(() => import('@/pages/profile/Profile'));
 const Settings = lazy(() => import('@/pages/settings/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
-
-// AI Classification Test Component
-const AIClassifierTest = lazy(() => import('@/components/features/AIComplaintClassifier'));
 const LandingPage = lazy(() => import('@/pages/LandingPage'));
 const SimpleComplaint = lazy(() => import('@/pages/SimpleComplaint'));
 
@@ -65,21 +55,13 @@ const routesConfig: RouteConfig[] = [
   { path: '/complaint-dashboard', component: ComplaintDashboard, layout: AuthLayout, auth: 'public' }, // Complaint dashboard
   { path: '/multimodal-submit', component: MultimodalComplaintSubmit, layout: React.Fragment, auth: 'public' }, // Multimodal complaint submission
   { path: '/my-complaints', component: MyComplaintsList, layout: React.Fragment, auth: 'protected' }, // User's complaints list
-  { path: '/ai-test', component: AIClassifierTest, layout: AuthLayout, auth: 'public' }, // Add AI test route
   { path: '/old-dashboard', component: Complaints, layout: AppLayout, auth: 'protected' },
   { path: '/complaints', component: Complaints, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/new', component: CreateComplaint, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/track', component: ComplaintTracking, layout: AppLayout, auth: 'protected' },
   { path: '/complaints/:id', component: ComplaintDetail, layout: AppLayout, auth: 'protected' },
-  { path: '/analytics', component: Analytics, layout: AppLayout, auth: 'protected' },
-  { path: '/analytics/performance', component: PerformanceMetrics, layout: AppLayout, auth: 'protected' },
-  { path: '/analytics/geospatial', component: GeospatialAnalytics, layout: AppLayout, auth: 'protected' },
   { path: '/chatbot', component: Chatbot, layout: React.Fragment, auth: 'public' },
   { path: '/notifications', component: Notifications, layout: AppLayout, auth: 'protected' },
-  { path: '/ml-models', component: MLModels, layout: AppLayout, auth: 'protected' },
-  { path: '/officer', component: OfficerDashboard, layout: AppLayout, auth: 'protected' },
-  { path: '/officer/assignments', component: OfficerAssignments, layout: AppLayout, auth: 'protected' },
-  { path: '/officer/analytics', component: OfficerAnalytics, layout: AppLayout, auth: 'protected' },
   { path: '/profile', component: Profile, layout: AppLayout, auth: 'protected' },
   { path: '/settings', component: Settings, layout: AppLayout, auth: 'protected' },
 ];
@@ -89,7 +71,7 @@ const ProtectedRoute: React.FC<{ route: RouteConfig; user: any }> = ({ route, us
   const isAuthenticated = !!localStorage.getItem('token');
 
   // Public pages - always accessible
-  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/ai-test', '/complaint', '/complaint-flow', '/complaint-dashboard', '/multimodal-submit', '/chatbot'];
+  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/complaint', '/complaint-flow', '/complaint-dashboard', '/multimodal-submit', '/chatbot'];
   
   if (publicPaths.includes(path)) {
     if (Layout === React.Fragment) {

@@ -200,7 +200,7 @@ Return only the enhanced complaint text, nothing else."""
                 return original_text
             
             response = self.groq_client.chat.completions.create(
-                model="llama3-8b-8192",
+                model="llama-3.1-8b-instant",  # Updated to latest supported model
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
@@ -244,7 +244,7 @@ Return valid JSON only."""
                 return {}
             
             response = self.groq_client.chat.completions.create(
-                model="llama3-8b-8192",
+                model="llama-3.1-8b-instant",  # Updated to latest supported model
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"Extract entities from: {text}"}
@@ -291,7 +291,7 @@ Return valid JSON only."""
                 }
             
             response = self.groq_client.chat.completions.create(
-                model="llama3-8b-8192",
+                model="llama-3.1-8b-instant",  # Updated to latest supported model
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"Analyze: {text}"}
@@ -400,7 +400,7 @@ Return valid JSON only."""
             if self.use_ai and self.groq_client:
                 try:
                     test_response = self.groq_client.chat.completions.create(
-                        model="llama3-8b-8192",
+                        model="llama-3.1-8b-instant",  # Updated to latest supported model
                         messages=[{"role": "user", "content": "Hello, this is a test."}],
                         max_tokens=10
                     )

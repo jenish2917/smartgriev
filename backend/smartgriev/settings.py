@@ -314,6 +314,6 @@ if not GROQ_API_KEY:
 COMPLAINT_CLASSIFICATION = {
     'ENABLED': True,
     'AUTO_CLASSIFY': True,
-    'MODEL': 'llama3-8b-8192',
+    'MODEL': 'llama-3.1-8b-instant',  # Updated to latest supported Groq model
     'CONFIDENCE_THRESHOLD': 0.7
 }
