@@ -35,16 +35,17 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'corsheaders',
-    # 'storages',  # Temporarily disabled for quick startup
-    # 'channels',  # Temporarily disabled for quick startup
-    # Local apps
-    'authentication',
-    'complaints',
-    'chatbot',  # ✅ ENABLED - Google AI chatbot now working!
-    'machine_learning',  # Machine learning models and experiments - OCR enabled
-    # 'analytics',  # Real-time analytics and dashboard - depends on chatbot
-    # 'geospatial',  # Geographic analytics - requires GDAL
-    # 'notifications',  # Advanced notification system
+    # Local apps - Core Functional Features
+    'authentication',        # ✅ WORKING - User authentication & language preferences
+    'complaints',           # ✅ WORKING - Complaint management system  
+    'chatbot',              # ✅ WORKING - AI chatbot for complaint submission
+    'machine_learning',     # ✅ WORKING - ML models, OCR, AI classification
+    # Advanced features (disabled - have code issues or missing dependencies)
+    # 'notifications',      # ❌ AttributeError: 'send_notification' vs 'SendNotificationView'
+    # 'analytics',          # ❌ Import errors - needs refactoring
+    # 'geospatial',         # ❌ Requires GDAL installation (advanced GIS feature)
+    # 'storages',           # ❌ Cloud storage - not needed for local development
+    # 'channels',           # ❌ WebSockets - not needed for current features
 ]
 
 MIDDLEWARE = [

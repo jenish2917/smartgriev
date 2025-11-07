@@ -10,17 +10,17 @@ from django.conf import settings
 import csv
 from django.http import HttpResponse
 
-from backend.analytics.models import (
+from analytics.models import (
     AnalyticsDashboard, RealTimeMetrics, UserActivity, 
     PerformanceMetrics, AlertRule, AlertInstance
 )
-from backend.analytics.serializers import (
+from analytics.serializers import (
     AnalyticsDashboardSerializer, RealTimeMetricsSerializer,
     UserActivitySerializer, PerformanceMetricsSerializer,
     AlertRuleSerializer, AlertInstanceSerializer, DashboardStatsSerializer
 )
 from complaints.models import Complaint, Department
-from backend.analytics.utils import get_satisfaction_score, get_department_performance, get_chatbot_stats, get_daily_trends, get_sentiment_distribution, get_resolution_rate, get_avg_resolution_time
+from analytics.utils import get_satisfaction_score, get_department_performance, get_chatbot_stats, get_daily_trends, get_sentiment_distribution, get_resolution_rate, get_avg_resolution_time
 
 User = get_user_model()
 

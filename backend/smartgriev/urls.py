@@ -50,12 +50,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/auth/', include('authentication.urls')),
-    path('api/complaints/', include('complaints.urls')),
-    path('api/chatbot/', include('chatbot.urls')),  # ✅ ENABLED for chatbot
-    path('api/ml/', include('machine_learning.urls')),  # OCR and ML endpoints enabled
-    # path('api/analytics/', include('analytics.urls')),  # Temporarily disabled
-
-    # path('api/geospatial/', include('geospatial.urls')),  # Temporarily disabled
-    # path('api/notifications/', include('notifications.urls')),  # Temporarily disabled
+    # Core API Endpoints - Fully Functional
+    path('api/auth/', include('authentication.urls')),        # ✅ Login, Register, Language
+    path('api/complaints/', include('complaints.urls')),      # ✅ Complaint CRUD
+    path('api/chatbot/', include('chatbot.urls')),           # ✅ AI Chatbot
+    path('api/ml/', include('machine_learning.urls')),       # ✅ OCR, Classification
+    # Advanced features (disabled - have code/dependency issues)
+    # path('api/notifications/', include('notifications.urls')), # ❌ AttributeError
+    # path('api/analytics/', include('analytics.urls')),     # ❌ Import errors
+    # path('api/geospatial/', include('geospatial.urls')),   # ❌ Requires GDAL
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
