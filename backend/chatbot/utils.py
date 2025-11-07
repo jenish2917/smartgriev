@@ -9,7 +9,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Any
 import logging
 import spacy
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 
 # Configure logging
@@ -141,32 +141,32 @@ class ResponseGeneratorInterface(ABC):
 
 # Concrete Implementations
 class GoogleTranslatorService(TranslatorInterface):
-    """Google Translator implementation"""
+    """Google Translator implementation using deep-translator"""
     
     def __init__(self):
-        self.translator = Translator()
         self.language_cache = {}
     
     def translate(self, text: str, target_language: str) -> str:
-        """Translate text using Google Translate API"""
+        """Translate text using Google Translate API via deep-translator"""
         try:
-            if target_language == "en":
+            if target_language == "en" or not text:
                 return text
             
-            result = self.translator.translate(text, dest=target_language)
-            return result.text
+            translated = GoogleTranslator(source='auto', target=target_language).translate(text)
+            return translated if translated else text
         except Exception as e:
             logger.error(f"Translation error: {e}")
             return text
     
     def detect_language(self, text: str) -> str:
-        """Detect language using Google Translate API"""
+        """Detect language - deep-translator doesn't have detection, default to 'en'"""
         try:
             if text in self.language_cache:
                 return self.language_cache[text]
             
-            detection = self.translator.detect(text)
-            language = detection.lang
+            # deep-translator doesn't have language detection
+            # Default to English or use a simple heuristic
+            language = "en"  # Default
             self.language_cache[text] = language
             return language
         except Exception as e:
