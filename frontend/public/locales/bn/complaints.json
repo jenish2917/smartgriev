@@ -1,0 +1,66 @@
+{
+  "title": "অভিযোগ ব্যবস্থাপনা",
+  "submit": "নতুন অভিযোগ জমা দিন",
+  "myComplaints": "আমার অভিযোগসমূহ",
+  "status": {
+    "pending": "অপেক্ষমান",
+    "in_progress": "প্রক্রিয়াধীন",
+    "resolved": "সমাধান হয়েছে",
+    "rejected": "প্রত্যাখ্যাত",
+    "closed": "বন্ধ"
+  },
+  "priority": {
+    "low": "নিম্ন",
+    "medium": "মাঝারি",
+    "high": "উচ্চ",
+    "urgent": "জরুরি"
+  },
+  "category": {
+    "roads": "রাস্তা ও পরিবহন",
+    "water": "জল সরবরাহ",
+    "electricity": "বিদ্যুৎ",
+    "sanitation": "স্যানিটেশন",
+    "health": "স্বাস্থ্য সেবা",
+    "education": "শিক্ষা",
+    "pollution": "দূষণ",
+    "security": "নিরাপত্তা",
+    "other": "অন্যান্য"
+  },
+  "form": {
+    "title": "শিরোনাম",
+    "description": "বর্ণনা",
+    "category": "বিভাগ",
+    "priority": "অগ্রাধিকার",
+    "location": "অবস্থান",
+    "attachments": "সংযুক্তি",
+    "submit": "অভিযোগ জমা দিন",
+    "draft": "খসড়া হিসাবে সংরক্ষণ করুন"
+  },
+  "details": {
+    "complaintId": "অভিযোগ আইডি",
+    "submittedBy": "জমাদানকারী",
+    "submittedOn": "জমার তারিখ",
+    "lastUpdate": "শেষ আপডেট",
+    "assignedTo": "নিযুক্ত",
+    "department": "বিভাগ"
+  },
+  "actions": {
+    "view": "বিস্তারিত দেখুন",
+    "edit": "সম্পাদনা করুন",
+    "delete": "মুছুন",
+    "track": "ট্র্যাক করুন",
+    "escalate": "উর্ধ্বতন কর্তৃপক্ষে পাঠান"
+  },
+  "messages": {
+    "submitSuccess": "অভিযোগ সফলভাবে জমা হয়েছে",
+    "updateSuccess": "অভিযোগ সফলভাবে আপডেট হয়েছে",
+    "deleteSuccess": "অভিযোগ সফলভাবে মুছে ফেলা হয়েছে",
+    "noComplaints": "কোন অভিযোগ পাওয়া যায়নি"
+  },
+  "ai": {
+    "classification": "এআই শ্রেণীবিভাগ",
+    "sentiment": "অনুভূতি বিশ্লেষণ",
+    "priority": "প্রস্তাবিত অগ্রাধিকার",
+    "department": "প্রস্তাবিত বিভাগ"
+  }
+}

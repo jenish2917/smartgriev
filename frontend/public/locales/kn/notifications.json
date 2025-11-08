@@ -1,0 +1,19 @@
+{
+  "title": "ಅಧಿಸೂಚನೆಗಳು",
+  "markAllRead": "ಎಲ್ಲವನ್ನೂ ಓದಿದ್ದೇವೆ ಎಂದು ಗುರುತಿಸಿ",
+  "noNotifications": "ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ",
+  "types": {
+    "complaint": "ದೂರು ನವೀಕರಣ",
+    "assignment": "ಹೊಸ ನಿಯೋಜನೆ",
+    "resolution": "ಪರಿಹರಿಸಲಾಗಿದೆ",
+    "comment": "ಹೊಸ ಟಿಪ್ಪಣಿ",
+    "escalation": "ಎಸ್ಕಲೇಟ್ ಮಾಡಲಾಗಿದೆ",
+    "system": "ಸಿಸ್ಟಮ್ ಅಧಿಸೂಚನೆ"
+  },
+  "messages": {
+    "complaintUpdated": "ದೂರು #{{id}} ನವೀಕರಿಸಲಾಗಿದೆ",
+    "complaintAssigned": "ನಿಮಗೆ ದೂರು #{{id}} ನಿಯೋಜಿಸಲಾಗಿದೆ",
+    "complaintResolved": "ದೂರು #{{id}} ಪರಿಹರಿಸಲಾಗಿದೆ",
+    "newComment": "ದೂರು #{{id}}ನಲ್ಲಿ ಹೊಸ ಟಿಪ್ಪಣಿ"
+  }
+}

@@ -1,28 +1,27 @@
-# SmartGriev Backend Dockerfile
-FROM python:3.10-slim
+# Multi-stage Docker build for SmartGriev Backend
+FROM python:3.10-slim as base
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV DJANGO_SETTINGS_MODULE=smartgriev.settings.production
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Set work directory
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        postgresql-client \
-        build-essential \
-        libpq-dev \
-        ffmpeg \
-        libsm6 \
-        libxext6 \
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    libpq-dev \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements/production.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements/base.txt requirements/production.txt /app/requirements/
+RUN pip install --upgrade pip && \
+    pip install -r requirements/production.txt
 
 # Copy project
 COPY . /app/
@@ -31,16 +30,13 @@ COPY . /app/
 RUN python manage.py collectstatic --noinput
 
 # Create non-root user
-RUN adduser --disabled-password --gecos '' appuser
-RUN chown -R appuser:appuser /app
-USER appuser
+RUN useradd -m -u 1000 smartgriev && \
+    chown -R smartgriev:smartgriev /app
+
+USER smartgriev
 
 # Expose port
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/complaints/api/health/ || exit 1
-
-# Run server
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "smartgriev.wsgi:application"]
+# Run gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "smartgriev.wsgi:application"]

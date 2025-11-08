@@ -1,52 +1,77 @@
+"""
+Signal handlers for automatic notifications
+"""
+
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from complaints.models import Complaint, AuditTrail
-from .tasks import send_notification_async
+from complaints.models import Complaint
+from .models import Notification, NotificationPreference
+from .sms_service import sms_service
+
 
 @receiver(post_save, sender=Complaint)
-def complaint_notification_handler(sender, instance, created, **kwargs):
-    """Handle notifications for complaint events"""
-    if created:
-        # New complaint created
-        send_notification_async.delay(
-            event='complaint_created',
-            complaint_id=instance.id,
-            context={'complaint': instance}
+def send_complaint_notification(sender, instance, created, **kwargs):
+    """Send notification when complaint is created or status changes"""
+    
+    if not instance.user:
+        return
+    
+    try:
+        # Get user preferences
+        preferences, _ = NotificationPreference.objects.get_or_create(
+            user=instance.user
         )
-    else:
-        # Complaint updated - check if status changed
-        if hasattr(instance, '_old_status') and instance._old_status != instance.status:
-            send_notification_async.delay(
-                event='status_changed',
-                complaint_id=instance.id,
-                context={
-                    'complaint': instance,
-                    'old_status': instance._old_status,
-                    'new_status': instance.status
-                }
+        
+        if created:
+            # New complaint created
+            title = "Complaint Registered"
+            message = f"Your complaint '{instance.title}' has been successfully registered with ID #{instance.id}"
+            notification_type = 'complaint_created'
+            
+            # Create notification
+            notification = Notification.objects.create(
+                user=instance.user,
+                title=title,
+                message=message,
+                notification_type=notification_type,
+                complaint=instance,
+                priority='medium'
             )
-
-@receiver(post_save, sender=AuditTrail)
-def audit_trail_notification_handler(sender, instance, created, **kwargs):
-    """Handle notifications for audit trail events"""
-    if created and 'comment' in instance.action:
-        send_notification_async.delay(
-            event='comment_added',
-            complaint_id=instance.complaint.id,
-            context={
-                'complaint': instance.complaint,
-                'comment': instance.action,
-                'by_user': instance.by_user
-            }
-        )
-
-# Track old status for comparison
-@receiver(pre_save, sender=Complaint)
-def track_complaint_status_change(sender, instance, **kwargs):
-    """Track the old status for comparison"""
-    if instance.pk:
-        try:
-            old_instance = Complaint.objects.get(pk=instance.pk)
-            instance._old_status = old_instance.status
-        except Complaint.DoesNotExist:
-            instance._old_status = None
+            
+            # Send SMS if enabled
+            if preferences.sms_enabled and preferences.notify_complaint_created:
+                sms_result = sms_service.send_complaint_created_sms(instance.user, instance)
+                if sms_result.get('success'):
+                    notification.sent_via_sms = True
+                    notification.save()
+        
+        else:
+            # Status changed
+            if instance.status in ['in_progress', 'resolved', 'rejected']:
+                title = f"Complaint Status: {instance.status.replace('_', ' ').title()}"
+                message = f"Your complaint #{instance.id} status has been updated to: {instance.status.replace('_', ' ').title()}"
+                notification_type = 'status_changed'
+                
+                # Create notification
+                notification = Notification.objects.create(
+                    user=instance.user,
+                    title=title,
+                    message=message,
+                    notification_type=notification_type,
+                    complaint=instance,
+                    priority='high' if instance.status == 'resolved' else 'medium'
+                )
+                
+                # Send SMS if enabled
+                if preferences.sms_enabled and preferences.notify_status_changed:
+                    sms_result = sms_service.send_status_update_sms(
+                        instance.user, 
+                        instance, 
+                        instance.status
+                    )
+                    if sms_result.get('success'):
+                        notification.sent_via_sms = True
+                        notification.save()
+    
+    except Exception as e:
+        print(f"Error sending notification: {e}")

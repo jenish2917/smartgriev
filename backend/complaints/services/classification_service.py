@@ -82,7 +82,7 @@ class ComplaintClassificationService:
         else:
             logging.warning("GROQ_API_KEY not set. Using fallback classification.")
             
-        self.model = "llama3-8b-8192"  # Using available Groq model
+        self.model = "llama-3.1-8b-instant"  # Updated to latest supported Groq model
         self.classification_cache = {}  # Simple in-memory cache
         self.performance_metrics = {
             'total_classifications': 0,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Typography, Alert, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
@@ -12,6 +13,7 @@ interface LoginFormData {
 }
 
 const Login: React.FC = () => {
+  const { t } = useTranslation('auth');
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -24,7 +26,7 @@ const Login: React.FC = () => {
       console.log('Login values:', values);
       // await dispatch(loginAsync({ username: values.username, password: values.password }));
     } catch (err) {
-      setError('Login failed. Please check your credentials.');
+      setError(t('loginError'));
     } finally {
       setLoading(false);
     }
@@ -33,7 +35,7 @@ const Login: React.FC = () => {
   return (
     <div>
       <Title level={3} style={{ textAlign: 'center', marginBottom: '24px' }}>
-        Sign In
+        {t('login')}
       </Title>
 
       {error && (
@@ -54,13 +56,13 @@ const Login: React.FC = () => {
         <Form.Item
           name="username"
           rules={[
-            { required: true, message: 'Please input your username!' },
-            { min: 3, message: 'Username must be at least 3 characters!' },
+            { required: true, message: t('invalidCredentials') },
+            { min: 3, message: t('invalidFormat') },
           ]}
         >
           <Input
             prefix={<UserOutlined />}
-            placeholder="Username"
+            placeholder={t('username')}
             size="large"
           />
         </Form.Item>
@@ -68,13 +70,13 @@ const Login: React.FC = () => {
         <Form.Item
           name="password"
           rules={[
-            { required: true, message: 'Please input your password!' },
-            { min: 6, message: 'Password must be at least 6 characters!' },
+            { required: true, message: t('invalidCredentials') },
+            { min: 6, message: t('invalidFormat') },
           ]}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Password"
+            placeholder={t('password')}
             size="large"
           />
         </Form.Item>
@@ -82,9 +84,9 @@ const Login: React.FC = () => {
         <Form.Item>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox>{t('rememberMe')}</Checkbox>
             </Form.Item>
-            <Link to="/forgot-password">Forgot password?</Link>
+            <Link to="/forgot-password">{t('forgotPassword')}</Link>
           </div>
         </Form.Item>
 
@@ -96,13 +98,13 @@ const Login: React.FC = () => {
             loading={loading}
             style={{ width: '100%' }}
           >
-            Sign In
+            {t('loginButton')}
           </Button>
         </Form.Item>
 
         <div style={{ textAlign: 'center' }}>
           <Text type="secondary">
-            Don't have an account? <Link to="/register">Sign up</Link>
+            {t('dontHaveAccount')} <Link to="/register">{t('signUpHere')}</Link>
           </Text>
         </div>
       </Form>

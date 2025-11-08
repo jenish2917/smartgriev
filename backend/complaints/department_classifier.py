@@ -205,7 +205,7 @@ Return valid JSON only."""
                 return self._get_keyword_classification(complaint_text)
             
             response = self.groq_client.chat.completions.create(
-                model="llama3-8b-8192",
+                model="llama-3.1-8b-instant",  # Updated to latest supported model
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}

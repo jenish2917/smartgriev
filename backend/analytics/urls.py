@@ -1,23 +1,19 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
+app_name = 'analytics'
+
 urlpatterns = [
-    # Dashboard and Analytics
-    path('dashboard/', views.AnalyticsDashboardView.as_view(), name='analytics-dashboard'),
-    path('dashboard/stats/', views.dashboard_stats, name='dashboard-stats'),
-    path('real-time-updates/', views.real_time_updates, name='real-time-updates'),
+    # Dashboard and overview
+    path('dashboard/', views.dashboard_stats, name='dashboard-stats'),
+    path('trends/', views.complaint_trends, name='complaint-trends'),
+    path('departments/', views.department_analytics, name='department-analytics'),
     
-    # Metrics
-    path('metrics/', views.RealTimeMetricsView.as_view(), name='real-time-metrics'),
-    path('performance/', views.PerformanceMetricsView.as_view(), name='performance-metrics'),
-    path('activity/', views.UserActivityView.as_view(), name='user-activity'),
+    # User activity
+    path('activity/', views.user_activity_log, name='user-activity-log'),
+    path('activity/log/', views.log_user_activity, name='log-activity'),
     
-    # Alerts
-    path('alerts/rules/', views.AlertRuleView.as_view(), name='alert-rules'),
-    path('alerts/instances/', views.AlertInstanceView.as_view(), name='alert-instances'),
-    path('alerts/<int:alert_id>/resolve/', views.mark_alert_resolved, name='mark-alert-resolved'),
-    
-    # Export and Health
-    path('export/', views.export_analytics_data, name='export-analytics'),
-    path('health/', views.system_health, name='system-health'),
+    # Statistics endpoints
+    path('complaint-stats/', views.ComplaintStatsListView.as_view(), name='complaint-stats-list'),
+    path('department-metrics/', views.DepartmentMetricsListView.as_view(), name='department-metrics-list'),
 ]

@@ -1,7 +1,8 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, ChangePasswordSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer, UpdateLanguageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
@@ -54,3 +55,35 @@ class ChangePasswordView(generics.UpdateAPIView):
         user.save()
 
         return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)
+
+class UpdateLanguageView(APIView):
+    """
+    API endpoint to update user's preferred language.
+    Allows authenticated users to change their interface language preference.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        serializer = UpdateLanguageSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            language = serializer.validated_data['language']
+            user = request.user
+            user.preferred_language = language
+            user.save(update_fields=['preferred_language'])
+            
+            return Response({
+                'message': 'Language preference updated successfully.',
+                'language': language,
+                'language_display': user.get_display_language()
+            }, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        """Get current user's language preference"""
+        user = request.user
+        return Response({
+            'language': user.preferred_language,
+            'language_display': user.get_display_language()
+        }, status=status.HTTP_200_OK)

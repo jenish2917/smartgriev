@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
+import LanguageSwitcher from './common/LanguageSwitcher';
 
 const NavbarContainer = styled.nav`
   background: linear-gradient(135deg, ${theme.colors.primary[700]} 0%, ${theme.colors.primary[500]} 100%);
@@ -454,6 +455,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           {/* Desktop Auth Section */}
           {user ? (
             <DesktopAuthButtons>
+              <LanguageSwitcher />
               <UserMenu>
                 <UserName>{user.name}</UserName>
                 <UserAvatar title={user.email}>
@@ -464,6 +466,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             </DesktopAuthButtons>
           ) : (
             <DesktopAuthButtons>
+              <LanguageSwitcher />
               <Button onClick={() => navigate('/login')} $variant="outline">Login</Button>
               <Button onClick={() => navigate('/register')} $variant="primary">Sign Up</Button>
             </DesktopAuthButtons>
@@ -519,6 +522,13 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               </MobileNavLink>
             </>
           )}
+
+          <MobileDivider />
+
+          {/* Language Switcher */}
+          <div style={{ padding: '8px 0' }}>
+            <LanguageSwitcher />
+          </div>
 
           <MobileDivider />
 

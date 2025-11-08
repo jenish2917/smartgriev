@@ -1,153 +1,148 @@
-# Real-time Analytics and Dashboard System
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 
-User = get_user_model()
 
-class AnalyticsDashboard(models.Model):
-    """Real-time analytics dashboard configuration"""
-    DASHBOARD_TYPES = [
-        ('citizen', 'Citizen Dashboard'),
-        ('officer', 'Officer Dashboard'), 
-        ('admin', 'Admin Dashboard'),
-        ('department', 'Department Dashboard')
+class UserActivity(models.Model):
+    """Track user activity for analytics"""
+    
+    ACTIVITY_TYPES = [
+        ('login', 'Login'),
+        ('logout', 'Logout'),
+        ('complaint_created', 'Complaint Created'),
+        ('complaint_viewed', 'Complaint Viewed'),
+        ('complaint_updated', 'Complaint Updated'),
+        ('chat_message', 'Chat Message'),
+        ('profile_updated', 'Profile Updated'),
+        ('search', 'Search'),
+        ('page_view', 'Page View'),
     ]
     
-    name = models.CharField(max_length=100)
-    dashboard_type = models.CharField(max_length=20, choices=DASHBOARD_TYPES)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dashboards')
-    is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='activities'
+    )
+    activity_type = models.CharField(max_length=30, choices=ACTIVITY_TYPES)
+    description = models.TextField(blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Optional metadata
+    metadata = models.JSONField(default=dict, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['activity_type', '-created_at']),
+        ]
+        verbose_name_plural = 'User Activities'
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.activity_type} at {self.created_at}"
+
+
+class ComplaintStats(models.Model):
+    """Aggregated complaint statistics"""
+    
+    date = models.DateField(unique=True)
+    
+    # Daily counts
+    total_complaints = models.IntegerField(default=0)
+    new_complaints = models.IntegerField(default=0)
+    resolved_complaints = models.IntegerField(default=0)
+    rejected_complaints = models.IntegerField(default=0)
+    pending_complaints = models.IntegerField(default=0)
+    
+    # By priority
+    high_priority_count = models.IntegerField(default=0)
+    medium_priority_count = models.IntegerField(default=0)
+    low_priority_count = models.IntegerField(default=0)
+    
+    # Response metrics
+    avg_response_time_hours = models.FloatField(null=True, blank=True)
+    avg_resolution_time_hours = models.FloatField(null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = ('user', 'name')
-
-class Widget(models.Model):
-    dashboard = models.ForeignKey(AnalyticsDashboard, on_delete=models.CASCADE, related_name='widgets')
-    # Add fields for your widget configuration, e.g.:
-    # name = models.CharField(max_length=100)
-    # type = models.CharField(max_length=50)
-    # config = models.JSONField(default=dict)
-
-class Layout(models.Model):
-    dashboard = models.OneToOneField(AnalyticsDashboard, on_delete=models.CASCADE, related_name='layout')
-    # Add fields for your layout settings, e.g.:
-    # positions = models.JSONField(default=dict)
-
-class RealTimeMetrics(models.Model):
-    """Store real-time metrics for dashboard display"""
-    METRIC_TYPES = [
-        ('complaint_count', 'Complaint Count'),
-        ('resolution_rate', 'Resolution Rate'),
-        ('avg_response_time', 'Average Response Time'),
-        ('satisfaction_score', 'Satisfaction Score'),
-        ('department_performance', 'Department Performance'),
-        ('geographic_distribution', 'Geographic Distribution'),
-        ('sentiment_trends', 'Sentiment Trends'),
-        ('chatbot_effectiveness', 'Chatbot Effectiveness')
-    ]
+        ordering = ['-date']
+        verbose_name_plural = 'Complaint Statistics'
     
-    metric_type = models.CharField(max_length=50, choices=METRIC_TYPES)
-    department = models.ForeignKey('complaints.Department', null=True, blank=True, on_delete=models.CASCADE)
-    time_period = models.CharField(max_length=20)  # hourly, daily, weekly, monthly
-    timestamp = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Stats for {self.date}"
+
+
+class DepartmentMetrics(models.Model):
+    """Department-wise performance metrics"""
     
-    class Meta:
-        indexes = [
-            models.Index(fields=['metric_type', 'timestamp']),
-            models.Index(fields=['department', 'metric_type']),
-        ]
-
-class MetricValue(models.Model):
-    metric = models.OneToOneField(RealTimeMetrics, on_delete=models.CASCADE, related_name='metric_value')
-    # Add fields for your metric value, e.g.:
-    # value = models.FloatField()
-    # series = models.JSONField(default=list)
-
-class MetricMetadata(models.Model):
-    metric = models.OneToOneField(RealTimeMetrics, on_delete=models.CASCADE, related_name='metadata')
-    # Add fields for your metadata, e.g.:
-    # unit = models.CharField(max_length=20)
-    # description = models.TextField()
-
-class UserActivity(models.Model):
-    """Track user activity for analytics"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    activity_type = models.CharField(max_length=50)
-    endpoint = models.CharField(max_length=255, null=True)
-    ip_address = models.GenericIPAddressField()
-    user_agent = models.TextField()
-    duration = models.FloatField(null=True)  # Request duration in seconds
-    response_code = models.IntegerField(null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    department = models.ForeignKey(
+        'complaints.Department',
+        on_delete=models.CASCADE,
+        related_name='metrics'
+    )
+    date = models.DateField()
     
-    class Meta:
-        indexes = [
-            models.Index(fields=['user', 'timestamp']),
-            models.Index(fields=['activity_type', 'timestamp']),
-        ]
-
-class ActivityMetadata(models.Model):
-    activity = models.OneToOneField(UserActivity, on_delete=models.CASCADE, related_name='metadata')
-    # Add fields for your metadata, e.g.:
-    # device = models.CharField(max_length=50)
-    # browser = models.CharField(max_length=50)
-
-class PerformanceMetrics(models.Model):
-    """System performance metrics"""
-    metric_name = models.CharField(max_length=100)
-    metric_value = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    server_node = models.CharField(max_length=50, null=True)
+    # Complaint volumes
+    total_complaints = models.IntegerField(default=0)
+    resolved_complaints = models.IntegerField(default=0)
+    pending_complaints = models.IntegerField(default=0)
+    rejected_complaints = models.IntegerField(default=0)
     
-    class Meta:
-        indexes = [
-            models.Index(fields=['metric_name', 'timestamp']),
-        ]
-
-class PerformanceMetadata(models.Model):
-    metric = models.OneToOneField(PerformanceMetrics, on_delete=models.CASCADE, related_name='metadata')
-    # Add fields for your metadata, e.g.:
-    # unit = models.CharField(max_length=20)
-    # description = models.TextField()
-
-class NotificationChannel(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    # Add fields for your notification channel, e.g.:
-    # type = models.CharField(max_length=20)
-    # config = models.JSONField(default=dict)
-
-class AlertRule(models.Model):
-    """Define alert rules for monitoring"""
-    CONDITION_TYPES = [
-        ('threshold', 'Threshold'),
-        ('percentage_change', 'Percentage Change'),
-        ('anomaly', 'Anomaly Detection')
-    ]
+    # Performance metrics
+    avg_response_time_hours = models.FloatField(null=True, blank=True)
+    avg_resolution_time_hours = models.FloatField(null=True, blank=True)
+    resolution_rate = models.FloatField(null=True, blank=True)  # Percentage
     
-    name = models.CharField(max_length=100)
-    metric_type = models.CharField(max_length=50)
-    condition_type = models.CharField(max_length=20, choices=CONDITION_TYPES)
-    threshold_value = models.FloatField(null=True)
-    comparison_operator = models.CharField(max_length=10)  # >, <, >=, <=, ==
-    is_active = models.BooleanField(default=True)
-    notification_channels = models.ManyToManyField(NotificationChannel)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    # User satisfaction
+    avg_rating = models.FloatField(null=True, blank=True)
+    total_ratings = models.IntegerField(default=0)
+    
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-date', 'department']
+        unique_together = ['department', 'date']
+        verbose_name_plural = 'Department Metrics'
+    
+    def __str__(self):
+        return f"{self.department.name} - {self.date}"
 
-class AlertInstance(models.Model):
-    """Alert instances when rules are triggered"""
-    rule = models.ForeignKey(AlertRule, on_delete=models.CASCADE)
-    triggered_value = models.FloatField()
-    message = models.TextField()
-    severity = models.CharField(max_length=20, default='medium')
-    is_resolved = models.BooleanField(default=False)
-    resolved_at = models.DateTimeField(null=True)
-    triggered_at = models.DateTimeField(auto_now_add=True)
 
-class AlertMetadata(models.Model):
-    alert = models.OneToOneField(AlertInstance, on_delete=models.CASCADE, related_name='metadata')
-    # Add fields for your metadata, e.g.:
-    # affected_users = models.IntegerField()
-    # related_complaints = models.ManyToManyField('complaints.Complaint')
+class SystemMetrics(models.Model):
+    """Overall system performance metrics"""
+    
+    timestamp = models.DateTimeField(unique=True)
+    
+    # User metrics
+    total_users = models.IntegerField(default=0)
+    active_users_today = models.IntegerField(default=0)
+    new_users_today = models.IntegerField(default=0)
+    
+    # Complaint metrics
+    total_complaints = models.IntegerField(default=0)
+    open_complaints = models.IntegerField(default=0)
+    resolved_complaints = models.IntegerField(default=0)
+    
+    # Performance metrics
+    avg_api_response_time_ms = models.FloatField(null=True, blank=True)
+    total_api_calls = models.IntegerField(default=0)
+    failed_api_calls = models.IntegerField(default=0)
+    
+    # System health
+    database_size_mb = models.FloatField(null=True, blank=True)
+    media_storage_mb = models.FloatField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name_plural = 'System Metrics'
+    
+    def __str__(self):
+        return f"System Metrics - {self.timestamp}"

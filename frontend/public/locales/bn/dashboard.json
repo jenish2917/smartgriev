@@ -1,0 +1,32 @@
+{
+  "title": "ড্যাশবোর্ড",
+  "welcome": "স্বাগতম, {{name}}",
+  "overview": "সংক্ষিপ্ত বিবরণ",
+  "statistics": "পরিসংখ্যান",
+  "recentActivity": "সাম্প্রতিক কার্যকলাপ",
+  "quickActions": "দ্রুত কাজ",
+  "citizen": {
+    "totalComplaints": "মোট অভিযোগ",
+    "pending": "অপেক্ষমান",
+    "resolved": "সমাধান হয়েছে",
+    "inProgress": "প্রক্রিয়াধীন"
+  },
+  "officer": {
+    "assigned": "নিযুক্ত অভিযোগ",
+    "completed": "সম্পন্ন",
+    "overdue": "বিলম্বিত",
+    "avgResolution": "গড় সমাধান সময়"
+  },
+  "admin": {
+    "totalUsers": "মোট ব্যবহারকারী",
+    "activeComplaints": "সক্রিয় অভিযোগ",
+    "departments": "বিভাগ",
+    "performance": "কর্মক্ষমতা"
+  },
+  "timeframe": {
+    "today": "আজ",
+    "week": "এই সপ্তাহ",
+    "month": "এই মাস",
+    "year": "এই বছর"
+  }
+}

@@ -1,31 +1,26 @@
 from django.urls import path
 from . import views
 
+app_name = 'notifications'
+
 urlpatterns = [
-    # Notification templates
-    path('templates/', views.NotificationTemplateView.as_view(), name='notification-templates'),
-    path('templates/<int:pk>/', views.NotificationTemplateDetailView.as_view(), name='template-detail'),
+    # Notification list and details
+    path('', views.NotificationListView.as_view(), name='notification-list'),
+    path('<int:pk>/', views.NotificationDetailView.as_view(), name='notification-detail'),
     
-    # Notification rules
-    path('rules/', views.NotificationRuleView.as_view(), name='notification-rules'),
-    path('rules/<int:pk>/', views.NotificationRuleDetailView.as_view(), name='rule-detail'),
+    # Notification actions
+    path('<int:pk>/read/', views.mark_notification_read, name='mark-read'),
+    path('mark-all-read/', views.mark_all_read, name='mark-all-read'),
+    path('<int:pk>/delete/', views.delete_notification, name='delete-notification'),
+    path('unread-count/', views.unread_count, name='unread-count'),
     
-    # Notification queue
-    path('queue/', views.NotificationQueueView.as_view(), name='notification-queue'),
+    # Notification preferences
+    path('preferences/', views.NotificationPreferenceView.as_view(), name='preferences'),
     
-    # User preferences
-    path('preferences/', views.NotificationPreferenceView.as_view(), name='notification-preferences'),
-    path('preferences/<int:pk>/', views.NotificationPreferenceDetailView.as_view(), name='user-preferences'),
-    
-    # Delivery logs
-    path('logs/', views.NotificationLogView.as_view(), name='notification-logs'),
-    
-    # Device tracking
-    path('devices/', views.DeviceTrackingView.as_view(), name='device-tracking'),
-    
-    # Send notification manually
+    # Send notification (admin/system)
     path('send/', views.send_notification, name='send-notification'),
     
-    # Statistics
-    path('stats/', views.notification_stats, name='notification-stats'),
+    # SMS endpoints
+    path('sms/send/', views.send_sms_notification, name='send-sms'),
+    path('sms/status/', views.sms_service_status, name='sms-status'),
 ]

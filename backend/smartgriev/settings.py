@@ -35,16 +35,17 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'corsheaders',
-    # 'storages',  # Temporarily disabled for quick startup
-    # 'channels',  # Temporarily disabled for quick startup
-    # Local apps
-    'authentication',
-    'complaints',
-    'chatbot',  # ✅ ENABLED - Google AI chatbot now working!
-    'machine_learning',  # Machine learning models and experiments - OCR enabled
-    # 'analytics',  # Real-time analytics and dashboard - depends on chatbot
-    # 'geospatial',  # Geographic analytics - requires GDAL
-    # 'notifications',  # Advanced notification system
+    # Local apps - Core Functional Features
+    'authentication',        # ✅ WORKING - User authentication & language preferences
+    'complaints',           # ✅ WORKING - Complaint management system  
+    'chatbot',              # ✅ WORKING - AI chatbot for complaint submission
+    'machine_learning',     # ✅ WORKING - ML models, OCR, AI classification
+    'notifications',        # ✅ WORKING - Notification system
+    'analytics',            # ✅ WORKING - Analytics and metrics
+    # Advanced features (disabled - have missing dependencies)
+    # 'geospatial',         # ❌ Requires GDAL installation (advanced GIS feature)
+    # 'storages',           # ❌ Cloud storage - not needed for local development
+    # 'channels',           # ❌ WebSockets - not needed for current features
 ]
 
 MIDDLEWARE = [
@@ -314,6 +315,6 @@ if not GROQ_API_KEY:
 COMPLAINT_CLASSIFICATION = {
     'ENABLED': True,
     'AUTO_CLASSIFY': True,
-    'MODEL': 'llama3-8b-8192',
+    'MODEL': 'llama-3.1-8b-instant',  # Updated to latest supported Groq model
     'CONFIDENCE_THRESHOLD': 0.7
 }
