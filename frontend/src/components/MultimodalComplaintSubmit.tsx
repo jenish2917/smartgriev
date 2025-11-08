@@ -81,6 +81,8 @@ const MultimodalComplaintSubmit = () => {
   ]);
   const [chatInput, setChatInput] = useState<string>('');
   const [chatLoading, setChatLoading] = useState<boolean>(false);
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -172,6 +174,9 @@ const MultimodalComplaintSubmit = () => {
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, botMessage]);
+        
+        // Automatically speak the AI's response (like a phone call)
+        speakResponse(response.data.response);
       } else {
         throw new Error('No response from chatbot');
       }
@@ -193,6 +198,92 @@ const MultimodalComplaintSubmit = () => {
       e.preventDefault();
       sendChatMessage();
     }
+  };
+
+  // Voice Recognition - Listen to user's voice
+  const startVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice recognition not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    // Auto-detect language (supports multiple Indian languages)
+    recognition.lang = 'hi-IN'; // Hindi as default, but will detect others
+
+    setIsListening(true);
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setChatInput(transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      alert('Voice input failed. Please try again.');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  // Text-to-Speech - AI speaks the response
+  const speakResponse = (text: string) => {
+    if (!('speechSynthesis' in window)) {
+      console.warn('Text-to-speech not supported');
+      return;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Auto-detect language from text
+    if (/[\u0A80-\u0AFF]/.test(text)) {
+      utterance.lang = 'gu-IN'; // Gujarati
+    } else if (/[\u0900-\u097F]/.test(text)) {
+      utterance.lang = 'hi-IN'; // Hindi
+    } else if (/[\u0980-\u09FF]/.test(text)) {
+      utterance.lang = 'mr-IN'; // Marathi
+    } else if (/[\u0A00-\u0A7F]/.test(text)) {
+      utterance.lang = 'pa-IN'; // Punjabi
+    } else {
+      utterance.lang = 'en-IN'; // English
+    }
+
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    setIsSpeaking(true);
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Stop speaking
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -393,15 +484,55 @@ const MultimodalComplaintSubmit = () => {
           </div>
 
           <div className={styles.chatInput}>
+            <button
+              onClick={startVoiceInput}
+              disabled={chatLoading || isListening}
+              className={styles.voiceButton}
+              title="Click to speak (Voice Input)"
+              style={{
+                background: isListening ? '#ff4444' : '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '45px',
+                height: '45px',
+                fontSize: '20px',
+                cursor: chatLoading || isListening ? 'not-allowed' : 'pointer',
+                marginRight: '8px',
+                animation: isListening ? 'pulse 1s infinite' : 'none'
+              }}
+            >
+              {isListening ? '🔴' : '🎤'}
+            </button>
             <input
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               onKeyPress={handleChatKeyPress}
-              placeholder="Ask anything about filing complaints..."
+              placeholder={isListening ? "Listening..." : "Type or speak your question..."}
               className={styles.chatInputField}
               disabled={chatLoading}
             />
+            {isSpeaking && (
+              <button
+                onClick={stopSpeaking}
+                className={styles.stopSpeakButton}
+                title="Stop speaking"
+                style={{
+                  background: '#ff6b6b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '45px',
+                  height: '45px',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  marginLeft: '8px'
+                }}
+              >
+                🔇
+              </button>
+            )}
             <button
               onClick={sendChatMessage}
               disabled={chatLoading || !chatInput.trim()}
