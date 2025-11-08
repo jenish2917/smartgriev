@@ -13,6 +13,7 @@ import {
   IErrorHandlingService 
 } from '@/types/core';
 import { ApplicationLogger } from '@/core/errorHandling';
+import { getApiBaseUrl } from '@/config/api.config';
 
 /**
  * Console Logger Implementation
@@ -47,7 +48,7 @@ export class AxiosHttpClient implements IHttpClient {
 
   constructor(baseURL?: string) {
     this.client = axios.create({
-      baseURL: baseURL || import.meta.env.VITE_API_BASE_URL || '/api',
+      baseURL: baseURL || getApiBaseUrl(),
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
@@ -79,7 +80,8 @@ export class AxiosHttpClient implements IHttpClient {
           const refreshToken = localStorage.getItem('refresh_token');
           if (refreshToken) {
             try {
-              const response = await axios.post('/api/auth/refresh/', {
+              // Use correct token refresh endpoint
+              const response = await axios.post('/api/token/refresh/', {
                 refresh: refreshToken,
               });
               

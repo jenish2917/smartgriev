@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import styles from './MultimodalComplaintSubmit.module.css';
+import { API_URLS } from '../config/api.config';
 
 interface FormData {
   title: string;
@@ -157,11 +158,7 @@ const MultimodalComplaintSubmit = () => {
     setChatLoading(true);
 
     try {
-      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://127.0.0.1:8000'
-        : `http://${window.location.hostname}:8000`;
-
-      const response = await axios.post(`${apiUrl}/api/chatbot/chat/`, {
+      const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
         message: chatInput,
         conversation_history: chatMessages.slice(-10).map(msg => ({
           type: msg.type,
@@ -205,12 +202,7 @@ const MultimodalComplaintSubmit = () => {
 
     try {
       const token = localStorage.getItem('token');
-      // Allow anonymous submissions - token is optional
-
-      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://127.0.0.1:8000'
-        : `http://${window.location.hostname}:8000`;
-
+      
       const submitData = new FormData();
       
       // Add text fields
@@ -227,16 +219,16 @@ const MultimodalComplaintSubmit = () => {
       if (files.audio) submitData.append('audio_file', files.audio);
 
       // Prepare headers - only add Authorization if token exists
-      const headers: any = {
-        'Content-Type': 'multipart/form-data'
-      };
+      // DO NOT set Content-Type for FormData - axios will set it automatically with boundary
+      const headers: any = {};
       
+      // Only send token if user is actually logged in
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await axios.post(
-        `${apiUrl}/api/complaints/submit/`,
+        API_URLS.SUBMIT_COMPLAINT(),
         submitData,
         { headers }
       );
@@ -260,7 +252,78 @@ const MultimodalComplaintSubmit = () => {
 
     } catch (err) {
       const error = err as any;
-      setError(error.response?.data?.error || error.message || 'Failed to submit complaint');
+      console.error('Complaint submission error:', error);
+      console.error('Error response:', error.response?.data);
+      
+      // If 401 error, might be expired token - try without token
+      if (error.response?.status === 401) {
+        console.log('401 error - attempting anonymous submission...');
+        try {
+          // Clear potentially bad token
+          const submitData = new FormData();
+          
+          // Add text fields
+          Object.keys(formData).forEach(key => {
+            const typedKey = key as keyof typeof formData;
+            const value = formData[typedKey];
+            if (value !== null && value !== '') {
+              submitData.append(key, String(value));
+            }
+          });
+
+          // Add files
+          if (files.image) submitData.append('image_file', files.image);
+          if (files.audio) submitData.append('audio_file', files.audio);
+
+          // Retry without Authorization header
+          const response = await axios.post(
+            API_URLS.SUBMIT_COMPLAINT(),
+            submitData,
+            { headers: {} }
+          );
+
+          setSuccess(true);
+          setResult(response.data);
+          
+          // Reset form
+          setFormData({
+            title: '',
+            description: '',
+            priority: 'medium',
+            urgency_level: 'medium',
+            category: '',
+            incident_address: '',
+            incident_latitude: null,
+            incident_longitude: null
+          });
+          setFiles({ image: null, audio: null });
+          setPreviews({ image: null, audio: null });
+          
+          setLoading(false);
+          return;
+        } catch (retryError) {
+          console.error('Retry also failed:', retryError);
+        }
+      }
+      
+      // Detailed error message
+      let errorMessage = 'Failed to submit complaint';
+      
+      if (error.response?.data) {
+        if (error.response.data.errors) {
+          // Validation errors from serializer
+          const errors = error.response.data.errors;
+          errorMessage = Object.keys(errors).map(key => `${key}: ${errors[key]}`).join(', ');
+        } else if (error.response.data.error) {
+          errorMessage = error.response.data.error;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

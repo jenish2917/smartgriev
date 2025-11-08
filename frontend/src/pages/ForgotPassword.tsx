@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import axios from 'axios';
+import { buildApiUrl, API_ENDPOINTS } from '../config/api.config';
 
 const ForgotPasswordContainer = styled.div`
   min-height: 100vh;
@@ -209,7 +210,7 @@ const ForgotPassword: React.FC = () => {
     setSuccess(false);
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/auth/forgot-password/', {
+      await axios.post(buildApiUrl(API_ENDPOINTS.AUTH.FORGOT_PASSWORD), {
         email
       });
       

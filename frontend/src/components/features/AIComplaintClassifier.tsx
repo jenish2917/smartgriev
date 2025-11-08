@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Card, Input, Typography, Alert, Spin, Tag, Divider, Menu } from 'antd';
 import { RobotOutlined, SendOutlined, HomeOutlined, LoginOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import { API_URLS } from '../../config/api.config';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -97,7 +98,7 @@ const AIComplaintClassifier: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-      const response = await fetch('http://127.0.0.1:8000/api/complaints/classify/', {
+      const response = await fetch(API_URLS.CLASSIFY_COMPLAINT(), {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

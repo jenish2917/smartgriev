@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import axios from 'axios';
+import { API_URLS } from '../config/api.config';
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
@@ -346,7 +347,7 @@ const Dashboard: React.FC = () => {
       }
 
       // Fetch complaints
-      const response = await axios.get('http://127.0.0.1:8000/api/complaints/my-complaints/', {
+      const response = await axios.get(API_URLS.MY_COMPLAINTS(), {
         headers: { Authorization: `Bearer ${token}` }
       });
 

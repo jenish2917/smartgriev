@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import axios from 'axios';
+import { API_URLS } from '../config/api.config';
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -243,11 +244,7 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://127.0.0.1:8000'
-        : `http://${window.location.hostname}:8000`;
-      
-      const response = await axios.post(`${apiUrl}/api/auth/login/`, {
+      const response = await axios.post(API_URLS.LOGIN(), {
         username: formData.email,  // API expects username, we use email field
         password: formData.password
       });

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-10-30T12:20:40.718561",
+  "timestamp": "2025-11-07T16:18:43.876625",
   "total_tests": 7,
-  "passed": 5,
-  "failed": 2,
+  "passed": 6,
+  "failed": 1,
   "tests": [
     {
       "name": "Backend Server Connection",
@@ -15,7 +15,7 @@
       "status": "\u2705 PASS",
       "message": "CORS headers are configured",
       "details": {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "http://localhost:3000",
         "Access-Control-Allow-Methods": "DELETE, GET, OPTIONS, PATCH, POST, PUT",
         "Access-Control-Allow-Headers": "accept, authorization, content-type, user-agent, x-csrftoken, x-requested-with"
       }
@@ -25,7 +25,7 @@
       "status": "\u2705 PASS",
       "message": "Registration endpoint works correctly",
       "details": {
-        "user": "testuser_1761807040.988582"
+        "user": "testuser_1762512524.325523"
       }
     },
     {
@@ -46,9 +46,11 @@
     },
     {
       "name": "Chatbot API",
-      "status": "\u274c FAIL",
-      "message": "Chatbot test failed (Status: 404)",
-      "details": null
+      "status": "\u2705 PASS",
+      "message": "Chatbot endpoint is working",
+      "details": {
+        "response_received": true
+      }
     },
     {
       "name": "Streaming Chatbot API",
