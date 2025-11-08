@@ -82,10 +82,6 @@ const MultimodalComplaintSubmit = () => {
   const [chatInput, setChatInput] = useState<string>('');
   const [chatLoading, setChatLoading] = useState<boolean>(false);
 
-  // Human support state
-  const [showHumanSupport, setShowHumanSupport] = useState<boolean>(false);
-  const SUPPORT_PHONE = '+91 8141415113';
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -154,31 +150,36 @@ const MultimodalComplaintSubmit = () => {
     };
 
     setChatMessages(prev => [...prev, userMessage]);
+    const currentInput = chatInput;
     setChatInput('');
     setChatLoading(true);
 
     try {
+      // Send message with conversation history for context
       const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
-        message: chatInput,
+        message: currentInput,
         conversation_history: chatMessages.slice(-10).map(msg => ({
-          type: msg.type,
-          message: msg.message
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.message
         }))
       });
 
-      if (response.data.success) {
+      // Check if we have a response
+      if (response.data && response.data.response) {
         const botMessage: ChatMessage = {
           type: 'bot',
           message: response.data.response,
           timestamp: new Date()
         };
         setChatMessages(prev => [...prev, botMessage]);
+      } else {
+        throw new Error('No response from chatbot');
       }
     } catch (err) {
       console.error('Chat error:', err);
       const errorMessage: ChatMessage = {
         type: 'bot',
-        message: 'Sorry, I encountered an error. Please try again or contact human support.',
+        message: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date()
       };
       setChatMessages(prev => [...prev, errorMessage]);
@@ -343,7 +344,7 @@ const MultimodalComplaintSubmit = () => {
         <p className={styles.subtitle}>AI-Powered Grievance Management System</p>
       </div>
 
-      {/* Support Options Bar */}
+      {/* Support Options Bar - AI Only */}
       <div className={styles.supportBar}>
         <button 
           className={styles.supportButton}
@@ -353,23 +354,6 @@ const MultimodalComplaintSubmit = () => {
           🤖 AI Assistant
           {showChatbot && <span className={styles.activeDot}></span>}
         </button>
-        
-        <button 
-          className={styles.supportButton}
-          onClick={() => setShowHumanSupport(!showHumanSupport)}
-          title="Contact Human Support"
-        >
-          👤 Human Support
-          {showHumanSupport && <span className={styles.activeDot}></span>}
-        </button>
-
-        <a 
-          href={`tel:${SUPPORT_PHONE}`}
-          className={styles.phoneButton}
-          title="Call Support"
-        >
-          📞 {SUPPORT_PHONE}
-        </a>
       </div>
 
       {/* AI Chatbot Panel */}
@@ -429,52 +413,7 @@ const MultimodalComplaintSubmit = () => {
         </div>
       )}
 
-      {/* Human Support Panel */}
-      {showHumanSupport && (
-        <div className={styles.humanSupportPanel}>
-          <div className={styles.chatHeader}>
-            <h3>👤 Human Support</h3>
-            <button 
-              onClick={() => setShowHumanSupport(false)}
-              className={styles.closeButton}
-            >
-              ✕
-            </button>
-          </div>
-          
-          <div className={styles.supportContent}>
-            <div className={styles.supportIcon}>📞</div>
-            <h4>Need Human Assistance?</h4>
-            <p>Our support team is ready to help you!</p>
-            
-            <div className={styles.contactInfo}>
-              <div className={styles.contactMethod}>
-                <strong>📞 Phone Support</strong>
-                <a href={`tel:${SUPPORT_PHONE}`} className={styles.phoneLink}>
-                  {SUPPORT_PHONE}
-                </a>
-                <button 
-                  onClick={() => window.location.href = `tel:${SUPPORT_PHONE}`}
-                  className={styles.callButton}
-                >
-                  📱 Call Now
-                </button>
-              </div>
-
-              <div className={styles.supportHours}>
-                <strong>⏰ Available Hours</strong>
-                <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                <p>Saturday: 10:00 AM - 4:00 PM</p>
-                <p>Sunday: Closed</p>
-              </div>
-
-              <div className={styles.supportNote}>
-                <p><strong>💡 Tip:</strong> Have your complaint details ready when calling for faster assistance.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Human Support Panel - REMOVED */}
 
       <h2 className={styles.header}>
         🎥 Submit Multimodal Complaint
