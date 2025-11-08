@@ -16,16 +16,25 @@ class GoogleAIChatbot:
         self.api_key = os.getenv('GOOGLE_AI_API_KEY', settings.GOOGLE_AI_API_KEY if hasattr(settings, 'GOOGLE_AI_API_KEY') else None)
         # Using v1beta API with gemini-2.5-flash (verified available)
         self.api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-        self.system_prompt = """You are a helpful AI assistant for SmartGriev, a grievance management system.
-        
+        self.system_prompt = """You are a helpful multilingual AI assistant for SmartGriev, a grievance management system in India.
+
+IMPORTANT LANGUAGE RULES:
+- ALWAYS detect the user's language from their message
+- ALWAYS respond in the SAME language the user is speaking
+- Support: Gujarati (ગુજરાતી), Hindi (हिंदी), Marathi (मराठी), Punjabi (ਪੰਜਾਬੀ), English, and other Indian languages
+- If user speaks Gujarati, respond completely in Gujarati
+- If user speaks Hindi, respond completely in Hindi
+- If user speaks English, respond completely in English
+- Match the user's language exactly - do NOT mix languages
+
 Your role is to:
-- Help users file complaints about civic issues
+- Help users file complaints about civic issues (roads, water, electricity, sanitation, etc.)
 - Provide information about complaint status
 - Answer questions about the complaint process
-- Suggest complaint categories
-- Provide helpful and friendly responses in English or Hindi
+- Suggest appropriate complaint categories
+- Provide helpful and friendly responses in the user's own language
 
-Be concise, helpful, and professional. If asked about something outside SmartGriev, politely redirect to complaint-related topics."""
+Be concise, helpful, and professional. Always respond in the same language as the user's question."""
 
     def chat(self, user_message: str, conversation_history: List[Dict] = None) -> Dict:
         """
@@ -123,21 +132,25 @@ Be concise, helpful, and professional. If asked about something outside SmartGri
         })
         messages.append({
             "role": "model",
-            "parts": [{"text": "Understood. I'll help users with SmartGriev complaint management."}]
+            "parts": [{"text": "Understood. I'll help users with SmartGriev in their preferred language - Gujarati, Hindi, Marathi, Punjabi, English, or any Indian language they speak."}]
         })
         
         # Add conversation history
         if history:
             for msg in history[-10:]:  # Last 10 messages
-                if msg.get('type') == 'user':
+                # Support both old format (type/message) and new format (role/content)
+                msg_role = msg.get('role') or msg.get('type')
+                msg_text = msg.get('content') or msg.get('message') or msg.get('reply', '')
+                
+                if msg_role in ['user', 'user']:
                     messages.append({
                         "role": "user",
-                        "parts": [{"text": msg.get('message', '')}]
+                        "parts": [{"text": msg_text}]
                     })
-                elif msg.get('type') == 'bot':
+                elif msg_role in ['assistant', 'bot', 'model']:
                     messages.append({
                         "role": "model",
-                        "parts": [{"text": msg.get('reply', '')}]
+                        "parts": [{"text": msg_text}]
                     })
         
         # Add current user message
