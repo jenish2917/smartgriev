@@ -300,7 +300,8 @@ LOGGING = {
 }
 
 # AI/ML Configuration
-GOOGLE_AI_API_KEY = os.getenv('GOOGLE_AI_API_KEY')
+GOOGLE_AI_API_KEY = os.getenv('GOOGLE_AI_API_KEY', 'AIzaSyA6jaqmJJOF69GjtYGz8d7lZ2DLg9nImWk')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyA6jaqmJJOF69GjtYGz8d7lZ2DLg9nImWk')  # Same as Google AI
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 if not GOOGLE_AI_API_KEY:

@@ -29,7 +29,7 @@ class ComplaintClassificationService:
             'keywords': ['road', 'bridge', 'building', 'construction', 'infrastructure', 'facility', 'repair', 'maintenance'],
             'priority_keywords': ['collapse', 'dangerous', 'urgent repair', 'safety hazard'],
             'icon': '🏗️',
-            'color': '#FF6B35'
+            'color': "#7F65FF"
         },
         'HEALTHCARE': {
             'name': 'Healthcare Services',
@@ -37,7 +37,7 @@ class ComplaintClassificationService:
             'keywords': ['hospital', 'doctor', 'medical', 'health', 'clinic', 'medicine', 'treatment', 'emergency'],
             'priority_keywords': ['emergency', 'critical', 'life threatening', 'urgent medical'],
             'icon': '🏥',
-            'color': '#28A745'
+            'color': "#5E69BE"
         },
         'EDUCATION': {
             'name': 'Education Department',
@@ -53,7 +53,7 @@ class ComplaintClassificationService:
             'keywords': ['transport', 'bus', 'train', 'traffic', 'vehicle', 'parking', 'license', 'registration'],
             'priority_keywords': ['accident', 'emergency', 'breakdown', 'blocked road'],
             'icon': '🚌',
-            'color': '#6F42C1'
+            'color': "#1B2962"
         },
         'UTILITIES': {
             'name': 'Water, Electricity and Utilities',
@@ -61,7 +61,7 @@ class ComplaintClassificationService:
             'keywords': ['water', 'electricity', 'power', 'gas', 'waste', 'sewage', 'garbage', 'utility'],
             'priority_keywords': ['outage', 'leak', 'contamination', 'emergency repair'],
             'icon': '⚡',
-            'color': '#FFC107'
+            'color': "#070BFF"
         }
     }
     

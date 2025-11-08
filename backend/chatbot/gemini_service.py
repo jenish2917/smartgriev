@@ -15,9 +15,10 @@ class GeminiChatbotService:
     
     def __init__(self):
         """Initialize Gemini API"""
-        api_key = os.getenv('GEMINI_API_KEY')
+        # Try to get API key from settings first, then environment
+        api_key = getattr(settings, 'GEMINI_API_KEY', None) or os.getenv('GEMINI_API_KEY')
         if not api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables")
+            raise ValueError("GEMINI_API_KEY not found in settings or environment variables")
         
         genai.configure(api_key=api_key)
         
