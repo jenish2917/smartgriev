@@ -230,7 +230,10 @@ const MultimodalComplaintSubmit = () => {
       const response = await axios.post(
         API_URLS.SUBMIT_COMPLAINT(),
         submitData,
-        { headers }
+        { 
+          headers,
+          timeout: 30000  // 30 second timeout to prevent infinite loading
+        }
       );
 
       setSuccess(true);
@@ -279,7 +282,10 @@ const MultimodalComplaintSubmit = () => {
           const response = await axios.post(
             API_URLS.SUBMIT_COMPLAINT(),
             submitData,
-            { headers: {} }
+            { 
+              headers: {},
+              timeout: 30000  // 30 second timeout
+            }
           );
 
           setSuccess(true);

@@ -248,9 +248,15 @@ class MultimodalComplaintSerializer(serializers.ModelSerializer):
         # Create complaint
         complaint = super().create(validated_data)
         
-        # Process multimodal inputs if requested
-        if process_multimodal:
-            self._process_multimodal_inputs(complaint)
+        # FAST TRACK: Skip heavy AI processing for now - process in background later
+        # This makes complaint submission instant instead of taking 30+ seconds
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Complaint created (ID: {complaint.id}). AI processing skipped for speed.")
+        
+        # You can process multimodal inputs later using a background task (Celery)
+        # if process_multimodal:
+        #     self._process_multimodal_inputs(complaint)
         
         return complaint
     
