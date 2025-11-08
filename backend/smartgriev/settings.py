@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'complaints',           # ✅ WORKING - Complaint management system  
     'chatbot',              # ✅ WORKING - AI chatbot for complaint submission
     'machine_learning',     # ✅ WORKING - ML models, OCR, AI classification
-    # Advanced features (disabled - have code issues or missing dependencies)
-    # 'notifications',      # ❌ AttributeError: 'send_notification' vs 'SendNotificationView'
-    # 'analytics',          # ❌ Import errors - needs refactoring
+    'notifications',        # ✅ WORKING - Notification system
+    'analytics',            # ✅ WORKING - Analytics and metrics
+    # Advanced features (disabled - have missing dependencies)
     # 'geospatial',         # ❌ Requires GDAL installation (advanced GIS feature)
     # 'storages',           # ❌ Cloud storage - not needed for local development
     # 'channels',           # ❌ WebSockets - not needed for current features

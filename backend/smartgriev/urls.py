@@ -33,10 +33,8 @@ def api_root(request):
             'Complaints': '/api/complaints/',
             'Chatbot': '/api/chatbot/',
             'ML Models': '/api/ml/',
-            'Analytics': '/api/analytics/',
-            'ML Experiments': '/api/ml-experiments/',
-            'Geospatial': '/api/geospatial/',
             'Notifications': '/api/notifications/',
+            'Analytics': '/api/analytics/',
             'Admin': '/admin/',
         },
         'auth': {
@@ -55,8 +53,8 @@ urlpatterns = [
     path('api/complaints/', include('complaints.urls')),      # ✅ Complaint CRUD
     path('api/chatbot/', include('chatbot.urls')),           # ✅ AI Chatbot
     path('api/ml/', include('machine_learning.urls')),       # ✅ OCR, Classification
-    # Advanced features (disabled - have code/dependency issues)
-    # path('api/notifications/', include('notifications.urls')), # ❌ AttributeError
-    # path('api/analytics/', include('analytics.urls')),     # ❌ Import errors
+    path('api/notifications/', include('notifications.urls')), # ✅ Notifications
+    path('api/analytics/', include('analytics.urls')),       # ✅ Analytics & Metrics
+    # Advanced features (disabled - have dependency issues)
     # path('api/geospatial/', include('geospatial.urls')),   # ❌ Requires GDAL
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
