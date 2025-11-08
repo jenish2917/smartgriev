@@ -83,6 +83,8 @@ const MultimodalComplaintSubmit = () => {
   const [chatLoading, setChatLoading] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [isLiveCall, setIsLiveCall] = useState<boolean>(false);
+  const [callLanguage, setCallLanguage] = useState<string>('en-IN');
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -286,6 +288,161 @@ const MultimodalComplaintSubmit = () => {
     setIsSpeaking(false);
   };
 
+  // Start Live Voice Call - AI speaks first and has continuous conversation
+  const startLiveCall = async () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice recognition not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-speech not supported in your browser.');
+      return;
+    }
+
+    setIsLiveCall(true);
+
+    // AI greets user first (like answering a phone call)
+    const greetings = {
+      'en-IN': 'Hello! I am your AI assistant from SmartGriev. How can I help you today?',
+      'hi-IN': 'नमस्ते! मैं SmartGriev से आपका AI सहायक हूं। आज मैं आपकी कैसे मदद कर सकता हूं?',
+      'gu-IN': 'નમસ્તે! હું SmartGriev તરફથી તમારો AI સહાયક છું. આજે હું તમને કેવી રીતે મદદ કરી શકું?',
+      'mr-IN': 'नमस्कार! मी SmartGriev कडून तुमचा AI सहाय्यक आहे. आज मी तुम्हाला कशी मदत करू शकतो?',
+      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ SmartGriev ਤੋਂ ਤੁਹਾਡਾ AI ਸਹਾਇਕ ਹਾਂ। ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?'
+    };
+
+    const greeting = greetings[callLanguage as keyof typeof greetings] || greetings['en-IN'];
+
+    // Add AI greeting to chat
+    const greetingMessage: ChatMessage = {
+      type: 'bot',
+      message: greeting,
+      timestamp: new Date()
+    };
+    setChatMessages(prev => [...prev, greetingMessage]);
+
+    // AI speaks the greeting
+    const utterance = new SpeechSynthesisUtterance(greeting);
+    utterance.lang = callLanguage;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    setIsSpeaking(true);
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      // After AI finishes speaking, start listening to user
+      setTimeout(() => {
+        if (isLiveCall) {
+          continueLiveConversation();
+        }
+      }, 500);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Continue live conversation - listen and respond automatically
+  const continueLiveConversation = () => {
+    if (!isLiveCall) return;
+
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = callLanguage;
+
+    setIsListening(true);
+
+    recognition.onresult = async (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setIsListening(false);
+
+      // Add user's speech to chat
+      const userMessage: ChatMessage = {
+        type: 'user',
+        message: transcript,
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, userMessage]);
+
+      // Get AI response
+      setChatLoading(true);
+      try {
+        const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
+          message: transcript,
+          conversation_history: chatMessages.slice(-10).map(msg => ({
+            role: msg.type === 'user' ? 'user' : 'assistant',
+            content: msg.message
+          }))
+        });
+
+        if (response.data && response.data.response) {
+          const botMessage: ChatMessage = {
+            type: 'bot',
+            message: response.data.response,
+            timestamp: new Date()
+          };
+          setChatMessages(prev => [...prev, botMessage]);
+
+          // AI speaks the response
+          const utterance = new SpeechSynthesisUtterance(response.data.response);
+          utterance.lang = callLanguage;
+          utterance.rate = 0.9;
+          utterance.pitch = 1.0;
+
+          setIsSpeaking(true);
+          setChatLoading(false);
+
+          utterance.onend = () => {
+            setIsSpeaking(false);
+            // Continue listening for next input
+            setTimeout(() => {
+              if (isLiveCall) {
+                continueLiveConversation();
+              }
+            }, 1000);
+          };
+
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (err) {
+        console.error('Live call error:', err);
+        setChatLoading(false);
+        endLiveCall();
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      if (isLiveCall && event.error !== 'no-speech') {
+        // Retry after error (except no-speech)
+        setTimeout(() => {
+          if (isLiveCall) {
+            continueLiveConversation();
+          }
+        }, 1000);
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  // End live call
+  const endLiveCall = () => {
+    setIsLiveCall(false);
+    setIsListening(false);
+    setIsSpeaking(false);
+    window.speechSynthesis.cancel();
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -452,13 +609,89 @@ const MultimodalComplaintSubmit = () => {
         <div className={styles.chatbotPanel}>
           <div className={styles.chatHeader}>
             <h3>🤖 AI Assistant</h3>
-            <button 
-              onClick={() => setShowChatbot(false)}
-              className={styles.closeButton}
-            >
-              ✕
-            </button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {!isLiveCall ? (
+                <>
+                  <select 
+                    value={callLanguage}
+                    onChange={(e) => setCallLanguage(e.target.value)}
+                    style={{
+                      padding: '5px 10px',
+                      borderRadius: '5px',
+                      border: '1px solid #ddd',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                    title="Select language for live call"
+                  >
+                    <option value="en-IN">🇬🇧 English</option>
+                    <option value="hi-IN">🇮🇳 हिंदी</option>
+                    <option value="gu-IN">🇮🇳 ગુજરાતી</option>
+                    <option value="mr-IN">🇮🇳 मराठी</option>
+                    <option value="pa-IN">🇮🇳 ਪੰਜਾਬੀ</option>
+                  </select>
+                  <button
+                    onClick={startLiveCall}
+                    disabled={isSpeaking || isListening}
+                    style={{
+                      background: '#00C853',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '20px',
+                      padding: '8px 15px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px'
+                    }}
+                    title="Start live voice call with AI"
+                  >
+                    📞 Live Call
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={endLiveCall}
+                  style={{
+                    background: '#ff4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '20px',
+                    padding: '8px 15px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    animation: 'pulse 1.5s infinite'
+                  }}
+                  title="End live call"
+                >
+                  📞 End Call
+                </button>
+              )}
+              <button 
+                onClick={() => setShowChatbot(false)}
+                className={styles.closeButton}
+              >
+                ✕
+              </button>
+            </div>
           </div>
+          
+          {isLiveCall && (
+            <div style={{
+              background: 'linear-gradient(90deg, #00C853, #00E676)',
+              color: 'white',
+              padding: '10px',
+              textAlign: 'center',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              borderBottom: '2px solid #00C853'
+            }}>
+              📞 Live Call Active - {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 AI Speaking...' : '⏸️ Ready'}
+            </div>
+          )}
           
           <div className={styles.chatMessages}>
             {chatMessages.map((msg, index) => (
