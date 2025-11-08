@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './MultimodalComplaintSubmit.module.css';
 import { API_URLS } from '../config/api.config';
@@ -85,6 +85,10 @@ const MultimodalComplaintSubmit = () => {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isLiveCall, setIsLiveCall] = useState<boolean>(false);
   const [callLanguage, setCallLanguage] = useState<string>('en-IN');
+  const [callDuration, setCallDuration] = useState<number>(0);
+  const liveCallRef = useRef<boolean>(false);
+  const callTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -301,6 +305,15 @@ const MultimodalComplaintSubmit = () => {
     }
 
     setIsLiveCall(true);
+    liveCallRef.current = true;
+    setCallDuration(0);
+    
+    // Start call timer
+    callTimerRef.current = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+    
+    console.log('📞 Starting live call in language:', callLanguage);
 
     // AI greets user first (like answering a phone call)
     const greetings = {
@@ -334,7 +347,7 @@ const MultimodalComplaintSubmit = () => {
       setIsSpeaking(false);
       // After AI finishes speaking, start listening to user
       setTimeout(() => {
-        if (isLiveCall) {
+        if (liveCallRef.current) {
           continueLiveConversation();
         }
       }, 500);
@@ -345,19 +358,30 @@ const MultimodalComplaintSubmit = () => {
 
   // Continue live conversation - listen and respond automatically
   const continueLiveConversation = () => {
-    if (!isLiveCall) return;
+    if (!liveCallRef.current) return;
 
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
     const recognition = new SpeechRecognition();
     
+    recognitionRef.current = recognition;
+    
     recognition.continuous = false;
     recognition.interimResults = false;
+    recognition.maxAlternatives = 3; // Get multiple alternatives for better accuracy
+    
+    // Set language based on selection
     recognition.lang = callLanguage;
+    
+    console.log('🎤 Starting recognition with language:', callLanguage);
 
     setIsListening(true);
 
     recognition.onresult = async (event: any) => {
       const transcript = event.results[0][0].transcript;
+      const confidence = event.results[0][0].confidence;
+      
+      console.log('📝 Recognized:', transcript, '| Confidence:', confidence, '| Language:', callLanguage);
+      
       setIsListening(false);
 
       // Add user's speech to chat
@@ -368,11 +392,23 @@ const MultimodalComplaintSubmit = () => {
       };
       setChatMessages(prev => [...prev, userMessage]);
 
-      // Get AI response
+      // Get AI response with language context
       setChatLoading(true);
       try {
+        // Add language instruction to help AI respond in correct language
+        const languageNames = {
+          'en-IN': 'English',
+          'hi-IN': 'Hindi',
+          'gu-IN': 'Gujarati',
+          'mr-IN': 'Marathi',
+          'pa-IN': 'Punjabi'
+        };
+        
+        const langName = languageNames[callLanguage as keyof typeof languageNames] || 'English';
+        const messageWithLangHint = `[User is speaking in ${langName}. Please respond in ${langName} only.]\n\nUser: ${transcript}`;
+        
         const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
-          message: transcript,
+          message: messageWithLangHint,
           conversation_history: chatMessages.slice(-10).map(msg => ({
             role: msg.type === 'user' ? 'user' : 'assistant',
             content: msg.message
@@ -387,11 +423,14 @@ const MultimodalComplaintSubmit = () => {
           };
           setChatMessages(prev => [...prev, botMessage]);
 
-          // AI speaks the response
+          // AI speaks the response in the correct language
           const utterance = new SpeechSynthesisUtterance(response.data.response);
           utterance.lang = callLanguage;
-          utterance.rate = 0.9;
+          utterance.rate = 0.85; // Slower for clarity
           utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+          
+          console.log('🔊 Speaking response in:', callLanguage);
 
           setIsSpeaking(true);
           setChatLoading(false);
@@ -400,7 +439,7 @@ const MultimodalComplaintSubmit = () => {
             setIsSpeaking(false);
             // Continue listening for next input
             setTimeout(() => {
-              if (isLiveCall) {
+              if (liveCallRef.current) {
                 continueLiveConversation();
               }
             }, 1000);
@@ -418,10 +457,10 @@ const MultimodalComplaintSubmit = () => {
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
-      if (isLiveCall && event.error !== 'no-speech') {
+      if (liveCallRef.current && event.error !== 'no-speech') {
         // Retry after error (except no-speech)
         setTimeout(() => {
-          if (isLiveCall) {
+          if (liveCallRef.current) {
             continueLiveConversation();
           }
         }, 1000);
@@ -438,9 +477,28 @@ const MultimodalComplaintSubmit = () => {
   // End live call
   const endLiveCall = () => {
     setIsLiveCall(false);
+    liveCallRef.current = false;
     setIsListening(false);
     setIsSpeaking(false);
+    
+    // Stop call timer
+    if (callTimerRef.current) {
+      clearInterval(callTimerRef.current);
+      callTimerRef.current = null;
+    }
+    
+    // Stop any ongoing speech recognition
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      } catch (error) {
+        console.log('Recognition already stopped');
+      }
+    }
+    
     window.speechSynthesis.cancel();
+    console.log('📞 Live call ended');
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -602,6 +660,51 @@ const MultimodalComplaintSubmit = () => {
           🤖 AI Assistant
           {showChatbot && <span className={styles.activeDot}></span>}
         </button>
+
+        {!isLiveCall ? (
+          <button 
+            className={styles.supportButton}
+            onClick={startLiveCall}
+            title="Start Live Voice Call with AI"
+            style={{
+              background: 'linear-gradient(135deg, #00C853, #00E676)',
+              color: 'white',
+              fontWeight: 'bold'
+            }}
+          >
+            📞 Live Call
+          </button>
+        ) : (
+          <button 
+            className={styles.supportButton}
+            onClick={endLiveCall}
+            title="End Live Voice Call"
+            style={{
+              background: 'linear-gradient(135deg, #ff4444, #ff6b6b)',
+              color: 'white',
+              fontWeight: 'bold',
+              animation: 'pulse 1.5s infinite'
+            }}
+          >
+            📞 End Call
+          </button>
+        )}
+
+        {isLiveCall && (
+          <div style={{
+            background: isListening ? '#4CAF50' : isSpeaking ? '#2196F3' : '#FF9800',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '25px',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 AI Speaking...' : '⏸️ Ready'} ({callDuration}s)
+          </div>
+        )}
       </div>
 
       {/* AI Chatbot Panel */}
@@ -689,7 +792,7 @@ const MultimodalComplaintSubmit = () => {
               fontWeight: 'bold',
               borderBottom: '2px solid #00C853'
             }}>
-              📞 Live Call Active - {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 AI Speaking...' : '⏸️ Ready'}
+              📞 Live Call Active - {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 AI Speaking...' : '⏸️ Ready'} ({callDuration}s)
             </div>
           )}
           
