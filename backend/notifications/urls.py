@@ -19,4 +19,8 @@ urlpatterns = [
     
     # Send notification (admin/system)
     path('send/', views.send_notification, name='send-notification'),
+    
+    # SMS endpoints
+    path('sms/send/', views.send_sms_notification, name='send-sms'),
+    path('sms/status/', views.sms_service_status, name='sms-status'),
 ]

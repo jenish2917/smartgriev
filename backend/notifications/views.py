@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Notification, NotificationPreference
 from .serializers import NotificationSerializer, NotificationPreferenceSerializer
+from .sms_service import sms_service
 
 
 class NotificationPagination(PageNumberPagination):
@@ -163,7 +164,14 @@ def send_notification(request):
                 fail_silently=True
             )
             notification.sent_via_email = True
-            notification.save()
+        
+        # Send via SMS if enabled
+        if preferences.sms_enabled and user.mobile:
+            sms_result = sms_service.send_sms(user.mobile, f"{title}: {message[:100]}")
+            if sms_result.get('success'):
+                notification.sent_via_sms = True
+        
+        notification.save()
     except NotificationPreference.DoesNotExist:
         pass
     
@@ -171,3 +179,36 @@ def send_notification(request):
         'message': 'Notification sent',
         'notification': NotificationSerializer(notification).data
     }, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_sms_notification(request):
+    """Send SMS notification to user"""
+    
+    phone = request.data.get('phone')
+    message = request.data.get('message')
+    
+    if not all([phone, message]):
+        return Response({
+            'error': 'phone and message are required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    result = sms_service.send_sms(phone, message)
+    
+    if result['success']:
+        return Response(result, status=status.HTTP_200_OK)
+    else:
+        return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sms_service_status(request):
+    """Check SMS service status"""
+    
+    return Response({
+        'enabled': sms_service.enabled,
+        'provider': 'Twilio',
+        'configured': bool(sms_service.account_sid and sms_service.auth_token)
+    })
