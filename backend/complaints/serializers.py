@@ -35,7 +35,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Complaint
-        fields = ('id', 'user', 'title', 'description', 'media', 'category',
+        fields = ('id', 'user', 'complaint_number', 'title', 'description', 'media', 'category',
                  'sentiment', 'department', 'department_id', 'status', 'priority',
                  # Multimodal input fields (video removed)
                  'audio_file', 'image_file',
@@ -47,12 +47,13 @@ class ComplaintSerializer(serializers.ModelSerializer):
                  'location_lat', 'location_lon', 'incident_coordinates',
                  # AI processing results
                  'ai_confidence_score', 'ai_processed_text', 'department_classification',
+                 'gemini_raw_response',
                  # Timestamps
                  'created_at', 'updated_at')
-        read_only_fields = ('user', 'sentiment', 'created_at', 'updated_at', 
+        read_only_fields = ('user', 'complaint_number', 'sentiment', 'created_at', 'updated_at', 
                            'video_analysis', 'audio_transcription', 'image_ocr_text', 
                            'detected_objects', 'ai_confidence_score', 'ai_processed_text',
-                           'department_classification')
+                           'department_classification', 'gemini_raw_response')
 
     def get_incident_coordinates(self, obj):
         """Return formatted incident coordinates"""

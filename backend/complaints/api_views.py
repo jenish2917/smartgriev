@@ -207,6 +207,7 @@ class MultiModalComplaintProcessingView(APIView):
                 urgency_level=classification.get('urgency_level', 'medium') if classification else 'medium',
                 ai_confidence_score=classification.get('confidence', 0.0) if classification else 0.0,
                 department_classification=json.dumps(classification) if classification else '{}',
+                gemini_raw_response=classification if classification else {},  # Store raw Gemini response
             )
             
             # Store files if provided
