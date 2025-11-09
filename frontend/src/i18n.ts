@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 
-// Supported languages for India
+// Supported languages for India - All 12 major languages
 export const SUPPORTED_LANGUAGES = {
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
@@ -13,6 +13,11 @@ export const SUPPORTED_LANGUAGES = {
   ta: { name: 'Tamil', nativeName: 'தமிழ்', flag: '🇮🇳' },
   gu: { name: 'Gujarati', nativeName: 'ગુજરાતી', flag: '🇮🇳' },
   kn: { name: 'Kannada', nativeName: 'ಕನ್ನಡ', flag: '🇮🇳' },
+  ml: { name: 'Malayalam', nativeName: 'മലയാളം', flag: '🇮🇳' },
+  pa: { name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+  ur: { name: 'Urdu', nativeName: 'اردو', flag: '🇮🇳', rtl: true },
+  as: { name: 'Assamese', nativeName: 'অসমীয়া', flag: '🇮🇳' },
+  or: { name: 'Odia', nativeName: 'ଓଡ଼ିଆ', flag: '🇮🇳' },
 };
 
 // Language codes array
@@ -53,11 +58,17 @@ i18n
     
     // Backend options
     backend: {
-      // Path to load translation files
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Load translations from Django API
+      loadPath: 'http://localhost:8000/api/auth/translations/?lang={{lng}}',
+      
+      // Parse response to get translations
+      parse: (data: string) => {
+        const parsed = JSON.parse(data);
+        return parsed.translations || {};
+      },
       
       // Allow cross-origin requests
-      crossDomain: false,
+      crossDomain: true,
     },
     
     // Namespaces

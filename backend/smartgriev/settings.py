@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Language detection and switching
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -142,11 +143,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-LANGUAGE_CODE = 'en-us'
+# Internationalization - 12 Indian Languages Support
+LANGUAGE_CODE = 'en'  # Default language
 TIME_ZONE = 'Asia/Kolkata'
-USE_I18N = True
+USE_I18N = True  # Enable internationalization
+USE_L10N = True  # Enable localized formatting
 USE_TZ = True
+
+# Supported languages (12 Indian languages)
+LANGUAGES = [
+    ('en', 'English'),
+    ('hi', 'हिन्दी (Hindi)'),
+    ('bn', 'বাংলা (Bengali)'),
+    ('te', 'తెలుగు (Telugu)'),
+    ('mr', 'मराठी (Marathi)'),
+    ('ta', 'தமிழ் (Tamil)'),
+    ('gu', 'ગુજરાતી (Gujarati)'),
+    ('kn', 'ಕನ್ನಡ (Kannada)'),
+    ('ml', 'മലയാളം (Malayalam)'),
+    ('pa', 'ਪੰਜਾਬੀ (Punjabi)'),
+    ('ur', 'اردو (Urdu)'),
+    ('as', 'অসমীয়া (Assamese)'),
+    ('or', 'ଓଡ଼ିଆ (Odia)'),
+]
+
+# Translation files location
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
