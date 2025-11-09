@@ -2,10 +2,11 @@ from rest_framework import generics, permissions, filters, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status as http_status
-from django.db.models import Q
+from django.db.models import Q, Count
 from math import cos, radians
+import logging
+import traceback
+
 from complaints.models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
 from complaints.serializers import (
     ComplaintSerializer,
@@ -19,6 +20,8 @@ from complaints.serializers import (
 from complaints.services import ComplaintService
 from complaints.services.classification_service import complaint_classifier
 from complaints.utils import perform_gps_validation
+
+logger = logging.getLogger(__name__)
 
 class IsOfficerOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -80,7 +83,6 @@ class ComplaintListCreateView(generics.ListCreateAPIView):
         
         # Try to assign to the classified department
         try:
-            from complaints.models import Department
             classified_dept = Department.objects.filter(
                 name__icontains=classification_result['department_name']
             ).first()
@@ -95,8 +97,6 @@ class ComplaintListCreateView(generics.ListCreateAPIView):
                 }
         except Exception as e:
             # Log but don't fail if classification assignment fails
-            import logging
-            logger = logging.getLogger(__name__)
             logger.warning(f"Auto-classification failed: {str(e)}")
         
         complaint = self.complaint_service.create_complaint_with_location(
@@ -209,9 +209,6 @@ class DepartmentStatsView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOfficerOrReadOnly]
     
     def get(self, request, *args, **kwargs):
-        from django.db.models import Count
-        from rest_framework.response import Response
-        
         department_id = kwargs.get('pk')
         stats = Complaint.objects.filter(department_id=department_id).aggregate(
             total_complaints=Count('id'),
@@ -307,7 +304,7 @@ def validate_gps_location(request, complaint_id):
         return Response(serializer.data)
         
     except Complaint.DoesNotExist:
-        return Response({'error': 'Complaint not found'}, status=http_status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Complaint not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 @permission_classes([])  # Make it publicly accessible for testing
@@ -320,12 +317,10 @@ def classify_complaint_text(request):
         if not complaint_text:
             return Response(
                 {'error': 'Complaint text is required'}, 
-                status=http_status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST
             )
         
         # Add logging for debugging
-        import logging
-        logger = logging.getLogger(__name__)
         logger.info(f"Classification request - Title: {complaint_title}, Text: {complaint_text[:100]}...")
         
         # Get classification from AI service
@@ -337,7 +332,6 @@ def classify_complaint_text(request):
         logger.info(f"Classification result: {classification_result}")
         
         # Get available departments
-        from complaints.models import Department
         departments = Department.objects.all()
         
         # Find matching department
@@ -360,17 +354,14 @@ def classify_complaint_text(request):
             ]
         }
         
-        return Response(response_data, status=http_status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
         
     except Exception as e:
-        import logging
-        import traceback
-        logger = logging.getLogger(__name__)
         logger.error(f"Classification failed: {str(e)}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         return Response(
             {'error': f'Classification failed: {str(e)}'}, 
-            status=http_status.HTTP_500_INTERNAL_SERVER_ERROR
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 @api_view(['GET'])
