@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third party apps
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',  # JWT token blacklist for rotation
     'corsheaders',
     # Local apps - Core Functional Features
     'authentication',        # ✅ WORKING - User authentication & language preferences
@@ -134,10 +135,38 @@ REST_FRAMEWORK = {
     ],
 }
 
-# JWT Settings
+# JWT Settings - Enhanced for Production
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # Token Lifetimes (from PDF spec)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Short-lived access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Long-lived refresh token
+    
+    # Token Rotation & Blacklisting
+    'ROTATE_REFRESH_TOKENS': True,                   # Issue new refresh token on refresh
+    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh tokens
+    'UPDATE_LAST_LOGIN': True,                       # Update last_login on token refresh
+    
+    # Security Headers
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    
+    # Cookie Settings for HttpOnly
+    'AUTH_COOKIE': 'access_token',                   # Access token cookie name
+    'AUTH_COOKIE_REFRESH': 'refresh_token',          # Refresh token cookie name
+    'AUTH_COOKIE_SECURE': True,                      # HTTPS only in production
+    'AUTH_COOKIE_HTTP_ONLY': True,                   # Prevent XSS attacks
+    'AUTH_COOKIE_PATH': '/',
+    'AUTH_COOKIE_SAMESITE': 'Lax',                   # CSRF protection
+    
+    # Algorithm & Signing
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    
+    # Token Claims
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
 # CORS settings - Allow global access
