@@ -315,13 +315,13 @@ const MultimodalComplaintSubmit = () => {
     
     console.log('📞 Starting live call in language:', callLanguage);
 
-    // AI greets user first in selected language - natural, friendly greeting
+    // AI greets user ONCE at start - short and direct
     const greetings = {
-      'en-IN': 'Hello! How are you? I am here to help you with your complaint. Please tell me, what problem are you facing?',
-      'hi-IN': 'नमस्ते! कैसे हैं आप? मैं आपकी शिकायत में मदद करने आया हूं। बताइए, क्या समस्या है?',
-      'gu-IN': 'નમસ્તે! કેમ છો? હું તમારી ફરિયાદમાં મદદ કરવા અહીં છું। કહો, શું તકલીફ છે?',
-      'mr-IN': 'नमस्कार! कसे आहात? मी तुमच्या तक्रारीत मदत करायला आलो आहे. सांगा, काय अडचण आहे?',
-      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਕਿਵੇਂ ਹੋ? ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਹਾਂ। ਦੱਸੋ, ਕੀ ਸਮੱਸਿਆ ਹੈ?'
+      'en-IN': 'Hello! Tell me, what problem do you have?',
+      'hi-IN': 'नमस्ते! बताइए, क्या समस्या है?',
+      'gu-IN': 'નમસ્તે! કહો, શું સમસ્યા છે?',
+      'mr-IN': 'नमस्कार! सांगा, काय समस्या आहे?',
+      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਦੱਸੋ, ਕੀ ਸਮੱਸਿਆ ਹੈ?'
     };
 
     const greeting = greetings[callLanguage as keyof typeof greetings] || greetings['en-IN'];
@@ -337,7 +337,7 @@ const MultimodalComplaintSubmit = () => {
     // AI speaks the greeting
     const utterance = new SpeechSynthesisUtterance(greeting);
     utterance.lang = callLanguage;
-    utterance.rate = 0.9;
+    utterance.rate = 0.95; // Natural speed
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
@@ -367,7 +367,7 @@ const MultimodalComplaintSubmit = () => {
     
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 3; // Get multiple alternatives for better accuracy
+    recognition.maxAlternatives = 5; // More alternatives for better accuracy
     
     // Set language based on selection
     recognition.lang = callLanguage;
@@ -392,35 +392,11 @@ const MultimodalComplaintSubmit = () => {
       };
       setChatMessages(prev => [...prev, userMessage]);
 
-      // Get AI response with language context
+      // Get AI response - send ONLY the user's message with conversation history
       setChatLoading(true);
       try {
-        // Language mapping for better AI understanding
-        const languageNames = {
-          'en-IN': 'English',
-          'hi-IN': 'Hindi (हिंदी)',
-          'gu-IN': 'Gujarati (ગુજરાતી)',
-          'mr-IN': 'Marathi (मराठी)',
-          'pa-IN': 'Punjabi (ਪੰਜਾਬੀ)'
-        };
-        
-        const langName = languageNames[callLanguage as keyof typeof languageNames] || 'English';
-        
-        // CRITICAL: Force AI to respond in exact language - no mixing allowed
-        const languageInstruction = `🔴 CRITICAL INSTRUCTION - READ CAREFULLY:
-The user has selected ${langName} as their language. This means:
-1. You MUST respond COMPLETELY and ONLY in ${langName}
-2. DO NOT use English words or mix languages
-3. DO NOT translate - just respond naturally in ${langName}
-4. Talk like a real human friend speaking pure ${langName}
-5. Keep it conversational and natural
-
-User's message in ${langName}: ${transcript}
-
-Remember: Respond ONLY in ${langName} - no exceptions!`;
-        
         const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
-          message: languageInstruction,
+          message: transcript,  // Just send what user said - NO extra instructions
           conversation_history: chatMessages.slice(-10).map(msg => ({
             role: msg.type === 'user' ? 'user' : 'assistant',
             content: msg.message
@@ -438,7 +414,7 @@ Remember: Respond ONLY in ${langName} - no exceptions!`;
           // AI speaks the response in the correct language
           const utterance = new SpeechSynthesisUtterance(response.data.response);
           utterance.lang = callLanguage;
-          utterance.rate = 0.85; // Slower for clarity
+          utterance.rate = 0.9; // Natural speed
           utterance.pitch = 1.0;
           utterance.volume = 1.0;
           
@@ -454,7 +430,7 @@ Remember: Respond ONLY in ${langName} - no exceptions!`;
               if (liveCallRef.current) {
                 continueLiveConversation();
               }
-            }, 1000);
+            }, 800); // Faster response
           };
 
           window.speechSynthesis.speak(utterance);
