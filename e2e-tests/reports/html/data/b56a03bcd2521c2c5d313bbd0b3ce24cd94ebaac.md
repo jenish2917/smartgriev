@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "SG SmartGriev Citizen Complaint System" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: SG
+        - generic [ref=e8]:
+          - generic [ref=e9]: SmartGriev
+          - generic [ref=e10]: Citizen Complaint System
+      - link "Home" [ref=e12] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e16]:
+            - img "global" [ref=e17]:
+              - img [ref=e18]
+            - text: selectLanguage
+          - generic [ref=e21] [cursor=pointer]:
+            - generic [ref=e23]:
+              - combobox [ref=e25]
+              - generic "en-US" [ref=e26]
+            - generic:
+              - img:
+                - img
+        - button "Login" [ref=e27] [cursor=pointer]
+        - button "Sign Up" [ref=e28] [cursor=pointer]
+  - generic [ref=e30]:
+    - generic [ref=e31]:
+      - generic [ref=e32]: SG
+      - heading "Welcome Back!" [level=1] [ref=e33]
+      - paragraph [ref=e34]: Sign in to continue to SmartGriev
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: Email / Username
+        - textbox "Email / Username" [ref=e38]:
+          - /placeholder: Enter your email or username
+          - text: test@smartgriev.com
+      - generic [ref=e39]:
+        - generic [ref=e40]: Password
+        - textbox "Password" [active] [ref=e41]:
+          - /placeholder: Enter your password
+          - text: TestPass123!
+      - button "🔐 Sign In" [ref=e42] [cursor=pointer]
+      - link "Forgot your password?" [ref=e43] [cursor=pointer]:
+        - /url: /forgot-password
+    - generic [ref=e44]: OR
+    - generic [ref=e45]:
+      - text: Don't have an account?
+      - link "Sign up now" [ref=e46] [cursor=pointer]:
+        - /url: /register
+```

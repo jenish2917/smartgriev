@@ -1,0 +1,2321 @@
+<testsuites id="" name="" tests="60" failures="57" skipped="0" errors="0" time="1144.765162">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="chromium" tests="10" failures="9" skipped="0" time="335.956" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="14.885">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Sign Up|Register/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+      34 |     // Navigate to signup page
+      35 |     await page.goto('/signup');
+    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
+         |                        ^
+      37 |
+      38 |     // Fill signup form
+      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.466">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Login|Sign In/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+       95 |     // First create a user (assume user exists or create via API)
+       96 |     await page.goto('/login');
+    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
+          |                        ^
+       98 |
+       99 |     // Fill login form with existing user (use env variables)
+      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="13.94">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+      127 |     await page.fill('input[name="password"], input[type="password"]', 'WrongPassword123!');
+      128 |     
+    > 129 |     await page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                ^
+      130 |
+      131 |     // Wait for error message
+      132 |     await helpers.waitForNotification();
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:129:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="63.976">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"], input[type="email"]')
+
+
+      144 |
+      145 |     // Fill form with invalid email
+    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+          |                ^
+      147 |     await page.fill('input[name="name"]', 'Test User');
+      148 |     await page.fill('input[name="mobile"]', testMobile);
+      149 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="63.467">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      166 |
+      167 |     // Fill form with weak password
+    > 168 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      169 |     await page.fill('input[name="name"]', 'Test User');
+      170 |     await page.fill('input[name="mobile"]', testMobile);
+      171 |     await page.fill('input[name="password"]', '123'); // Weak password
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="13.855">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+       at ..\utils\helpers.ts:167
+
+      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
+      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
+    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                     ^
+      168 |     
+      169 |     // Wait for redirect to dashboard
+      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="13.43">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+       at ..\utils\helpers.ts:167
+
+      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
+      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
+    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                     ^
+      168 |     
+      169 |     // Wait for redirect to dashboard
+      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="63.3">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      233 |
+      234 |     // Fill form with invalid mobile
+    > 235 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      236 |     await page.fill('input[name="name"]', 'Test User');
+      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      238 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="63.356">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      258 |
+      259 |     // Fill form with existing email
+    > 260 |     await page.fill('input[name="email"]', existingEmail);
+          |                ^
+      261 |     await page.fill('input[name="name"]', 'Test User');
+      262 |     await page.fill('input[name="mobile"]', testMobile);
+      263 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="14.281">
+<system-out>
+<![CDATA[✓ Database connected successfully
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="firefox" tests="10" failures="10" skipped="0" time="0.484" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.07">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.047">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.05">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.05">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.045">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.044">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.045">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.042">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.045">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.046">
+<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+
+    Error: browser.newContext: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="webkit" tests="10" failures="10" skipped="0" time="1.811" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.18">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.192">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.172">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.166">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.166">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.18">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.174">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.175">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.226">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.18">
+<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Mobile Chrome" tests="10" failures="9" skipped="0" time="353.979" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="11.331">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Sign Up|Register/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+      34 |     // Navigate to signup page
+      35 |     await page.goto('/signup');
+    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
+         |                        ^
+      37 |
+      38 |     // Fill signup form
+      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.361">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Login|Sign In/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+       95 |     // First create a user (assume user exists or create via API)
+       96 |     await page.goto('/login');
+    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
+          |                        ^
+       98 |
+       99 |     // Fill login form with existing user (use env variables)
+      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="18.719">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.ant-notification, .toast, [role="alert"]').first() to be visible
+
+
+       at ..\utils\helpers.ts:69
+
+      67 |   async waitForNotification(message?: string) {
+      68 |     const notification = this.page.locator('.ant-notification, .toast, [role="alert"]').first();
+    > 69 |     await notification.waitFor({ state: 'visible', timeout: 5000 });
+         |                        ^
+      70 |     
+      71 |     if (message) {
+      72 |       await expect(notification).toContainText(message);
+        at TestHelpers.waitForNotification (D:\SmartGriev\e2e-tests\utils\helpers.ts:69:24)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:132:19
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="62.792">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"], input[type="email"]')
+
+
+      144 |
+      145 |     // Fill form with invalid email
+    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+          |                ^
+      147 |     await page.fill('input[name="name"]', 'Test User');
+      148 |     await page.fill('input[name="mobile"]', testMobile);
+      149 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="62.799">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      166 |
+      167 |     // Fill form with weak password
+    > 168 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      169 |     await page.fill('input[name="name"]', 'Test User');
+      170 |     await page.fill('input[name="mobile"]', testMobile);
+      171 |     await page.fill('input[name="password"]', '123'); // Weak password
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="24.057">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+       at ..\utils\helpers.ts:170
+
+      168 |     
+      169 |     // Wait for redirect to dashboard
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="23.803">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+       at ..\utils\helpers.ts:170
+
+      168 |     
+      169 |     // Wait for redirect to dashboard
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="62.859">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      233 |
+      234 |     // Fill form with invalid mobile
+    > 235 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      236 |     await page.fill('input[name="name"]', 'Test User');
+      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      238 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="62.847">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      258 |
+      259 |     // Fill form with existing email
+    > 260 |     await page.fill('input[name="email"]', existingEmail);
+          |                ^
+      261 |     await page.fill('input[name="name"]', 'Test User');
+      262 |     await page.fill('input[name="mobile"]', testMobile);
+      263 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="13.411">
+<system-out>
+<![CDATA[✓ Database connected successfully
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Mobile Safari" tests="10" failures="10" skipped="0" time="1.877" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.17">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.186">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.19">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.179">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.189">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.193">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.189">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.179">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.21">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.192">
+<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+
+    Error: browserContext.newPage: Unknown permission: microphone
+
+    TypeError: Cannot read properties of undefined (reading 'close')
+
+      28 |       console.log('Cleanup error:', error);
+      29 |     }
+    > 30 |     await dbHelper.close();
+         |                    ^
+      31 |   });
+      32 |
+      33 |   test('should complete user signup flow with OTP verification', async ({ page }) => {
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:30:20
+]]>
+</failure>
+<system-out>
+<![CDATA[Cleanup error: TypeError: Cannot read properties of undefined (reading 'cleanupTestData')
+    at [90mD:\SmartGriev\e2e-tests\[39mtests\01-authentication.spec.ts:26:22
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:52
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:305:17
+    at TimeoutManager.withRunnable [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\timeoutManager.js:68:9[90m)[39m
+    at TestInfoImpl._runWithTimeout [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:303:34[90m)[39m
+    at FixtureRunner.resolveParametersAndRunFunction [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\fixtureRunner.js:228:20[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:469:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runEachHooksForSuites [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:468:9[90m)[39m
+    at [90mD:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:330:11
+    at TestInfoImpl._runAsStep [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\testInfo.js:294:7[90m)[39m
+    at WorkerMain._runTest [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:318:5[90m)[39m
+    at WorkerMain.runTestGroup [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\worker\workerMain.js:198:11[90m)[39m
+    at process.<anonymous> [90m(D:\SmartGriev\e2e-tests\[39mnode_modules\[4mplaywright[24m\lib\common\process.js:65:22[90m)[39m
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Microsoft Edge" tests="10" failures="9" skipped="0" time="333.077" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="11.614">
+<failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Sign Up|Register/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+      34 |     // Navigate to signup page
+      35 |     await page.goto('/signup');
+    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
+         |                        ^
+      37 |
+      38 |     // Fill signup form
+      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.626">
+<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Login|Sign In/i
+    Received string:  "SmartGriev - Enterprise Grievance Management"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 10000ms
+        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+
+
+       95 |     // First create a user (assume user exists or create via API)
+       96 |     await page.goto('/login');
+    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
+          |                        ^
+       98 |
+       99 |     // Fill login form with existing user (use env variables)
+      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="14.121">
+<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+      127 |     await page.fill('input[name="password"], input[type="password"]', 'WrongPassword123!');
+      128 |     
+    > 129 |     await page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                ^
+      130 |
+      131 |     // Wait for error message
+      132 |     await helpers.waitForNotification();
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:129:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="63.477">
+<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"], input[type="email"]')
+
+
+      144 |
+      145 |     // Fill form with invalid email
+    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+          |                ^
+      147 |     await page.fill('input[name="name"]', 'Test User');
+      148 |     await page.fill('input[name="mobile"]', testMobile);
+      149 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="63.463">
+<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      166 |
+      167 |     // Fill form with weak password
+    > 168 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      169 |     await page.fill('input[name="name"]', 'Test User');
+      170 |     await page.fill('input[name="mobile"]', testMobile);
+      171 |     await page.fill('input[name="password"]', '123'); // Weak password
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="13.91">
+<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+       at ..\utils\helpers.ts:167
+
+      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
+      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
+    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                     ^
+      168 |     
+      169 |     // Wait for redirect to dashboard
+      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="13.798">
+<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
+        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
+        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+
+    Call log:
+      - waiting for getByRole('button', { name: /login|sign in/i })
+
+
+       at ..\utils\helpers.ts:167
+
+      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
+      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
+    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
+          |                                                                     ^
+      168 |     
+      169 |     // Wait for redirect to dashboard
+      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="63.529">
+<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      233 |
+      234 |     // Fill form with invalid mobile
+    > 235 |     await page.fill('input[name="email"]', testEmail);
+          |                ^
+      236 |     await page.fill('input[name="name"]', 'Test User');
+      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      238 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="63.389">
+<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.fill: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="email"]')
+
+
+      258 |
+      259 |     // Fill form with existing email
+    > 260 |     await page.fill('input[name="email"]', existingEmail);
+          |                ^
+      261 |     await page.fill('input[name="name"]', 'Test User');
+      262 |     await page.fill('input[name="mobile"]', testMobile);
+      263 |     await page.fill('input[name="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[✓ Database connected successfully
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="14.15">
+<system-out>
+<![CDATA[✓ Database connected successfully
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
