@@ -5,7 +5,10 @@ Generates translations for SmartGriev in 12 Indian languages
 import google.generativeai as genai
 import os
 import json
+import logging
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 class GeminiTranslationService:
     """Use Gemini AI to generate translations"""
@@ -76,7 +79,7 @@ Output JSON (translated to {language_name}):"""
             translations = json.loads(text)
             return translations
         except Exception as e:
-            print(f"Translation error for {target_language}: {e}")
+            logger.error(f"Translation error for {target_language}: {e}")
             return {key: text for key, text in texts.items()}
     
     def generate_all_translations(self):
@@ -207,7 +210,7 @@ Output JSON (translated to {language_name}):"""
         language_codes = ['hi', 'bn', 'te', 'mr', 'ta', 'gu', 'kn', 'ml', 'pa', 'ur', 'as', 'or']
         
         for lang_code in language_codes:
-            print(f"Generating translations for {lang_code}...")
+            logger.info(f"Generating translations for {lang_code}...")
             translations = self.translate_batch(base_strings, lang_code)
             all_translations[lang_code] = translations
         

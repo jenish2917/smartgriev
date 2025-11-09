@@ -3,9 +3,12 @@ SMS Notification Service using Twilio
 """
 
 import os
+import logging
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class SMSService:
@@ -23,10 +26,10 @@ class SMSService:
             try:
                 self.client = Client(self.account_sid, self.auth_token)
             except Exception as e:
-                print(f"Twilio initialization error: {e}")
+                logger.error(f"Twilio initialization error: {e}")
                 self.enabled = False
         else:
-            print("SMS service disabled - Twilio credentials not configured")
+            logger.warning("SMS service disabled - Twilio credentials not configured")
             self.client = None
     
     def send_sms(self, to_number: str, message: str) -> dict:

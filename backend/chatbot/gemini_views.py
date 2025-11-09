@@ -8,9 +8,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 import uuid
+import logging
 from .gemini_service import gemini_chatbot
 from .models import ChatSession, ChatLog
 from complaints.models import Complaint, ComplaintCategory, Department
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -67,7 +70,7 @@ def gemini_chat(request):
                     reply_language=language
                 )
             except Exception as e:
-                print(f"Error saving chat log: {e}")
+                logger.error(f"Error saving chat log: {e}")
         
         return Response({
             'session_id': session_id,
