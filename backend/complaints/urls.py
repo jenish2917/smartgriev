@@ -29,6 +29,14 @@ from .multimodal_views import (
     ComplaintListView,
     ComplaintDetailView as MultimodalComplaintDetailView
 )
+from .voice_vision_views import (
+    ImageAnalysisView,
+    MultiImageAnalysisView,
+    VideoAnalysisView,
+    AudioTranscriptionView,
+    VoiceComplaintAnalysisView,
+    MultimodalAnalysisView
+)
 from .location_views import (
     geocode_address,
     reverse_geocode,
@@ -47,6 +55,14 @@ urlpatterns = [
     path('api/departments/', DepartmentListView.as_view(), name='api-departments'),
     path('api/simple/', process_complaint_simple, name='api-process-simple'),
     path('api/health/', health_check, name='api-health-check'),
+    
+    # Voice & Vision AI Endpoints (Feature 10)
+    path('analyze/image/', ImageAnalysisView.as_view(), name='analyze-image'),
+    path('analyze/multi-image/', MultiImageAnalysisView.as_view(), name='analyze-multi-image'),
+    path('analyze/video/', VideoAnalysisView.as_view(), name='analyze-video'),
+    path('analyze/audio/transcribe/', AudioTranscriptionView.as_view(), name='transcribe-audio'),
+    path('analyze/audio/complete/', VoiceComplaintAnalysisView.as_view(), name='analyze-voice-complaint'),
+    path('analyze/multimodal/', MultimodalAnalysisView.as_view(), name='analyze-multimodal'),
     
     # New Multimodal Complaint Submission Endpoints
     path('submit/', MultimodalComplaintCreateView.as_view(), name='multimodal-complaint-create'),
