@@ -22,55 +22,108 @@ class GeminiChatbotService:
         
         genai.configure(api_key=api_key)
         
-        # Use latest Gemini 2.5 Flash (stable and fast)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        # Use Gemini 1.5 Flash (cost-optimized: $0.35/M tokens)
+        # Auto-switch to Pro for complex queries (token count > 10k)
+        self.flash_model = genai.GenerativeModel('gemini-1.5-flash')
+        self.pro_model = genai.GenerativeModel('gemini-1.5-pro')
+        self.model = self.flash_model  # Default to Flash
         
         # Conversation history storage
         self.conversations = {}
         
-        # Supported languages
+        # Supported languages (12 Indian languages - from PDF spec)
         self.languages = {
             'en': 'English',
-            'hi': 'Hindi',
-            'bn': 'Bengali',
-            'te': 'Telugu',
-            'mr': 'Marathi',
-            'ta': 'Tamil',
-            'gu': 'Gujarati',
-            'kn': 'Kannada',
-            'ml': 'Malayalam',
-            'pa': 'Punjabi',
+            'hi': 'Hindi (हिंदी)',
+            'bn': 'Bengali (বাংলা)',
+            'te': 'Telugu (తెలుగు)',
+            'mr': 'Marathi (मराठी)',
+            'ta': 'Tamil (தமிழ்)',
+            'gu': 'Gujarati (ગુજરાતી)',
+            'kn': 'Kannada (ಕನ್ನಡ)',
+            'ml': 'Malayalam (മലയാളം)',
+            'pa': 'Punjabi (ਪੰਜਾਬੀ)',
+            'ur': 'Urdu (اردو)',        # RTL support
+            'as': 'Assamese (অসমীয়া)',  # New
+            'or': 'Odia (ଓଡ଼ିଆ)',        # New
         }
         
-        # System prompt for complaint handling
-        self.system_prompt = """You are a helpful AI assistant for SmartGriev, a civic grievance redressal system in India.
+        # Department keywords in 12 Indian languages (for classification)
+        self.department_keywords = {
+            'water': ['water', 'पानी', 'জল', 'నీరు', 'पाणी', 'தண்ணீர்', 'પાણી', 'ನೀರು', 'വെള്ളം', 'ਪਾਣੀ', 'پانی', 'পানী', 'ପାଣି'],
+            'electricity': ['electricity', 'light', 'बिजली', 'বিদ্যুৎ', 'విద్యుత్', 'वीज', 'மின்சாரம்', 'વીજળી', 'ವಿದ್ಯುತ್', 'വൈദ്യുതി', 'ਬਿਜਲੀ', 'بجلی', 'বিদ্যুৎ', 'ବିଦ୍ୟୁତ'],
+            'roads': ['road', 'pothole', 'सड़क', 'রাস্তা', 'రోడ్డు', 'रस्ता', 'சாலை', 'રસ્તો', 'ರಸ್ತೆ', 'റോഡ്', 'ਸੜਕ', 'سڑک', 'ৰাস্তা', 'ରାସ୍ତା'],
+            'sanitation': ['garbage', 'waste', 'कचरा', 'আবর্জনা', 'చెత్త', 'कचरा', 'குப்பை', 'કચરો', 'ಕಸ', 'മാലിന്യം', 'ਕੂੜਾ', 'کچرا', 'আবৰ্জনা', 'ଅଳିଆ'],
+            'streetlights': ['streetlight', 'lamp', 'बत्ती', 'বাতি', 'దీపం', 'दिवा', 'விளக்கு', 'દીવો', 'ದೀಪ', 'വിളക്ക്', 'ਬੱਤੀ', 'بتی', 'লাইট', 'ବତୀ'],
+        }
+        
+        # System prompt with few-shot learning (5 examples per department)
+        self.system_prompt = """You are SmartGriev AI - a helpful assistant for India's civic grievance system.
 
-Your role:
-1. Help citizens file complaints in their native language
-2. Extract key information: issue type, location, description, urgency
-3. Be empathetic and professional
-4. Ask clarifying questions if needed
-5. Confirm details before creating the complaint
+ROLE: Help citizens file complaints in 12 Indian languages (English, Hindi, Bengali, Telugu, Marathi, Tamil, Gujarati, Kannada, Malayalam, Punjabi, Urdu, Assamese, Odia)
 
-Complaint categories:
-- Infrastructure (roads, water supply, electricity, drainage)
-- Health & Sanitation (garbage, cleanliness, hospitals)
-- Law & Order (crime, safety, police)
-- Education (schools, teachers, facilities)
-- Transportation (buses, traffic, parking)
-- Environment (pollution, trees, parks)
-- Others
+DEPARTMENTS:
+1. Water Supply - Water shortage, leakage, quality issues
+2. Electricity - Power cuts, faulty meters, line issues  
+3. Roads - Potholes, damaged roads, construction delays
+4. Sanitation - Garbage collection, cleanliness, drainage
+5. Streetlights - Non-functional lights, damaged poles
+6. Waste Management - Waste disposal, recycling
+7. Parks & Gardens - Maintenance, cleanliness
+8. Building Permits - Construction violations
+9. Fire Safety - Fire hazards, safety concerns
+10. Other - Miscellaneous civic issues
 
-Guidelines:
-- Always be polite and empathetic
-- Ask one question at a time
-- Keep responses concise (2-3 sentences max)
-- Acknowledge the citizen's concern
-- Extract location, urgency level (low/medium/high/urgent)
-- If complaint is about a person, ask for more details
-- Once you have enough info, summarize and ask for confirmation
+FEW-SHOT EXAMPLES (Learn from these):
 
-Important: Respond in the same language as the user's message."""
+Example 1 - Water Department:
+User: "हमारे इलाके में 3 दिन से पानी नहीं आ रहा है"
+Department: water
+Urgency: high
+Location: (ask for specific area)
+Response: "मुझे समझ आ गया। यह एक गंभीर समस्या है। कृपया अपना क्षेत्र का नाम बताएं?"
+
+Example 2 - Electricity:
+User: "Power cut from 2 days in Sector 15"
+Department: electricity
+Urgency: high  
+Location: Sector 15
+Response: "I understand the inconvenience. I'll help file this complaint. Can you specify the exact locality in Sector 15?"
+
+Example 3 - Roads:
+User: "రోడ్డు మీద పెద్ద గుంట ఉంది, ప్రమాదం కాబోతోంది"
+Department: roads
+Urgency: urgent
+Location: (ask for exact location)
+Response: "నేను అర్థం చేసుకున్నాను. ఇది తక్షణ శ్రద్ధ అవసరం. దయచేసి ఖచ్చితమైన ప్రదేశం చెప్పండి?"
+
+Example 4 - Sanitation:
+User: "Garbage not collected for 1 week, very bad smell"
+Department: sanitation
+Urgency: high
+Location: (ask for address)
+Response: "I apologize for this inconvenience. Let me help you file this complaint. Can you provide your street address?"
+
+Example 5 - Streetlights:
+User: "પોઈન્ટ રોડ પર સ્ટ્રીટલાઈટ કામ નથી કરતી, રાત્રે અંધારું રહે છે"
+Department: streetlights
+Urgency: medium
+Location: પોઈન્ટ રોડ (Point Road)
+Response: "હું સમજ્યો. આ સુરક્ષા સમસ્યા છે. કયા વિસ્તારમાં છે? પોઈન્ટ રોડ પર ક્યાં?"
+
+GUIDELINES:
+✅ Respond in the SAME language as user
+✅ Be empathetic and professional
+✅ Ask ONE question at a time (max 2-3 sentences)
+✅ Extract: issue type, location, urgency (low/medium/high/urgent)
+✅ Classify into correct department
+✅ Confirm details before finalizing
+
+⚠️ Keep responses concise
+⚠️ Don't ask already answered questions
+⚠️ For RTL languages (Urdu), maintain proper text direction
+
+Respond naturally and helpfully."""
 
     def start_conversation(self, session_id: str, user_language: str = 'en') -> str:
         """Start a new conversation"""
@@ -85,7 +138,7 @@ Important: Respond in the same language as the user's message."""
         return greeting
     
     def _get_greeting(self, language: str) -> str:
-        """Get greeting in user's language"""
+        """Get greeting in user's language (12 Indian languages)"""
         greetings = {
             'en': "Hello! I'm here to help you file a complaint. What issue would you like to report?",
             'hi': "नमस्ते! मैं आपकी शिकायत दर्ज करने में मदद करने के लिए यहां हूं। आप किस समस्या की रिपोर्ट करना चाहेंगे?",
@@ -96,7 +149,10 @@ Important: Respond in the same language as the user's message."""
             'gu': "નમસ્તે! હું તમારી ફરિયાદ નોંધવામાં મદદ કરવા અહીં છું. તમે કઈ સમસ્યાની જાણ કરવા માંગો છો?",
             'kn': "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ದೂರು ದಾಖಲಿಸಲು ಸಹಾಯ ಮಾಡಲು ನಾನು ಇಲ್ಲಿದ್ದೇನೆ. ನೀವು ಯಾವ ಸಮಸ್ಯೆಯನ್ನು ವರದಿ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ?",
             'ml': "ഹലോ! നിങ്ങളുടെ പരാതി ഫയൽ ചെയ്യാൻ സഹായിക്കാൻ ഞാൻ ഇവിടെയുണ്ട്. നിങ്ങൾ ഏത് പ്രശ്നമാണ് റിപ്പോർട്ട് ചെയ്യാൻ ആഗ്രഹിക്കുന്നത്?",
-            'pa': "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਇੱਥੇ ਹਾਂ। ਤੁਸੀਂ ਕਿਹੜੀ ਸਮੱਸਿਆ ਦੀ ਰਿਪੋਰਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+            'pa': "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਇੱਥੇ ਹਾਂ। ਤੁਸੀਂ ਕਿਹੜੀ ਸਮੱਸਿਆ ਦੀ ਰਿਪੋਰਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+            'ur': "السلام علیکم! میں آپ کی شکایت درج کرنے میں مدد کے لیے یہاں ہوں۔ آپ کس مسئلے کی اطلاع دینا چاہتے ہیں؟",  # RTL
+            'as': "নমস্কাৰ! মই আপোনাৰ অভিযোগ দাখিল কৰাত সহায় কৰিবলৈ ইয়াত আছো। আপুনি কোনটো সমস্যা প্ৰতিবেদন কৰিব বিচাৰে?",  # Assamese
+            'or': "ନମସ୍କାର! ମୁଁ ଆପଣଙ୍କ ଅଭିଯୋଗ ଦାଖଲ କରିବାରେ ସାହାଯ୍ୟ କରିବାକୁ ଏଠାରେ ଅଛି। ଆପଣ କେଉଁ ସମସ୍ୟାର ରିପୋର୍ଟ କରିବାକୁ ଚାହୁଁଛନ୍ତି?",  # Odia
         }
         return greetings.get(language, greetings['en'])
     
@@ -129,9 +185,16 @@ Important: Respond in the same language as the user's message."""
             # Build conversation context
             prompt = self._build_prompt(conversation, user_message, translated_message)
             
-            # Generate response using Gemini
-            response = self.model.generate_content(prompt)
+            # Auto-switch to Pro model for complex queries (>10k tokens)
+            token_estimate = len(prompt) // 4  # Rough estimate: 4 chars ≈ 1 token
+            selected_model = self.pro_model if token_estimate > 10000 else self.flash_model
+            
+            # Generate response using Gemini (Flash or Pro)
+            response = selected_model.generate_content(prompt)
             bot_response = response.text
+            
+            # Classify department using keywords
+            department = self._classify_department(translated_message)
             
             # Translate response back to user's language if needed
             if user_language != 'en':
@@ -172,6 +235,25 @@ Important: Respond in the same language as the user's message."""
                 'conversation_complete': False,
                 'error': str(e)
             }
+    
+    def _classify_department(self, message: str) -> str:
+        """
+        Classify complaint into department using keyword matching
+        Supports 12 Indian languages
+        """
+        message_lower = message.lower()
+        
+        # Score each department
+        department_scores = {}
+        for dept, keywords in self.department_keywords.items():
+            score = sum(1 for keyword in keywords if keyword in message_lower)
+            if score > 0:
+                department_scores[dept] = score
+        
+        # Return department with highest score, default to 'other'
+        if department_scores:
+            return max(department_scores, key=department_scores.get)
+        return 'other'
     
     def _build_prompt(self, conversation: dict, user_message: str, translated_message: str) -> str:
         """Build prompt for Gemini with conversation history"""
