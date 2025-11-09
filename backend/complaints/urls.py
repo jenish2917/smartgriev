@@ -29,6 +29,15 @@ from .multimodal_views import (
     ComplaintListView,
     ComplaintDetailView as MultimodalComplaintDetailView
 )
+from .location_views import (
+    geocode_address,
+    reverse_geocode,
+    search_places,
+    generate_plus_code,
+    decode_plus_code,
+    assign_ward,
+    get_supported_cities
+)
 
 urlpatterns = [
     # Advanced Multi-Modal API endpoints
@@ -66,4 +75,13 @@ urlpatterns = [
     
     # AI Classification
     path('classify/', classify_complaint_text, name='classify-complaint'),
+    
+    # Location & GIS - MapMyIndia Integration
+    path('geocode/', geocode_address, name='geocode-address'),
+    path('reverse-geocode/', reverse_geocode, name='reverse-geocode'),
+    path('search-places/', search_places, name='search-places'),
+    path('plus-code/generate/', generate_plus_code, name='generate-plus-code'),
+    path('plus-code/decode/', decode_plus_code, name='decode-plus-code'),
+    path('assign-ward/', assign_ward, name='assign-ward'),
+    path('supported-cities/', get_supported_cities, name='supported-cities'),
 ]

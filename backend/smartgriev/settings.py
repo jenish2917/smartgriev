@@ -334,6 +334,14 @@ MAX_LAT = float(os.getenv('MAX_LAT', 37.6))
 MIN_LON = float(os.getenv('MIN_LON', 68.7))
 MAX_LON = float(os.getenv('MAX_LON', 97.25))
 
+# MapMyIndia Configuration for Location Services
+MAPMYINDIA_CONFIG = {
+    'API_KEY': os.getenv('MAPMYINDIA_API_KEY', ''),
+    'BASE_URL': os.getenv('MAPMYINDIA_BASE_URL', 'https://atlas.mapmyindia.com/api'),
+    'TIMEOUT': int(os.getenv('MAPMYINDIA_TIMEOUT', 10)),
+    'CACHE_TIMEOUT': int(os.getenv('MAPMYINDIA_CACHE_TIMEOUT', 86400)),  # 24 hours
+}
+
 # Logging configuration
 LOGGING = {
     'version': 1,

@@ -138,8 +138,29 @@ class Complaint(models.Model):
     location_method = models.CharField(max_length=50, default='gps', choices=[
         ('gps', 'GPS'),
         ('manual', 'Manual Entry'),
-        ('address', 'Address Lookup')
+        ('address', 'Address Lookup'),
+        ('plus_code', 'Plus Code')
     ])
+    
+    # MapMyIndia & Plus Code fields
+    plus_code = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text='Open Location Code (Plus Code) for precise location (e.g., 7JWWJ6J9+2V)'
+    )
+    ward_id = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text='Assigned ward/zone identifier'
+    )
+    ward_name = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text='Ward/zone name for the complaint location'
+    )
     
     # Additional location context
     area_type = models.CharField(max_length=50, null=True, blank=True, choices=[
