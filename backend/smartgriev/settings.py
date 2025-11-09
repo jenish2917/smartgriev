@@ -10,6 +10,15 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# GDAL Configuration for PostGIS
+if os.name == 'nt':  # Windows
+    OSGEO4W = r"C:\Program Files\PostgreSQL\15"
+    if os.path.exists(OSGEO4W):
+        os.environ['OSGEO4W_ROOT'] = OSGEO4W
+        os.environ['GDAL_DATA'] = os.path.join(OSGEO4W, 'share', 'gdal')
+        os.environ['PROJ_LIB'] = os.path.join(OSGEO4W, 'share', 'proj')
+        os.environ['PATH'] = os.path.join(OSGEO4W, 'bin') + ';' + os.environ['PATH']
+
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'django.contrib.gis',  # PostGIS support - disabled until GDAL is installed
     # Third party apps
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  # JWT token blacklist for rotation
@@ -84,12 +94,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'smartgriev.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Switch between SQLite (development) and PostgreSQL (production) using environment variable
+USE_POSTGRES = os.getenv('USE_POSTGRES', 'False').lower() == 'true'
+
+if USE_POSTGRES:
+    # PostgreSQL Configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',  # Standard PostgreSQL backend
+            'NAME': os.getenv('POSTGRES_DB', 'smartgriev'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'CONN_MAX_AGE': 600,  # Connection pooling
+            'OPTIONS': {
+                'connect_timeout': 10,
+                'options': '-c statement_timeout=30000',  # 30 second query timeout
+            }
+        }
     }
-}
+else:
+    # SQLite Configuration (Development)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Custom User Model
 AUTH_USER_MODEL = 'authentication.User'
