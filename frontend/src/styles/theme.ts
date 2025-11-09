@@ -1,77 +1,141 @@
-// SmartGriev Blue & White Theme
+// SmartGriev Unified Design System - Merged Spec
+// Based on Trust Blue (#2563EB) & Success Green (#059669)
 export const theme = {
   colors: {
-    // Primary Blue Shades
+    // Primary - Trust Blue (from PDF spec)
     primary: {
-      50: '#E3F2FD',
-      100: '#BBDEFB',
-      200: '#90CAF9',
-      300: '#64B5F6',
-      400: '#42A5F5',
-      500: '#2196F3',  // Main Blue
-      600: '#1E88E5',
-      700: '#1976D2',
-      800: '#1565C0',
-      900: '#0D47A1',
+      50: '#EFF6FF',
+      100: '#DBEAFE',
+      200: '#BFDBFE',
+      300: '#93C5FD',
+      400: '#60A5FA',
+      500: '#2563EB',  // Trust Blue - Main Brand Color
+      600: '#1D4ED8',
+      700: '#1E40AF',
+      800: '#1E3A8A',
+      900: '#1E3A70',
+      950: '#172554',
     },
-    // Secondary Blue Shades
+    // Secondary - Success Green (from PDF spec)
     secondary: {
-      50: '#E1F5FE',
-      100: '#B3E5FC',
-      200: '#81D4FA',
-      300: '#4FC3F7',
-      400: '#29B6F6',
-      500: '#03A9F4',
-      600: '#039BE5',
-      700: '#0288D1',
-      800: '#0277BD',
-      900: '#01579B',
+      50: '#ECFDF5',
+      100: '#D1FAE5',
+      200: '#A7F3D0',
+      300: '#6EE7B7',
+      400: '#34D399',
+      500: '#059669',  // Success Green - Secondary Brand Color
+      600: '#047857',
+      700: '#065F46',
+      800: '#064E3B',
+      900: '#022C22',
     },
-    // White Shades
+    // White & Neutral Colors
     white: {
       pure: '#FFFFFF',
-      50: '#FAFAFA',
-      100: '#F5F5F5',
-      200: '#EEEEEE',
-      300: '#E0E0E0',
-      400: '#BDBDBD',
+      off: '#FAFAFA',
     },
-    // Accent Colors
-    accent: {
-      blue: '#2196F3',
-      lightBlue: '#64B5F6',
-      darkBlue: '#1565C0',
-      cyan: '#00BCD4',
+    black: {
+      pure: '#000000',
+      soft: '#1A1A1A',
+    },
+    // Glassmorphism Colors
+    glass: {
+      light: 'rgba(255, 255, 255, 0.8)',
+      medium: 'rgba(255, 255, 255, 0.6)',
+      dark: 'rgba(26, 29, 46, 0.8)',
+      blur: 'blur(20px)',
+    },
+    // Futuristic Accent Colors
+    futuristic: {
+      purple: '#6C63FF',
+      cyan: '#4ECDC4',
+      pink: '#FF6584',
+      yellow: '#FFD93D',
+      lime: '#7BE495',
+    },
+    // Department Color Coding (from PDF spec)
+    departments: {
+      water: '#0EA5E9',       // Light blue
+      electricity: '#F97316', // Orange
+      roads: '#6B7280',       // Gray
+      sanitation: '#84CC16',  // Lime green
+      waste: '#A855F7',       // Purple
+      streetlights: '#FCD34D', // Yellow
+      parks: '#10B981',       // Emerald
+      building: '#8B5CF6',    // Violet
+      fire: '#EF4444',        // Red
+      other: '#64748B',       // Slate
+    },
+    // Indian Government Colors
+    government: {
+      ashokaChakra: '#000080',
+      saffron: '#FF9933',
+      white: '#FFFFFF',
+      green: '#138808',
+      tricolor: {
+        saffron: '#FF9933',
+        white: '#FFFFFF',
+        green: '#138808',
+      }
     },
     // Status Colors
     status: {
-      success: '#4CAF50',
-      warning: '#FF9800',
-      error: '#F44336',
-      info: '#2196F3',
+      success: '#059669',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      info: '#2563EB',
+      pending: '#F59E0B',
+      resolved: '#059669',
     },
     // Text Colors
     text: {
-      primary: '#1565C0',
-      secondary: '#1976D2',
-      tertiary: '#64B5F6',
-      dark: '#0D47A1',
-      light: '#90CAF9',
-      white: '#FFFFFF',
+      primary: '#1E3A8A',
+      secondary: '#475569',
+      tertiary: '#64748B',
+      disabled: '#94A3B8',
+      inverse: '#FFFFFF',
+      link: '#2563EB',
+      dark: {
+        primary: '#E8EEF7',
+        secondary: '#CBD5E1',
+        tertiary: '#94A3B8',
+        disabled: '#64748B',
+      }
     },
     // Background Colors
     background: {
       primary: '#FFFFFF',
-      secondary: '#F5F5F5',
-      tertiary: '#E3F2FD',
-      blue: '#2196F3',
-      lightBlue: '#BBDEFB',
+      secondary: '#F8FAFC',
+      tertiary: '#F1F5F9',
+      accent: '#EFF6FF',
+      dark: {
+        primary: '#1A1D2E',
+        secondary: '#23263E',
+        tertiary: '#2D3047',
+        accent: '#3A3F5C',
+      }
     },
   },
   fonts: {
     primary: "'Inter', 'Segoe UI', 'Roboto', sans-serif",
     heading: "'Poppins', 'Inter', sans-serif",
     mono: "'Fira Code', 'Courier New', monospace",
+    // Indian Language Fonts (12 languages)
+    multilingual: {
+      english: "'Inter', sans-serif",
+      hindi: "'Noto Sans Devanagari', sans-serif",
+      bengali: "'Noto Sans Bengali', sans-serif",
+      telugu: "'Noto Sans Telugu', sans-serif",
+      marathi: "'Noto Sans Devanagari', sans-serif",
+      tamil: "'Noto Sans Tamil', sans-serif",
+      gujarati: "'Noto Sans Gujarati', sans-serif",
+      kannada: "'Noto Sans Kannada', sans-serif",
+      malayalam: "'Noto Sans Malayalam', sans-serif",
+      punjabi: "'Noto Sans Gurmukhi', sans-serif",
+      urdu: "'Noto Nastaliq Urdu', sans-serif",  // RTL
+      assamese: "'Noto Sans Bengali', sans-serif",
+      odia: "'Noto Sans Oriya', sans-serif",
+    },
   },
   spacing: {
     xs: '4px',
@@ -89,10 +153,12 @@ export const theme = {
     full: '9999px',
   },
   shadows: {
-    sm: '0 1px 3px rgba(33, 150, 243, 0.12)',
-    md: '0 4px 6px rgba(33, 150, 243, 0.16)',
-    lg: '0 10px 15px rgba(33, 150, 243, 0.2)',
-    xl: '0 20px 25px rgba(33, 150, 243, 0.25)',
+    sm: '0 1px 3px rgba(37, 99, 235, 0.12)',      // Trust blue
+    md: '0 4px 6px rgba(37, 99, 235, 0.16)',
+    lg: '0 10px 15px rgba(37, 99, 235, 0.2)',
+    xl: '0 20px 25px rgba(37, 99, 235, 0.25)',
+    glass: '0 8px 32px rgba(108, 99, 255, 0.15)',  // Glassmorphism
+    glow: '0 0 20px rgba(37, 99, 235, 0.3)',       // Accent glow
   },
   transitions: {
     fast: '150ms ease',
