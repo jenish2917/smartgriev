@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Complaint, Department, AuditTrail, IncidentLocationHistory, GPSValidation
+from .models import Complaint, Department, ComplaintCategory, AuditTrail, IncidentLocationHistory, GPSValidation
 from django.contrib.auth import get_user_model
 import logging
 
@@ -10,6 +10,11 @@ class UserMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name')
+
+class ComplaintCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComplaintCategory
+        fields = ('id', 'name', 'description', 'is_active')
 
 class DepartmentSerializer(serializers.ModelSerializer):
     officer = UserMiniSerializer(read_only=True)

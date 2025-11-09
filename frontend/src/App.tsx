@@ -15,6 +15,9 @@ const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const PasswordResetConfirm = lazy(() => import('./pages/PasswordResetConfirm'));
+const EmailVerification = lazy(() => import('./pages/EmailVerification'));
+const MobileVerification = lazy(() => import('./pages/MobileVerification'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Complaints = lazy(() => import('@/pages/complaints/Complaints'));
 const ComplaintDetail = lazy(() => import('@/pages/complaints/ComplaintDetail'));
@@ -49,6 +52,9 @@ const routesConfig: RouteConfig[] = [
   { path: '/login', component: Login, layout: React.Fragment, auth: 'public' },
   { path: '/register', component: Register, layout: React.Fragment, auth: 'public' },
   { path: '/forgot-password', component: ForgotPassword, layout: React.Fragment, auth: 'public' },
+  { path: '/password-reset/confirm', component: PasswordResetConfirm, layout: React.Fragment, auth: 'public' },
+  { path: '/verify-email', component: EmailVerification, layout: React.Fragment, auth: 'public' },
+  { path: '/verify-mobile', component: MobileVerification, layout: React.Fragment, auth: 'public' },
   { path: '/dashboard', component: Dashboard, layout: React.Fragment, auth: 'protected' }, // New Dashboard
   { path: '/complaint', component: SimpleComplaint, layout: AuthLayout, auth: 'public' }, // Simple complaint form
   { path: '/complaint-flow', component: ComplaintSubmissionFlow, layout: AuthLayout, auth: 'public' }, // Enhanced complaint flow

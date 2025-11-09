@@ -47,6 +47,26 @@ test.describe('User Authentication Flow', () => {
       await page.fill('input[name="confirmPassword"]', testPassword);
     }
 
+    // NEW: Fill optional address field if it exists
+    const addressExists = await helpers.elementExists('input[name="address"]');
+    if (addressExists) {
+      await page.fill('input[name="address"]', '123 Test Street, Test City');
+    }
+
+    // NEW: Select language if dropdown exists (default is 'en')
+    const languageExists = await helpers.elementExists('.ant-select[name="language"], select[name="language"]');
+    if (languageExists) {
+      // Frontend defaults to English, so no action needed unless testing other languages
+      console.log('Language selector found, using default (English)');
+    }
+
+    // NEW: Accept terms and conditions checkbox (REQUIRED)
+    const termsCheckboxExists = await helpers.elementExists('input[name="acceptTerms"], input[type="checkbox"][name="terms"]');
+    if (termsCheckboxExists) {
+      await page.check('input[name="acceptTerms"], input[type="checkbox"][name="terms"]');
+      console.log('✓ Terms and conditions accepted');
+    }
+
     // Take screenshot before submission
     await helpers.takeScreenshot('signup-form-filled');
 
@@ -92,14 +112,40 @@ test.describe('User Authentication Flow', () => {
   });
 
   test('should login with valid credentials', async ({ page }) => {
-    // First create a user (assume user exists or create via API)
-    await page.goto('/login');
-    await expect(page).toHaveTitle(/SmartGriev/i); // Frontend uses generic title
-
-    // Fill login form with existing user (use env variables)
+    // IMPORTANT: This test requires the user to exist first
+    // Either run signup test first or create user via API
+    
     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
     const loginPassword = process.env.TEST_USER_PASSWORD || 'TestPass123!';
 
+    // Check if user exists in database, if not create via signup
+    const user = await dbHelper.getUserByEmail(loginEmail);
+    if (!user) {
+      console.log('⚠️ User does not exist, creating via signup first...');
+      
+      // Navigate to register page and create user
+      await page.goto('/register');
+      await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+      await page.fill('input[name="email"], input[type="email"]', loginEmail);
+      await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      await page.fill('input[name="password"], input[type="password"]', loginPassword);
+      
+      // Submit signup form
+      await page.locator('button[type="submit"]').click();
+      
+      // Handle OTP if required (wait a bit for page to load)
+      await page.waitForTimeout(2000);
+      
+      // If OTP page appears, skip for now and go to login
+      await page.goto('/login');
+    } else {
+      console.log('✓ User already exists in database, proceeding with login');
+      await page.goto('/login');
+    }
+
+    await expect(page).toHaveTitle(/SmartGriev/i);
+
+    // Fill login form
     await page.fill('input[name="email"], input[type="email"]', loginEmail);
     await page.fill('input[name="password"], input[type="password"]', loginPassword);
     
