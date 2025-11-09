@@ -56,9 +56,19 @@ class Complaint(models.Model):
         ('kn', 'Kannada'),
         ('ml', 'Malayalam'),
         ('pa', 'Punjabi'),
+        ('ur', 'Urdu'),        # RTL support
         ('or', 'Odia'),
         ('as', 'Assamese'),
     ]
+    
+    # Unique complaint number (format: BC-{YEAR}-{CITY}-{DEPT}-{SEQ})
+    complaint_number = models.CharField(
+        max_length=50,
+        unique=True,
+        null=True,
+        blank=True,
+        help_text='Unique complaint identifier: BC-YEAR-CITY-DEPT-SEQUENCE'
+    )
     
     # Basic complaint fields
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
@@ -111,6 +121,13 @@ class Complaint(models.Model):
     department_classification = models.JSONField(default=dict, blank=True, help_text="AI department classification results")
     ai_processed_text = models.TextField(blank=True, help_text="AI enhanced/processed complaint text")
     
+    # Gemini AI raw response (JSONB for advanced analytics)
+    gemini_raw_response = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Raw Gemini API response including department classification, confidence scores, and metadata'
+    )
+    
     # Location fields
     location = models.CharField(max_length=500, blank=True, help_text="Location description or address")
     incident_latitude = models.FloatField(null=True, blank=True, help_text="Latitude where the incident occurred")
@@ -151,6 +168,64 @@ class Complaint(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['complaint_number']),
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['department', 'status']),
+        ]
+    
+    def __str__(self):
+        return f"{self.complaint_number or self.title} - {self.status}"
+    
+    def save(self, *args, **kwargs):
+        """Override save to generate complaint number"""
+        # Generate complaint number if not exists
+        if not self.complaint_number:
+            self.complaint_number = self.generate_complaint_number()
+        super().save(*args, **kwargs)
+    
+    def generate_complaint_number(self):
+        """
+        Generate unique complaint number: BC-{YEAR}-{CITY}-{DEPT}-{SEQ}
+        Example: BC-2025-MUM-WAT-00123
+        """
+        from datetime import datetime
+        
+        year = datetime.now().year
+        
+        # Get city code (default to 'GEN' for general if no user location)
+        city_code = 'GEN'
+        if self.user and hasattr(self.user, 'city'):
+            city_code = self.user.city[:3].upper()
+        elif self.incident_address:
+            # Extract city from address (simplified)
+            city_code = self.incident_address.split(',')[0][:3].upper()
+        
+        # Get department code
+        dept_code = 'OTH'  # Default
+        if self.department:
+            dept_code = self.department.name[:3].upper()
+        elif self.category:
+            dept_code = self.category.name[:3].upper()
+        
+        # Get sequence number for this year/city/dept combination
+        from django.db.models import Max
+        last_complaint = Complaint.objects.filter(
+            complaint_number__startswith=f'BC-{year}-{city_code}-{dept_code}'
+        ).aggregate(Max('complaint_number'))
+        
+        last_number = last_complaint['complaint_number__max']
+        if last_number:
+            # Extract sequence number and increment
+            try:
+                last_seq = int(last_number.split('-')[-1])
+                seq = last_seq + 1
+            except (ValueError, IndexError):
+                seq = 1
+        else:
+            seq = 1
+        
+        return f'BC-{year}-{city_code}-{dept_code}-{seq:05d}'
     
     def __str__(self):
         return f"{self.title} - {self.status}"
