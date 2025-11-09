@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Update - SmartGriev</title>
+    <!-- Django template with dynamic CSS values - CSS linter warnings are expected -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .status-badge {
+            text-align: center;
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 8px;
+            /* Dynamic colors applied via inline styles */
+        }
+        .status-badge h2 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            /* Dynamic color applied via inline styles */
+        }
+        .status-transition {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .status-box {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .status-old {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+        .status-new {
+            color: #ffffff;
+            /* Dynamic background color applied via inline styles */
+        }
+        .arrow {
+            font-size: 24px;
+            color: #6b7280;
+        }
+        .complaint-details {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        .detail-row {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            color: #6b7280;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #2563EB;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #2563EB;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔔 Status Update</h1>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <p style="font-size: 18px; color: #111827;">Hello {{ user.first_name|default:user.username }},</p>
+            
+            <p style="color: #374151; line-height: 1.6;">
+                Your complaint <strong>{{ complaint_number }}</strong> has been updated. Here's the latest status:
+            </p>
+            
+            <!-- Status Transition -->
+            <div class="status-transition">
+                <div class="status-box status-old">
+                    {{ old_status|upper }}
+                </div>
+                <div class="arrow">→</div>
+                <div class="status-box status-new" style="background-color: {{ status_color }};">
+                    {{ new_status|upper }}
+                </div>
+            </div>
+            
+            <!-- Status Badge -->
+            <div class="status-badge" style="background-color: {{ status_color }}15; border: 2px solid {{ status_color }};">
+                <h2 style="color: {{ status_color }};">{{ new_status|upper }}</h2>
+            </div>
+            
+            <!-- Complaint Details -->
+            <div class="complaint-details">
+                <h3 style="margin: 0 0 16px 0; color: #111827;">Complaint Information</h3>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Complaint Number:</span>
+                    <span class="detail-value"><strong>{{ complaint_number }}</strong></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Title:</span>
+                    <span class="detail-value">{{ title }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Department:</span>
+                    <span class="detail-value">{{ department }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Last Updated:</span>
+                    <span class="detail-value">{{ updated_at|date:"F d, Y h:i A" }}</span>
+                </div>
+            </div>
+            
+            <!-- Status-specific messages -->
+            {% if new_status == 'resolved' %}
+            <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #059669;">
+                <h4 style="margin: 0 0 12px 0; color: #065f46;">✅ Great News!</h4>
+                <p style="margin: 0; color: #065f46;">
+                    Your complaint has been resolved! Please review the resolution and provide feedback if needed.
+                </p>
+            </div>
+            {% elif new_status == 'in_progress' %}
+            <div style="background-color: #eff6ff; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #2563EB;">
+                <h4 style="margin: 0 0 12px 0; color: #1e40af;">🔄 In Progress</h4>
+                <p style="margin: 0; color: #1e40af;">
+                    The assigned department is actively working on your complaint. You'll be notified of any updates.
+                </p>
+            </div>
+            {% elif new_status == 'rejected' %}
+            <div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #f5222d;">
+                <h4 style="margin: 0 0 12px 0; color: #dc2626;">⚠️ Update Required</h4>
+                <p style="margin: 0; color: #dc2626;">
+                    Your complaint requires additional information or clarification. Please check the details and resubmit if necessary.
+                </p>
+            </div>
+            {% endif %}
+            
+            <!-- Call to Action -->
+            <div style="text-align: center; margin: 32px 0;">
+                <a href="{{ view_url }}" class="btn">View Full Details</a>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 14px; margin-top: 32px;">
+                📱 You can track all updates in real-time through your SmartGriev dashboard.
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin: 0 0 12px 0;"><strong>SmartGriev</strong> - Making Civic Engagement Smarter</p>
+            <p style="margin: 0 0 8px 0;">
+                <a href="{{ view_url }}">View Complaint</a> | 
+                <a href="{{ settings.FRONTEND_URL }}/dashboard">Dashboard</a> | 
+                <a href="{{ settings.FRONTEND_URL }}/help">Help Center</a>
+            </p>
+            <p style="margin: 16px 0 0 0; font-size: 12px; color: #9ca3af;">
+                This is an automated message. Please do not reply to this email.<br>
+                If you need assistance, contact us at support@smartgriev.gov.in
+            </p>
+        </div>
+    </div>
+</body>
+</html>
