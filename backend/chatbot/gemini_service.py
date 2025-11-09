@@ -5,10 +5,13 @@ Handles natural language complaint submission in 8 Indian languages
 
 import os
 import json
+import logging
 import google.generativeai as genai
 from django.conf import settings
 from deep_translator import GoogleTranslator
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 class GeminiChatbotService:
     """Advanced chatbot powered by Google Gemini API"""
@@ -179,7 +182,7 @@ Respond naturally and helpfully."""
                     translator = GoogleTranslator(source='auto', target='en')
                     translated_message = translator.translate(user_message)
                 except Exception as e:
-                    print(f"Translation error: {e}")
+                    logger.error(f"Translation error: {e}")
                     translated_message = user_message
             
             # Build conversation context
@@ -202,7 +205,7 @@ Respond naturally and helpfully."""
                     translator = GoogleTranslator(source='en', target=user_language)
                     bot_response = translator.translate(bot_response)
                 except Exception as e:
-                    print(f"Translation error: {e}")
+                    logger.error(f"Translation error: {e}")
             
             # Update conversation history
             conversation['history'].append({
@@ -227,7 +230,7 @@ Respond naturally and helpfully."""
             }
             
         except Exception as e:
-            print(f"Gemini chat error: {e}")
+            logger.error(f"Gemini chat error: {e}")
             return {
                 'response': "I apologize, but I'm having trouble processing your request. Please try again.",
                 'intent': 'error',
@@ -318,7 +321,7 @@ Return ONLY valid JSON, no explanation."""
                     complaint_data[key] = value
                     
         except Exception as e:
-            print(f"Data extraction error: {e}")
+            logger.error(f"Data extraction error: {e}")
         
         return complaint_data
     

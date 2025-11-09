@@ -2,11 +2,14 @@
 Signal handlers for automatic notifications
 """
 
+import logging
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from complaints.models import Complaint
 from .models import Notification, NotificationPreference
 from .sms_service import sms_service
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Complaint)
@@ -74,4 +77,4 @@ def send_complaint_notification(sender, instance, created, **kwargs):
                         notification.save()
     
     except Exception as e:
-        print(f"Error sending notification: {e}")
+        logger.error(f"Error sending notification: {e}")
