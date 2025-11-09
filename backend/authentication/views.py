@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, ChangePasswordSerializer, UpdateLanguageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 User = get_user_model()
 
@@ -25,6 +26,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserLoginView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
+    serializer_class = CustomTokenObtainPairSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

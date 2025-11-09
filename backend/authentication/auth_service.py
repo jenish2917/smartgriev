@@ -46,7 +46,7 @@ class AdvancedAuthService:
         """Generate a random 6-digit OTP"""
         return ''.join(random.choices(string.digits, k=self.otp_length))
     
-    async def register_user(
+    def register_user(
         self, 
         phone_number: Optional[str] = None,
         email: Optional[str] = None,
@@ -85,9 +85,9 @@ class AdvancedAuthService:
             
             # Send verification OTP
             if phone_number:
-                await self.send_phone_otp(user, phone_number, 'registration')
+                self.send_phone_otp(user, phone_number, 'registration')
             if email:
-                await self.send_email_otp(user, email, 'registration')
+                self.send_email_otp(user, email, 'registration')
             
             return True, "User registered successfully. Please verify your contact details.", user
             
@@ -95,7 +95,7 @@ class AdvancedAuthService:
             logger.error(f"Registration failed: {e}")
             return False, "Registration failed. Please try again.", None
     
-    async def send_phone_otp(self, user: Any, phone_number: str, otp_type: str) -> OTPResult:
+    def send_phone_otp(self, user: Any, phone_number: str, otp_type: str) -> OTPResult:
         """Send OTP to phone number"""
         try:
             # Generate OTP
@@ -114,7 +114,7 @@ class AdvancedAuthService:
             logger.info(f"SMS OTP for {phone_number}: {otp_code}")
             
             # In production, uncomment and configure:
-            # await self._send_sms(phone_number, otp_code, otp_type)
+            # self._send_sms(phone_number, otp_code, otp_type)
             
             return OTPResult(
                 success=True,
@@ -129,7 +129,7 @@ class AdvancedAuthService:
                 message="Failed to send OTP"
             )
     
-    async def send_email_otp(self, user: Any, email: str, otp_type: str) -> OTPResult:
+    def send_email_otp(self, user: Any, email: str, otp_type: str) -> OTPResult:
         """Send OTP to email"""
         try:
             # Generate OTP
@@ -144,7 +144,7 @@ class AdvancedAuthService:
             )
             
             # Send email
-            await self._send_email(email, otp_code, otp_type)
+            self._send_email(email, otp_code, otp_type)
             
             return OTPResult(
                 success=True,
@@ -159,7 +159,7 @@ class AdvancedAuthService:
                 message="Failed to send OTP"
             )
     
-    async def _send_sms(self, phone_number: str, otp_code: str, otp_type: str):
+    def _send_sms(self, phone_number: str, otp_code: str, otp_type: str):
         """
         Send SMS using Twilio (configure in production)
         """
@@ -180,7 +180,7 @@ class AdvancedAuthService:
             logger.error(f"Failed to send SMS: {e}")
             raise
     
-    async def _send_email(self, email: str, otp_code: str, otp_type: str):
+    def _send_email(self, email: str, otp_code: str, otp_type: str):
         """Send OTP email"""
         subject = f"SmartGriev {otp_type.title()} OTP"
         message = f"""
@@ -205,7 +205,7 @@ class AdvancedAuthService:
             fail_silently=False,
         )
     
-    async def verify_otp(self, user_id: int, otp_code: str, otp_type: str) -> Tuple[bool, str]:
+    def verify_otp(self, user_id: int, otp_code: str, otp_type: str) -> Tuple[bool, str]:
         """Verify OTP code"""
         try:
             # Find the latest OTP record
@@ -240,7 +240,7 @@ class AdvancedAuthService:
             logger.error(f"OTP verification failed: {e}")
             return False, "OTP verification failed"
     
-    async def authenticate_user(
+    def authenticate_user(
         self, 
         identifier: str,  # phone/email/username
         password: str,

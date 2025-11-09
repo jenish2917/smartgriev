@@ -252,24 +252,24 @@ class AuthenticationAPIView(APIView):
     """
     permission_classes = [permissions.AllowAny]
     
-    async def post(self, request, *args, **kwargs):
-        """Handle authentication requests"""
+    def post(self, request, *args, **kwargs):
+        """Handle authentication requests (sync wrapper)"""
         action = request.data.get('action')
         
         if action == 'register':
-            return await self._handle_registration(request)
+            return self._handle_registration(request)
         elif action == 'login':
-            return await self._handle_login(request)
+            return self._handle_login(request)
         elif action == 'verify_otp':
-            return await self._handle_otp_verification(request)
+            return self._handle_otp_verification(request)
         elif action == 'send_otp':
-            return await self._handle_send_otp(request)
+            return self._handle_send_otp(request)
         else:
             return Response({
                 'error': 'Invalid action. Supported: register, login, verify_otp, send_otp'
             }, status=status.HTTP_400_BAD_REQUEST)
     
-    async def _handle_registration(self, request):
+    def _handle_registration(self, request):
         """Handle user registration with OTP"""
         try:
             phone_number = request.data.get('phone_number')
@@ -278,7 +278,7 @@ class AuthenticationAPIView(APIView):
             first_name = request.data.get('first_name', '')
             last_name = request.data.get('last_name', '')
             
-            success, message, user = await auth_service.register_user(
+            success, message, user = auth_service.register_user(
                 phone_number=phone_number,
                 email=email,
                 password=password,
@@ -305,7 +305,7 @@ class AuthenticationAPIView(APIView):
                 'error': 'Registration failed'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    async def _handle_login(self, request):
+    def _handle_login(self, request):
         """Handle user login"""
         try:
             identifier = request.data.get('identifier')  # phone/email/username
@@ -316,7 +316,7 @@ class AuthenticationAPIView(APIView):
                     'error': 'Identifier and password are required'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            success, message, user = await auth_service.authenticate_user(
+            success, message, user = auth_service.authenticate_user(
                 identifier=identifier,
                 password=password,
                 request_ip=request.META.get('REMOTE_ADDR')
@@ -354,7 +354,7 @@ class AuthenticationAPIView(APIView):
                 'error': 'Login failed'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    async def _handle_otp_verification(self, request):
+    def _handle_otp_verification(self, request):
         """Handle OTP verification"""
         try:
             user_id = request.data.get('user_id')
@@ -366,7 +366,7 @@ class AuthenticationAPIView(APIView):
                     'error': 'User ID and OTP code are required'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            success, message = await auth_service.verify_otp(
+            success, message = auth_service.verify_otp(
                 user_id=user_id,
                 otp_code=otp_code,
                 otp_type=otp_type
@@ -383,7 +383,7 @@ class AuthenticationAPIView(APIView):
                 'error': 'OTP verification failed'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    async def _handle_send_otp(self, request):
+    def _handle_send_otp(self, request):
         """Handle sending OTP"""
         try:
             identifier = request.data.get('identifier')  # phone or email
@@ -408,9 +408,9 @@ class AuthenticationAPIView(APIView):
             
             # Send OTP
             if identifier.isdigit():
-                await auth_service.send_phone_otp(user, identifier, otp_type)
+                auth_service.send_phone_otp(user, identifier, otp_type)
             else:
-                await auth_service.send_email_otp(user, identifier, otp_type)
+                auth_service.send_email_otp(user, identifier, otp_type)
             
             return Response({
                 'success': True,
