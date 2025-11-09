@@ -315,13 +315,13 @@ const MultimodalComplaintSubmit = () => {
     
     console.log('📞 Starting live call in language:', callLanguage);
 
-    // AI greets user first (like answering a phone call)
+    // AI greets user first in selected language
     const greetings = {
-      'en-IN': 'Hello! I am your AI assistant from SmartGriev. How can I help you today?',
-      'hi-IN': 'नमस्ते! मैं SmartGriev से आपका AI सहायक हूं। आज मैं आपकी कैसे मदद कर सकता हूं?',
-      'gu-IN': 'નમસ્તે! હું SmartGriev તરફથી તમારો AI સહાયક છું. આજે હું તમને કેવી રીતે મદદ કરી શકું?',
-      'mr-IN': 'नमस्कार! मी SmartGriev कडून तुमचा AI सहाय्यक आहे. आज मी तुम्हाला कशी मदत करू शकतो?',
-      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ SmartGriev ਤੋਂ ਤੁਹਾਡਾ AI ਸਹਾਇਕ ਹਾਂ। ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?'
+      'en-IN': 'Hello! I am your AI assistant from SmartGriev. How can I help you with your complaint today?',
+      'hi-IN': 'नमस्ते! मैं SmartGriev से आपका AI सहायक हूं। आज मैं आपकी शिकायत में कैसे मदद कर सकता हूं?',
+      'gu-IN': 'નમસ્તે! હું SmartGriev તરફથી તમારો AI સહાયક છું. આજે હું તમારી ફરિયાદમાં કેવી રીતે મદદ કરી શકું?',
+      'mr-IN': 'नमस्कार! मी SmartGriev कडून तुमचा AI सहाय्यक आहे. आज मी तुमच्या तक्रारीत कशी मदत करू शकतो?',
+      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ SmartGriev ਤੋਂ ਤੁਹਾਡਾ AI ਸਹਾਇਕ ਹਾਂ। ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਵਿੱਚ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?'
     };
 
     const greeting = greetings[callLanguage as keyof typeof greetings] || greetings['en-IN'];
@@ -395,7 +395,7 @@ const MultimodalComplaintSubmit = () => {
       // Get AI response with language context
       setChatLoading(true);
       try {
-        // Add language instruction to help AI respond in correct language
+        // Language mapping for better AI understanding
         const languageNames = {
           'en-IN': 'English',
           'hi-IN': 'Hindi',
@@ -405,10 +405,14 @@ const MultimodalComplaintSubmit = () => {
         };
         
         const langName = languageNames[callLanguage as keyof typeof languageNames] || 'English';
-        const messageWithLangHint = `[User is speaking in ${langName}. Please respond in ${langName} only.]\n\nUser: ${transcript}`;
+        
+        // Strong language instruction for AI
+        const systemInstruction = `IMPORTANT: The user is speaking in ${langName}. You MUST respond ONLY in ${langName} language. Do not translate or respond in English. Use the same language as the user's message.`;
+        
+        const messageWithContext = `${systemInstruction}\n\nUser's message: ${transcript}`;
         
         const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
-          message: messageWithLangHint,
+          message: messageWithContext,
           conversation_history: chatMessages.slice(-10).map(msg => ({
             role: msg.type === 'user' ? 'user' : 'assistant',
             content: msg.message
