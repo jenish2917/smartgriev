@@ -315,13 +315,13 @@ const MultimodalComplaintSubmit = () => {
     
     console.log('📞 Starting live call in language:', callLanguage);
 
-    // AI greets user first in selected language
+    // AI greets user first in selected language - natural, friendly greeting
     const greetings = {
-      'en-IN': 'Hello! I am your AI assistant from SmartGriev. How can I help you with your complaint today?',
-      'hi-IN': 'नमस्ते! मैं SmartGriev से आपका AI सहायक हूं। आज मैं आपकी शिकायत में कैसे मदद कर सकता हूं?',
-      'gu-IN': 'નમસ્તે! હું SmartGriev તરફથી તમારો AI સહાયક છું. આજે હું તમારી ફરિયાદમાં કેવી રીતે મદદ કરી શકું?',
-      'mr-IN': 'नमस्कार! मी SmartGriev कडून तुमचा AI सहाय्यक आहे. आज मी तुमच्या तक्रारीत कशी मदत करू शकतो?',
-      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ SmartGriev ਤੋਂ ਤੁਹਾਡਾ AI ਸਹਾਇਕ ਹਾਂ। ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਵਿੱਚ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?'
+      'en-IN': 'Hello! How are you? I am here to help you with your complaint. Please tell me, what problem are you facing?',
+      'hi-IN': 'नमस्ते! कैसे हैं आप? मैं आपकी शिकायत में मदद करने आया हूं। बताइए, क्या समस्या है?',
+      'gu-IN': 'નમસ્તે! કેમ છો? હું તમારી ફરિયાદમાં મદદ કરવા અહીં છું। કહો, શું તકલીફ છે?',
+      'mr-IN': 'नमस्कार! कसे आहात? मी तुमच्या तक्रारीत मदत करायला आलो आहे. सांगा, काय अडचण आहे?',
+      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਕਿਵੇਂ ਹੋ? ਮੈਂ ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਹਾਂ। ਦੱਸੋ, ਕੀ ਸਮੱਸਿਆ ਹੈ?'
     };
 
     const greeting = greetings[callLanguage as keyof typeof greetings] || greetings['en-IN'];
@@ -398,21 +398,29 @@ const MultimodalComplaintSubmit = () => {
         // Language mapping for better AI understanding
         const languageNames = {
           'en-IN': 'English',
-          'hi-IN': 'Hindi',
-          'gu-IN': 'Gujarati',
-          'mr-IN': 'Marathi',
-          'pa-IN': 'Punjabi'
+          'hi-IN': 'Hindi (हिंदी)',
+          'gu-IN': 'Gujarati (ગુજરાતી)',
+          'mr-IN': 'Marathi (मराठी)',
+          'pa-IN': 'Punjabi (ਪੰਜਾਬੀ)'
         };
         
         const langName = languageNames[callLanguage as keyof typeof languageNames] || 'English';
         
-        // Strong language instruction for AI
-        const systemInstruction = `IMPORTANT: The user is speaking in ${langName}. You MUST respond ONLY in ${langName} language. Do not translate or respond in English. Use the same language as the user's message.`;
-        
-        const messageWithContext = `${systemInstruction}\n\nUser's message: ${transcript}`;
+        // CRITICAL: Force AI to respond in exact language - no mixing allowed
+        const languageInstruction = `🔴 CRITICAL INSTRUCTION - READ CAREFULLY:
+The user has selected ${langName} as their language. This means:
+1. You MUST respond COMPLETELY and ONLY in ${langName}
+2. DO NOT use English words or mix languages
+3. DO NOT translate - just respond naturally in ${langName}
+4. Talk like a real human friend speaking pure ${langName}
+5. Keep it conversational and natural
+
+User's message in ${langName}: ${transcript}
+
+Remember: Respond ONLY in ${langName} - no exceptions!`;
         
         const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
-          message: messageWithContext,
+          message: languageInstruction,
           conversation_history: chatMessages.slice(-10).map(msg => ({
             role: msg.type === 'user' ? 'user' : 'assistant',
             content: msg.message
