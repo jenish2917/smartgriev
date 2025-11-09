@@ -1,0 +1,59 @@
+# Prometheus Configuration for SmartGriev
+# Place this file at /etc/prometheus/prometheus.yml or use with Docker
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'smartgriev'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'localhost:9093'
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts/smartgriev_alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # SmartGriev Django application
+  - job_name: 'smartgriev_backend'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'localhost:8000'  # Django development server
+          # - 'smartgriev-api:8000'  # Docker container
+        labels:
+          service: 'django'
+          app: 'smartgriev'
+  
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+          - 'localhost:9090'
+  
+  # Node exporter for system metrics (optional)
+  - job_name: 'node'
+    static_configs:
+      - targets:
+          - 'localhost:9100'
+  
+  # PostgreSQL exporter (optional)
+  - job_name: 'postgres'
+    static_configs:
+      - targets:
+          - 'localhost:9187'
+        labels:
+          database: 'smartgriev'
+  
+  # Redis exporter (optional)
+  - job_name: 'redis'
+    static_configs:
+      - targets:
+          - 'localhost:9121'

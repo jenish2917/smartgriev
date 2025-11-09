@@ -69,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'smartgriev.middleware.observability.ObservabilityMiddleware',  # Prometheus metrics & tracing
     # 'analytics.middleware.UserActivityMiddleware',  # Track user activity - temporarily disabled
     # 'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers - temporarily disabled
     # 'analytics.middleware.CacheControlMiddleware',  # Cache control - temporarily disabled
@@ -412,3 +413,25 @@ COMPLAINT_CLASSIFICATION = {
     'MODEL': 'llama-3.1-8b-instant',  # Updated to latest supported Groq model
     'CONFIDENCE_THRESHOLD': 0.7
 }
+
+# ==============================================================================
+# OBSERVABILITY & MONITORING SETTINGS
+# ==============================================================================
+
+# Application version and environment
+APP_VERSION = os.getenv('APP_VERSION', '1.0.0')
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+
+# OpenTelemetry Configuration
+ENABLE_OPENTELEMETRY = os.getenv('ENABLE_OPENTELEMETRY', 'False') == 'True'
+OTLP_ENDPOINT = os.getenv('OTLP_ENDPOINT', 'http://localhost:4317')  # Jaeger/OTLP endpoint
+
+# Structured Logging
+USE_JSON_LOGGING = os.getenv('USE_JSON_LOGGING', 'False') == 'True'  # Enable in production
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+
+# Performance Monitoring
+SLOW_REQUEST_THRESHOLD = float(os.getenv('SLOW_REQUEST_THRESHOLD', 1.0))  # Log requests slower than 1s
+
+# Prometheus Metrics - already enabled via django-prometheus in production.txt
+# Metrics endpoint will be available at /metrics

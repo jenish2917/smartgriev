@@ -1,0 +1,102 @@
+{
+  "dashboard": {
+    "title": "SmartGriev - Application Metrics",
+    "tags": ["smartgriev", "complaints", "civic-engagement"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Total Complaints",
+        "targets": [
+          {
+            "expr": "smartgriev_complaints_total",
+            "legendFormat": "{{status}} - {{category}}"
+          }
+        ],
+        "type": "graph"
+      },
+      {
+        "title": "Complaints by Status",
+        "targets": [
+          {
+            "expr": "smartgriev_complaints_by_status",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "type": "graph"
+      },
+      {
+        "title": "HTTP Request Rate",
+        "targets": [
+          {
+            "expr": "rate(smartgriev_http_requests_total[5m])",
+            "legendFormat": "{{method}} {{endpoint}} - {{status}}"
+          }
+        ],
+        "type": "graph"
+      },
+      {
+        "title": "HTTP Request Duration (p95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(smartgriev_http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "type": "graph"
+      },
+      {
+        "title": "Active HTTP Requests",
+        "targets": [
+          {
+            "expr": "smartgriev_http_active_requests"
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "title": "Active Users (24h)",
+        "targets": [
+          {
+            "expr": "smartgriev_active_users"
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "title": "Complaint Resolution Time Distribution",
+        "targets": [
+          {
+            "expr": "smartgriev_complaint_resolution_time_hours_bucket",
+            "legendFormat": "{{le}}"
+          }
+        ],
+        "type": "heatmap"
+      },
+      {
+        "title": "Request Size (bytes)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(smartgriev_http_request_size_bytes_bucket[5m]))",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "type": "graph"
+      },
+      {
+        "title": "Response Size (bytes)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(smartgriev_http_response_size_bytes_bucket[5m]))",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "type": "graph"
+      }
+    ],
+    "refresh": "30s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    }
+  }
+}
