@@ -46,6 +46,11 @@ export const API_ENDPOINTS = {
     TWO_FACTOR_AUTH: '/api/auth/2fa/',
   },
 
+  // User Endpoints
+  USERS: {
+    UPDATE_LANGUAGE: '/api/users/update-language/',
+  },
+
   // Token Endpoints
   TOKEN: {
     OBTAIN: '/api/token/',
