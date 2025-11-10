@@ -27,7 +27,12 @@ test.describe('User Authentication Flow', () => {
     } catch (error) {
       console.log('Cleanup error:', error);
     }
-    await dbHelper.close();
+    // Always try to close, dbHelper.close() has null check
+    try {
+      await dbHelper.close();
+    } catch (error) {
+      console.log('Close connection error:', error);
+    }
   });
 
   test('should complete user signup flow with OTP verification', async ({ page }) => {
@@ -35,11 +40,12 @@ test.describe('User Authentication Flow', () => {
     await page.goto('/register');
     await expect(page).toHaveTitle(/SmartGriev/i); // Frontend uses generic title
 
-    // Fill signup form
-    await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-    await page.fill('input[name="email"], input[type="email"]', testEmail);
-    await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
-    await page.fill('input[name="password"], input[type="password"]', testPassword);
+    // Fill signup form - Frontend uses firstName, lastName, not name/fullName
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="mobile"]', testMobile);
+    await page.fill('input[name="password"]', testPassword);
     
     // Check if confirm password field exists
     const confirmPasswordExists = await helpers.elementExists('input[name="confirmPassword"]');
@@ -125,10 +131,11 @@ test.describe('User Authentication Flow', () => {
       
       // Navigate to register page and create user
       await page.goto('/register');
-      await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-      await page.fill('input[name="email"], input[type="email"]', loginEmail);
-      await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
-      await page.fill('input[name="password"], input[type="password"]', loginPassword);
+      await page.fill('input[name="firstName"]', 'Test');
+      await page.fill('input[name="lastName"]', 'User');
+      await page.fill('input[name="email"]', loginEmail);
+      await page.fill('input[name="mobile"]', testMobile);
+      await page.fill('input[name="password"]', loginPassword);
       
       // Submit signup form
       await page.locator('button[type="submit"]').click();
@@ -154,11 +161,11 @@ test.describe('User Authentication Flow', () => {
     // Submit login form - use submit button to avoid multiple button issue
     await page.locator('button[type="submit"]').click();
 
-    // Wait for redirect to dashboard
-    await page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+    // Wait for redirect to home page
+    await page.waitForURL(/\/home/i, { timeout: 10000 });
     
-    // Verify we're on dashboard
-    expect(page.url()).toMatch(/dashboard|home/i);
+    // Verify we're on home page
+    expect(page.url()).toMatch(/\/home/i);
     console.log('✓ Successfully logged in and redirected to dashboard');
 
     // Take screenshot of dashboard
@@ -189,8 +196,9 @@ test.describe('User Authentication Flow', () => {
     await page.goto('/register');
 
     // Fill form with invalid email
-    await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="email"]', 'invalid-email');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', testPassword);
 
@@ -212,7 +220,8 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with weak password
     await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', '123'); // Weak password
 
@@ -236,8 +245,8 @@ test.describe('User Authentication Flow', () => {
     
     await helpers.login(loginEmail, loginPassword);
     
-    // Verify on dashboard
-    expect(page.url()).toMatch(/dashboard|home/i);
+    // Verify on home page
+    expect(page.url()).toMatch(/\/home/i);
     
     // Logout
     await helpers.logout();
@@ -264,7 +273,7 @@ test.describe('User Authentication Flow', () => {
     });
 
     // Try to access protected page
-    await page.goto('/dashboard');
+    await page.goto('/home');
     await page.waitForTimeout(2000);
 
     // Should be redirected to login
@@ -279,8 +288,9 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with invalid mobile
     await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="name"]', 'Test User');
-    await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
+    await page.fill('input[name="mobile"]', '123'); // Invalid mobile
     await page.fill('input[name="password"]', testPassword);
 
     // Try to submit
@@ -304,7 +314,8 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with existing email
     await page.fill('input[name="email"]', existingEmail);
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', testPassword);
 

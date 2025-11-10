@@ -1,28 +1,24 @@
-<testsuites id="" name="" tests="60" failures="57" skipped="0" errors="0" time="1144.765162">
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="chromium" tests="10" failures="9" skipped="0" time="335.956" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="14.885">
+<testsuites id="" name="" tests="60" failures="57" skipped="0" errors="0" time="1418.9679820000001">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="chromium" tests="10" failures="9" skipped="0" time="446.966" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="63.408">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [chromium] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Sign Up|Register/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-      34 |     // Navigate to signup page
-      35 |     await page.goto('/signup');
-    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
-         |                        ^
       37 |
       38 |     // Fill signup form
-      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+    > 39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+         |                ^
+      40 |     await page.fill('input[name="email"], input[type="email"]', testEmail);
+      41 |     await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      42 |     await page.fill('input[name="password"], input[type="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:39:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-chromium\test-failed-1.png
@@ -46,29 +42,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.466">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="64.027">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Login|Sign In/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-       95 |     // First create a user (assume user exists or create via API)
-       96 |     await page.goto('/login');
-    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
-          |                        ^
-       98 |
-       99 |     // Fill login form with existing user (use env variables)
-      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+      126 |       // Navigate to register page and create user
+      127 |       await page.goto('/register');
+    > 128 |       await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+          |                  ^
+      129 |       await page.fill('input[name="email"], input[type="email"]', loginEmail);
+      130 |       await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      131 |       await page.fill('input[name="password"], input[type="password"]', loginPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:128:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\test-failed-1.png
@@ -83,6 +75,7 @@
 </failure>
 <system-out>
 <![CDATA[✓ Database connected successfully
+⚠️ User does not exist, creating via signup first...
 
 [[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-chromium\test-failed-1.png]]
 
@@ -92,26 +85,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="13.94">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="19.222">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
-
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
     Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+      - waiting for locator('.ant-notification, .toast, [role="alert"]').first() to be visible
 
 
-      127 |     await page.fill('input[name="password"], input[type="password"]', 'WrongPassword123!');
-      128 |     
-    > 129 |     await page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                ^
-      130 |
-      131 |     // Wait for error message
-      132 |     await helpers.waitForNotification();
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:129:64
+       at ..\utils\helpers.ts:69
+
+      67 |   async waitForNotification(message?: string) {
+      68 |     const notification = this.page.locator('.ant-notification, .toast, [role="alert"]').first();
+    > 69 |     await notification.waitFor({ state: 'visible', timeout: 5000 });
+         |                        ^
+      70 |     
+      71 |     if (message) {
+      72 |       await expect(notification).toContainText(message);
+        at TestHelpers.waitForNotification (D:\SmartGriev\e2e-tests\utils\helpers.ts:69:24)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:178:19
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-chromium\test-failed-1.png
@@ -135,25 +128,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="63.976">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="60.268">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"], input[type="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      144 |
-      145 |     // Fill form with invalid email
-    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+      191 |     // Fill form with invalid email
+      192 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+    > 193 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      147 |     await page.fill('input[name="name"]', 'Test User');
-      148 |     await page.fill('input[name="mobile"]', testMobile);
-      149 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+      194 |     await page.fill('input[name="mobile"]', testMobile);
+      195 |     await page.fill('input[name="password"]', testPassword);
+      196 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:193:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-chromium\test-failed-1.png
@@ -177,25 +170,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="63.467">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="60.27">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      166 |
-      167 |     // Fill form with weak password
-    > 168 |     await page.fill('input[name="email"]', testEmail);
+      213 |     // Fill form with weak password
+      214 |     await page.fill('input[name="email"]', testEmail);
+    > 215 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      169 |     await page.fill('input[name="name"]', 'Test User');
-      170 |     await page.fill('input[name="mobile"]', testMobile);
-      171 |     await page.fill('input[name="password"]', '123'); // Weak password
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+      216 |     await page.fill('input[name="mobile"]', testMobile);
+      217 |     await page.fill('input[name="password"]', '123'); // Weak password
+      218 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:215:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-chromium\test-failed-1.png
@@ -219,29 +212,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="13.855">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="23.173">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
 
-    Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+       at ..\utils\helpers.ts:170
 
-
-       at ..\utils\helpers.ts:167
-
-      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
-      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
-    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                     ^
       168 |     
       169 |     // Wait for redirect to dashboard
-      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
-        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:237:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-chromium\test-failed-1.png
@@ -265,29 +255,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="13.43">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="23.334">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
 
-    Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+       at ..\utils\helpers.ts:170
 
-
-       at ..\utils\helpers.ts:167
-
-      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
-      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
-    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                     ^
       168 |     
       169 |     // Wait for redirect to dashboard
-      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
-        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:257:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-chromium\test-failed-1.png
@@ -311,25 +298,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="63.3">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="60.281">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      233 |
-      234 |     // Fill form with invalid mobile
-    > 235 |     await page.fill('input[name="email"]', testEmail);
+      280 |     // Fill form with invalid mobile
+      281 |     await page.fill('input[name="email"]', testEmail);
+    > 282 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      236 |     await page.fill('input[name="name"]', 'Test User');
-      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
-      238 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+      283 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      284 |     await page.fill('input[name="password"]', testPassword);
+      285 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:282:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-chromium\test-failed-1.png
@@ -353,25 +340,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="63.356">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [chromium] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="60.348">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [chromium] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      258 |
-      259 |     // Fill form with existing email
-    > 260 |     await page.fill('input[name="email"]', existingEmail);
+      305 |     // Fill form with existing email
+      306 |     await page.fill('input[name="email"]', existingEmail);
+    > 307 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      261 |     await page.fill('input[name="name"]', 'Test User');
-      262 |     await page.fill('input[name="mobile"]', testMobile);
-      263 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+      308 |     await page.fill('input[name="mobile"]', testMobile);
+      309 |     await page.fill('input[name="password"]', testPassword);
+      310 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:307:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-chromium\test-failed-1.png
@@ -395,15 +382,15 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="14.281">
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="12.635">
 <system-out>
 <![CDATA[✓ Database connected successfully
 ]]>
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="firefox" tests="10" failures="10" skipped="0" time="0.484" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.07">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="firefox" tests="10" failures="10" skipped="0" time="0.254" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.025">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [firefox] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
@@ -440,9 +427,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.047">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.024">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -477,9 +464,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.05">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.024">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -514,9 +501,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.05">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.022">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -551,9 +538,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.045">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.025">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -588,9 +575,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.044">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.027">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -625,9 +612,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.045">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.024">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -662,9 +649,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.042">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.027">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -699,9 +686,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.045">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.029">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -736,9 +723,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.046">
-<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
-<![CDATA[  [firefox] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.027">
+<failure message="01-authentication.spec.ts:326:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [firefox] › 01-authentication.spec.ts:326:7 › User Authentication Flow › should handle password visibility toggle 
 
     Error: browser.newContext: Unknown permission: microphone
 
@@ -774,8 +761,8 @@
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="webkit" tests="10" failures="10" skipped="0" time="1.811" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.18">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="webkit" tests="10" failures="10" skipped="0" time="1.059" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.184">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [webkit] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
@@ -812,9 +799,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.192">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.088">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -849,9 +836,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.172">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.105">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -886,9 +873,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.166">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.088">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -923,9 +910,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.166">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.099">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -960,9 +947,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.18">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.094">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -997,9 +984,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.174">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.097">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1034,9 +1021,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.175">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.105">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1071,9 +1058,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.226">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.104">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1108,9 +1095,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.18">
-<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
-<![CDATA[  [webkit] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.095">
+<failure message="01-authentication.spec.ts:326:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [webkit] › 01-authentication.spec.ts:326:7 › User Authentication Flow › should handle password visibility toggle 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1146,30 +1133,26 @@
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Mobile Chrome" tests="10" failures="9" skipped="0" time="353.979" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="11.331">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="Mobile Chrome" tests="10" failures="9" skipped="0" time="443.634" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="63.03">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Sign Up|Register/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-      34 |     // Navigate to signup page
-      35 |     await page.goto('/signup');
-    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
-         |                        ^
       37 |
       38 |     // Fill signup form
-      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+    > 39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+         |                ^
+      40 |     await page.fill('input[name="email"], input[type="email"]', testEmail);
+      41 |     await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      42 |     await page.fill('input[name="password"], input[type="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:39:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Mobile-Chrome\test-failed-1.png
@@ -1193,29 +1176,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.361">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="61.762">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Login|Sign In/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-       95 |     // First create a user (assume user exists or create via API)
-       96 |     await page.goto('/login');
-    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
-          |                        ^
-       98 |
-       99 |     // Fill login form with existing user (use env variables)
-      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+      126 |       // Navigate to register page and create user
+      127 |       await page.goto('/register');
+    > 128 |       await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+          |                  ^
+      129 |       await page.fill('input[name="email"], input[type="email"]', loginEmail);
+      130 |       await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      131 |       await page.fill('input[name="password"], input[type="password"]', loginPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:128:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\test-failed-1.png
@@ -1230,6 +1209,7 @@
 </failure>
 <system-out>
 <![CDATA[✓ Database connected successfully
+⚠️ User does not exist, creating via signup first...
 
 [[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Mobile-Chrome\test-failed-1.png]]
 
@@ -1239,9 +1219,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="18.719">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="18.468">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
     TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
     Call log:
@@ -1258,7 +1238,7 @@
       71 |     if (message) {
       72 |       await expect(notification).toContainText(message);
         at TestHelpers.waitForNotification (D:\SmartGriev\e2e-tests\utils\helpers.ts:69:24)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:132:19
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:178:19
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Mobile-Chrome\test-failed-1.png
@@ -1282,25 +1262,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="62.792">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="60.253">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"], input[type="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      144 |
-      145 |     // Fill form with invalid email
-    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+      191 |     // Fill form with invalid email
+      192 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+    > 193 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      147 |     await page.fill('input[name="name"]', 'Test User');
-      148 |     await page.fill('input[name="mobile"]', testMobile);
-      149 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+      194 |     await page.fill('input[name="mobile"]', testMobile);
+      195 |     await page.fill('input[name="password"]', testPassword);
+      196 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:193:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Mobile-Chrome\test-failed-1.png
@@ -1324,25 +1304,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="62.799">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="60.252">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      166 |
-      167 |     // Fill form with weak password
-    > 168 |     await page.fill('input[name="email"]', testEmail);
+      213 |     // Fill form with weak password
+      214 |     await page.fill('input[name="email"]', testEmail);
+    > 215 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      169 |     await page.fill('input[name="name"]', 'Test User');
-      170 |     await page.fill('input[name="mobile"]', testMobile);
-      171 |     await page.fill('input[name="password"]', '123'); // Weak password
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+      216 |     await page.fill('input[name="mobile"]', testMobile);
+      217 |     await page.fill('input[name="password"]', '123'); // Weak password
+      218 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:215:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Mobile-Chrome\test-failed-1.png
@@ -1366,9 +1346,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="24.057">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="23.04">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
     TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
     =========================== logs ===========================
@@ -1385,7 +1365,7 @@
       172 |
       173 |   /**
         at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:237:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Mobile-Chrome\test-failed-1.png
@@ -1409,9 +1389,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="23.803">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="23.099">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
     TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
     =========================== logs ===========================
@@ -1428,7 +1408,7 @@
       172 |
       173 |   /**
         at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:257:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Mobile-Chrome\test-failed-1.png
@@ -1452,25 +1432,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="62.859">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="60.287">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      233 |
-      234 |     // Fill form with invalid mobile
-    > 235 |     await page.fill('input[name="email"]', testEmail);
+      280 |     // Fill form with invalid mobile
+      281 |     await page.fill('input[name="email"]', testEmail);
+    > 282 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      236 |     await page.fill('input[name="name"]', 'Test User');
-      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
-      238 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+      283 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      284 |     await page.fill('input[name="password"]', testPassword);
+      285 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:282:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Mobile-Chrome\test-failed-1.png
@@ -1494,25 +1474,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="62.847">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="60.285">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      258 |
-      259 |     // Fill form with existing email
-    > 260 |     await page.fill('input[name="email"]', existingEmail);
+      305 |     // Fill form with existing email
+      306 |     await page.fill('input[name="email"]', existingEmail);
+    > 307 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      261 |     await page.fill('input[name="name"]', 'Test User');
-      262 |     await page.fill('input[name="mobile"]', testMobile);
-      263 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+      308 |     await page.fill('input[name="mobile"]', testMobile);
+      309 |     await page.fill('input[name="password"]', testPassword);
+      310 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:307:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Mobile-Chrome\test-failed-1.png
@@ -1536,15 +1516,15 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="13.411">
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="13.158">
 <system-out>
 <![CDATA[✓ Database connected successfully
 ]]>
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Mobile Safari" tests="10" failures="10" skipped="0" time="1.877" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.17">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="Mobile Safari" tests="10" failures="10" skipped="0" time="0.909" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="0.089">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
@@ -1581,9 +1561,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.186">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="0.096">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1618,9 +1598,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.19">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="0.083">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1655,9 +1635,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.179">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="0.095">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1692,9 +1672,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.189">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="0.094">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1729,9 +1709,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.193">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="0.09">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1766,9 +1746,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.189">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="0.092">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1803,9 +1783,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.179">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="0.099">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1840,9 +1820,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.21">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="0.083">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1877,9 +1857,9 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.192">
-<failure message="01-authentication.spec.ts:280:7 should handle password visibility toggle" type="FAILURE">
-<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:280:7 › User Authentication Flow › should handle password visibility toggle 
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="0.088">
+<failure message="01-authentication.spec.ts:326:7 should handle password visibility toggle" type="FAILURE">
+<![CDATA[  [Mobile Safari] › 01-authentication.spec.ts:326:7 › User Authentication Flow › should handle password visibility toggle 
 
     Error: browserContext.newPage: Unknown permission: microphone
 
@@ -1915,30 +1895,26 @@
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="01-authentication.spec.ts" timestamp="2025-11-09T14:51:36.245Z" hostname="Microsoft Edge" tests="10" failures="9" skipped="0" time="333.077" errors="0">
-<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="11.614">
+<testsuite name="01-authentication.spec.ts" timestamp="2025-11-10T01:51:03.800Z" hostname="Microsoft Edge" tests="10" failures="9" skipped="0" time="444.702" errors="0">
+<testcase name="User Authentication Flow › should complete user signup flow with OTP verification" classname="01-authentication.spec.ts" time="62.125">
 <failure message="01-authentication.spec.ts:33:7 should complete user signup flow with OTP verification" type="FAILURE">
 <![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:33:7 › User Authentication Flow › should complete user signup flow with OTP verification 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Sign Up|Register/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-      34 |     // Navigate to signup page
-      35 |     await page.goto('/signup');
-    > 36 |     await expect(page).toHaveTitle(/Sign Up|Register/i);
-         |                        ^
       37 |
       38 |     // Fill signup form
-      39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:36:24
+    > 39 |     await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+         |                ^
+      40 |     await page.fill('input[name="email"], input[type="email"]', testEmail);
+      41 |     await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      42 |     await page.fill('input[name="password"], input[type="password"]', testPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:39:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-87ba7--flow-with-OTP-verification-Microsoft-Edge\test-failed-1.png
@@ -1962,29 +1938,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="11.626">
-<failure message="01-authentication.spec.ts:94:7 should login with valid credentials" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:94:7 › User Authentication Flow › should login with valid credentials 
+<testcase name="User Authentication Flow › should login with valid credentials" classname="01-authentication.spec.ts" time="62.124">
+<failure message="01-authentication.spec.ts:114:7 should login with valid credentials" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:114:7 › User Authentication Flow › should login with valid credentials 
 
-    Error: expect(page).toHaveTitle(expected) failed
+    Test timeout of 60000ms exceeded.
 
-    Expected pattern: /Login|Sign In/i
-    Received string:  "SmartGriev - Enterprise Grievance Management"
-    Timeout: 10000ms
-
+    Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - Expect "toHaveTitle" with timeout 10000ms
-        13 × unexpected value "SmartGriev - Enterprise Grievance Management"
+      - waiting for locator('input[name="name"], input[name="fullName"]')
 
 
-       95 |     // First create a user (assume user exists or create via API)
-       96 |     await page.goto('/login');
-    >  97 |     await expect(page).toHaveTitle(/Login|Sign In/i);
-          |                        ^
-       98 |
-       99 |     // Fill login form with existing user (use env variables)
-      100 |     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:97:24
+      126 |       // Navigate to register page and create user
+      127 |       await page.goto('/register');
+    > 128 |       await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
+          |                  ^
+      129 |       await page.fill('input[name="email"], input[type="email"]', loginEmail);
+      130 |       await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
+      131 |       await page.fill('input[name="password"], input[type="password"]', loginPassword);
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:128:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\test-failed-1.png
@@ -1999,6 +1971,7 @@
 </failure>
 <system-out>
 <![CDATA[✓ Database connected successfully
+⚠️ User does not exist, creating via signup first...
 
 [[ATTACHMENT|..\test-results\01-authentication-User-Aut-8eca7-ogin-with-valid-credentials-Microsoft-Edge\test-failed-1.png]]
 
@@ -2008,26 +1981,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="14.121">
-<failure message="01-authentication.spec.ts:122:7 should show error for invalid credentials" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:122:7 › User Authentication Flow › should show error for invalid credentials 
+<testcase name="User Authentication Flow › should show error for invalid credentials" classname="01-authentication.spec.ts" time="18.502">
+<failure message="01-authentication.spec.ts:168:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:168:7 › User Authentication Flow › should show error for invalid credentials 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
-
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
     Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+      - waiting for locator('.ant-notification, .toast, [role="alert"]').first() to be visible
 
 
-      127 |     await page.fill('input[name="password"], input[type="password"]', 'WrongPassword123!');
-      128 |     
-    > 129 |     await page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                ^
-      130 |
-      131 |     // Wait for error message
-      132 |     await helpers.waitForNotification();
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:129:64
+       at ..\utils\helpers.ts:69
+
+      67 |   async waitForNotification(message?: string) {
+      68 |     const notification = this.page.locator('.ant-notification, .toast, [role="alert"]').first();
+    > 69 |     await notification.waitFor({ state: 'visible', timeout: 5000 });
+         |                        ^
+      70 |     
+      71 |     if (message) {
+      72 |       await expect(notification).toContainText(message);
+        at TestHelpers.waitForNotification (D:\SmartGriev\e2e-tests\utils\helpers.ts:69:24)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:178:19
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-4b058-ror-for-invalid-credentials-Microsoft-Edge\test-failed-1.png
@@ -2051,25 +2024,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="63.477">
-<failure message="01-authentication.spec.ts:142:7 should validate email format" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:142:7 › User Authentication Flow › should validate email format 
+<testcase name="User Authentication Flow › should validate email format" classname="01-authentication.spec.ts" time="60.291">
+<failure message="01-authentication.spec.ts:188:7 should validate email format" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:188:7 › User Authentication Flow › should validate email format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"], input[type="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      144 |
-      145 |     // Fill form with invalid email
-    > 146 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+      191 |     // Fill form with invalid email
+      192 |     await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
+    > 193 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      147 |     await page.fill('input[name="name"]', 'Test User');
-      148 |     await page.fill('input[name="mobile"]', testMobile);
-      149 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:146:16
+      194 |     await page.fill('input[name="mobile"]', testMobile);
+      195 |     await page.fill('input[name="password"]', testPassword);
+      196 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:193:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-bee91-hould-validate-email-format-Microsoft-Edge\test-failed-1.png
@@ -2093,25 +2066,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="63.463">
-<failure message="01-authentication.spec.ts:164:7 should validate password strength" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:164:7 › User Authentication Flow › should validate password strength 
+<testcase name="User Authentication Flow › should validate password strength" classname="01-authentication.spec.ts" time="60.241">
+<failure message="01-authentication.spec.ts:210:7 should validate password strength" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:210:7 › User Authentication Flow › should validate password strength 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      166 |
-      167 |     // Fill form with weak password
-    > 168 |     await page.fill('input[name="email"]', testEmail);
+      213 |     // Fill form with weak password
+      214 |     await page.fill('input[name="email"]', testEmail);
+    > 215 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      169 |     await page.fill('input[name="name"]', 'Test User');
-      170 |     await page.fill('input[name="mobile"]', testMobile);
-      171 |     await page.fill('input[name="password"]', '123'); // Weak password
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:168:16
+      216 |     await page.fill('input[name="mobile"]', testMobile);
+      217 |     await page.fill('input[name="password"]', '123'); // Weak password
+      218 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:215:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-956e4--validate-password-strength-Microsoft-Edge\test-failed-1.png
@@ -2135,29 +2108,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="13.91">
-<failure message="01-authentication.spec.ts:186:7 should logout successfully" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:186:7 › User Authentication Flow › should logout successfully 
+<testcase name="User Authentication Flow › should logout successfully" classname="01-authentication.spec.ts" time="24.114">
+<failure message="01-authentication.spec.ts:232:7 should logout successfully" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:232:7 › User Authentication Flow › should logout successfully 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
 
-    Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+       at ..\utils\helpers.ts:170
 
-
-       at ..\utils\helpers.ts:167
-
-      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
-      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
-    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                     ^
       168 |     
       169 |     // Wait for redirect to dashboard
-      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
-        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:191:5
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:237:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-0e789--should-logout-successfully-Microsoft-Edge\test-failed-1.png
@@ -2181,29 +2151,26 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="13.798">
-<failure message="01-authentication.spec.ts:206:7 should handle session timeout" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:206:7 › User Authentication Flow › should handle session timeout 
+<testcase name="User Authentication Flow › should handle session timeout" classname="01-authentication.spec.ts" time="23.468">
+<failure message="01-authentication.spec.ts:252:7 should handle session timeout" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:252:7 › User Authentication Flow › should handle session timeout 
 
-    Error: locator.click: Error: strict mode violation: getByRole('button', { name: /login|sign in/i }) resolved to 2 elements:
-        1) <button class="sc-dYwGCk fMUBDJ">Login</button> aka getByRole('button', { name: 'Login' })
-        2) <button type="submit" class="sc-eknHtZ kBgIcq">🔐 Sign In</button> aka getByRole('button', { name: '🔐 Sign In' })
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
 
-    Call log:
-      - waiting for getByRole('button', { name: /login|sign in/i })
+       at ..\utils\helpers.ts:170
 
-
-       at ..\utils\helpers.ts:167
-
-      165 |     await this.page.fill('input[name="email"], input[type="email"]', email);
-      166 |     await this.page.fill('input[name="password"], input[type="password"]', password);
-    > 167 |     await this.page.getByRole('button', { name: /login|sign in/i }).click();
-          |                                                                     ^
       168 |     
       169 |     // Wait for redirect to dashboard
-      170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
-        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:167:69)
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:211:5
+    > 170 |     await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+          |                     ^
+      171 |   }
+      172 |
+      173 |   /**
+        at TestHelpers.login (D:\SmartGriev\e2e-tests\utils\helpers.ts:170:21)
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:257:5
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-30e7c-ould-handle-session-timeout-Microsoft-Edge\test-failed-1.png
@@ -2227,25 +2194,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="63.529">
-<failure message="01-authentication.spec.ts:231:7 should validate mobile number format" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:231:7 › User Authentication Flow › should validate mobile number format 
+<testcase name="User Authentication Flow › should validate mobile number format" classname="01-authentication.spec.ts" time="60.268">
+<failure message="01-authentication.spec.ts:277:7 should validate mobile number format" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:277:7 › User Authentication Flow › should validate mobile number format 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      233 |
-      234 |     // Fill form with invalid mobile
-    > 235 |     await page.fill('input[name="email"]', testEmail);
+      280 |     // Fill form with invalid mobile
+      281 |     await page.fill('input[name="email"]', testEmail);
+    > 282 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      236 |     await page.fill('input[name="name"]', 'Test User');
-      237 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
-      238 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:235:16
+      283 |     await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+      284 |     await page.fill('input[name="password"]', testPassword);
+      285 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:282:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e4117-lidate-mobile-number-format-Microsoft-Edge\test-failed-1.png
@@ -2269,25 +2236,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="63.389">
-<failure message="01-authentication.spec.ts:253:7 should prevent duplicate email registration" type="FAILURE">
-<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:253:7 › User Authentication Flow › should prevent duplicate email registration 
+<testcase name="User Authentication Flow › should prevent duplicate email registration" classname="01-authentication.spec.ts" time="60.262">
+<failure message="01-authentication.spec.ts:299:7 should prevent duplicate email registration" type="FAILURE">
+<![CDATA[  [Microsoft Edge] › 01-authentication.spec.ts:299:7 › User Authentication Flow › should prevent duplicate email registration 
 
     Test timeout of 60000ms exceeded.
 
     Error: page.fill: Test timeout of 60000ms exceeded.
     Call log:
-      - waiting for locator('input[name="email"]')
+      - waiting for locator('input[name="name"]')
 
 
-      258 |
-      259 |     // Fill form with existing email
-    > 260 |     await page.fill('input[name="email"]', existingEmail);
+      305 |     // Fill form with existing email
+      306 |     await page.fill('input[name="email"]', existingEmail);
+    > 307 |     await page.fill('input[name="name"]', 'Test User');
           |                ^
-      261 |     await page.fill('input[name="name"]', 'Test User');
-      262 |     await page.fill('input[name="mobile"]', testMobile);
-      263 |     await page.fill('input[name="password"]', testPassword);
-        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:260:16
+      308 |     await page.fill('input[name="mobile"]', testMobile);
+      309 |     await page.fill('input[name="password"]', testPassword);
+      310 |
+        at D:\SmartGriev\e2e-tests\tests\01-authentication.spec.ts:307:16
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\01-authentication-User-Aut-e0b69-uplicate-email-registration-Microsoft-Edge\test-failed-1.png
@@ -2311,7 +2278,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="14.15">
+<testcase name="User Authentication Flow › should handle password visibility toggle" classname="01-authentication.spec.ts" time="13.307">
 <system-out>
 <![CDATA[✓ Database connected successfully
 ]]>
