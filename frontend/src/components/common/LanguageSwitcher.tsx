@@ -4,6 +4,8 @@ import { Select, Space, Typography, message } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { SUPPORTED_LANGUAGES, changeLanguage, getCurrentLanguage } from '@/i18n';
 import axios from 'axios';
+import { buildApiUrl } from '../../config/api.config';
+import styles from './LanguageSwitcher.module.css';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -36,7 +38,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       if (token) {
         try {
           const response = await axios.post(
-            'http://127.0.0.1:8000/api/users/update-language/',
+            buildApiUrl('/api/users/update-language/'),
             { language: languageCode },
             {
               headers: {
@@ -52,7 +54,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         } catch (apiError) {
           console.error('Failed to update user language preference:', apiError);
           // Still show success since language changed in UI
-          message.warning('Language changed locally. Please log in again to persist your preference.');
+          message.info(`Language changed to ${SUPPORTED_LANGUAGES[languageCode as keyof typeof SUPPORTED_LANGUAGES].nativeName}. Your preference will sync when you log in next time.`);
         }
       } else {
         // Show success for unauthenticated users
@@ -90,10 +92,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
             }
           >
             <Space>
-              <span style={{ fontSize: '18px' }}>{lang.flag}</span>
+              <span className={styles.languageFlag}>{lang.flag}</span>
               <div>
                 <div>{lang.nativeName}</div>
-                <div style={{ fontSize: '12px', color: '#999' }}>{lang.name}</div>
+                <div className={styles.languageSubtext}>{lang.name}</div>
               </div>
             </Space>
           </Option>

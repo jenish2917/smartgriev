@@ -190,7 +190,7 @@
   border-radius: 18px 18px 5px 18px;
   max-width: 80%;
   margin-left: auto;
-  display: inline-block;
+  display: block;
   float: right;
   clear: both;
 }
