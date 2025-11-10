@@ -67,7 +67,12 @@ export default defineConfig({
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { 
+        ...devices['Desktop Firefox'],
+        // Firefox doesn't support microphone permission in Playwright
+        // Remove microphone from permissions for Firefox only
+        permissions: ['geolocation', 'notifications'],
+      },
     },
 
     // WEBKIT/SAFARI DISABLED - Microphone permission not supported
