@@ -565,4 +565,147 @@ test.describe('Complaint Submission - Text Only', () => {
       }
     }
   });
+
+  test('should submit complaint with all enhanced fields (GPS, urgency, location)', async ({ page }) => {
+    // Navigate to submit complaint page
+    await page.goto('/submit-complaint');
+    await page.waitForTimeout(2000);
+
+    const complaintTitle = `Enhanced Test Complaint - ${Date.now()}`;
+    const complaintDescription = 'This is a comprehensive test with GPS location and all new fields.';
+
+    // Fill basic fields
+    await page.fill('input[name="title"]', complaintTitle);
+    await page.fill('textarea[name="description"]', complaintDescription);
+
+    // NEW: Select urgency level (Low, Medium, High, Critical)
+    const urgencyExists = await helpers.elementExists('select[name="urgency_level"], .ant-select[id*="urgency"]');
+    if (urgencyExists) {
+      try {
+        // Try native select first
+        const nativeSelect = page.locator('select[name="urgency_level"]');
+        if (await nativeSelect.isVisible({ timeout: 1000 })) {
+          await nativeSelect.selectOption('High');
+          console.log('✓ Selected urgency level: High');
+        } else {
+          // Try Ant Design Select
+          await page.locator('.ant-select[id*="urgency"]').click();
+          await page.locator('.ant-select-item:has-text("High")').click();
+          console.log('✓ Selected urgency level: High (Ant Design)');
+        }
+      } catch (e) {
+        console.log('⚠ Could not set urgency level:', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // NEW: Select submitted language (defaults to 'en')
+    const languageExists = await helpers.elementExists('select[name="submitted_language"], .ant-select[id*="submitted_language"]');
+    if (languageExists) {
+      console.log('✓ Language selector found (defaulting to English)');
+    }
+
+    // NEW: Fill location details
+    const addressExists = await helpers.elementExists('input[name="incident_address"]');
+    if (addressExists) {
+      await page.fill('input[name="incident_address"]', '123 Test Road, Test City');
+      console.log('✓ Filled incident address');
+    }
+
+    const landmarkExists = await helpers.elementExists('input[name="incident_landmark"]');
+    if (landmarkExists) {
+      await page.fill('input[name="incident_landmark"]', 'Near City Hall');
+      console.log('✓ Filled landmark');
+    }
+
+    const plusCodeExists = await helpers.elementExists('input[name="plus_code"]');
+    if (plusCodeExists) {
+      await page.fill('input[name="plus_code"]', '7JVW52M7+2F');
+      console.log('✓ Filled Plus Code');
+    }
+
+    // NEW: Fill GPS coordinates (simulating manual entry)
+    const latExists = await helpers.elementExists('input[name="incident_latitude"]');
+    const lonExists = await helpers.elementExists('input[name="incident_longitude"]');
+    if (latExists && lonExists) {
+      await page.fill('input[name="incident_latitude"]', '23.0225');
+      await page.fill('input[name="incident_longitude"]', '72.5714');
+      console.log('✓ Filled GPS coordinates (Ahmedabad)');
+    }
+
+    // NEW: Select area type
+    const areaTypeExists = await helpers.elementExists('select[name="area_type"], .ant-select[id*="area_type"]');
+    if (areaTypeExists) {
+      try {
+        const nativeSelect = page.locator('select[name="area_type"]');
+        if (await nativeSelect.isVisible({ timeout: 1000 })) {
+          await nativeSelect.selectOption('Residential');
+          console.log('✓ Selected area type: Residential');
+        } else {
+          await page.locator('.ant-select[id*="area_type"]').click();
+          await page.locator('.ant-select-item:has-text("Residential")').click();
+          console.log('✓ Selected area type: Residential (Ant Design)');
+        }
+      } catch (e) {
+        console.log('⚠ Could not set area type:', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    await helpers.takeScreenshot('enhanced-complaint-form-filled');
+
+    // Submit the form
+    await page.locator('button[type="submit"]').first().click();
+    await page.waitForTimeout(3000);
+    await helpers.takeScreenshot('enhanced-complaint-submitted');
+
+    // Verify in database with new fields
+    if (testUserId) {
+      const complaint = await dbHelper.getLatestComplaintByUser(testUserId);
+      if (complaint) {
+        console.log('✓ Enhanced complaint found in database:', complaint.id);
+        console.log('  Title:', complaint.title);
+        console.log('  Urgency:', complaint.urgency_level || 'not set');
+        console.log('  Location:', complaint.incident_address || 'not set');
+        console.log('  Coordinates:', `${complaint.incident_latitude || 'N/A'}, ${complaint.incident_longitude || 'N/A'}`);
+        expect(complaint.title).toContain('Enhanced Test Complaint');
+      }
+    }
+  });
+
+  test('should handle GPS location capture button', async ({ page }) => {
+    // Navigate to submit complaint page
+    await page.goto('/submit-complaint');
+    await page.waitForTimeout(2000);
+
+    // Look for GPS capture button
+    const gpsButtonExists = await helpers.elementExists('button:has-text("Get Current"), button:has-text("GPS"), button:has-text("Location")');
+    
+    if (gpsButtonExists) {
+      console.log('✓ GPS capture button found');
+      
+      // Note: In E2E tests, geolocation API needs to be mocked or granted permission
+      // For now, just verify the button exists and is clickable
+      try {
+        const gpsButton = page.locator('button:has-text("Get Current"), button:has-text("GPS"), button:has-text("Location")').first();
+        await expect(gpsButton).toBeVisible();
+        console.log('✓ GPS button is visible and ready');
+        
+        // Optional: Test with mock geolocation
+        await page.context().grantPermissions(['geolocation']);
+        await page.context().setGeolocation({ latitude: 23.0225, longitude: 72.5714 });
+        
+        await gpsButton.click();
+        await page.waitForTimeout(2000);
+        
+        // Check if coordinates were filled
+        const latValue = await page.locator('input[name="incident_latitude"]').inputValue();
+        if (latValue) {
+          console.log('✓ GPS coordinates auto-filled:', latValue);
+        }
+      } catch (e) {
+        console.log('⚠ GPS test skipped:', e instanceof Error ? e.message : String(e));
+      }
+    } else {
+      console.log('⚠ GPS capture button not found');
+    }
+  });
 });

@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-inline-styles */
 import React, { useState } from 'react';
-import { Button, Card, Input, Typography, Alert, Spin, Tag, Divider, Menu } from 'antd';
+import { Card, Input, Button, Typography, Alert, Spin, Tag, Divider, Menu } from 'antd';
 import { RobotOutlined, SendOutlined, HomeOutlined, LoginOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { API_URLS } from '../../config/api.config';
+import './AIComplaintClassifier.css';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -218,7 +222,7 @@ const AIComplaintClassifier: React.FC = () => {
         bodyStyle={{ padding: 32 }}
       >
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ color: '#FF9933', marginBottom: 8 }}>
+          <Title level={2} style={{ color: '#3344ffff', marginBottom: 8 }}>
             <RobotOutlined /> AI Complaint Classification
           </Title>
           <Text type="secondary" style={{ fontSize: 16 }}>

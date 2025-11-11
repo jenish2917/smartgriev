@@ -247,7 +247,10 @@ const Register: React.FC = () => {
     username: '',
     password: '',
     confirmPassword: '',
-    phone: ''
+    phone: '',
+    address: '',
+    language: 'en',
+    acceptTerms: false
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -296,6 +299,12 @@ const Register: React.FC = () => {
       return;
     }
 
+    if (!formData.acceptTerms) {
+      setError('Please accept the Terms & Conditions to continue.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(API_URLS.REGISTER(), {
         username: formData.username,
@@ -304,12 +313,16 @@ const Register: React.FC = () => {
         confirm_password: formData.confirmPassword,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        mobile: formData.phone || '', // Backend expects 'mobile', not 'phone'
-        address: '', // Optional field
-        language: 'en' // Default language
+        mobile: formData.phone || '', // Backend expects 'mobile', optional
+        address: formData.address || '', // Optional field
+        language: formData.language // User selected language
       });
 
-      setSuccess(t('register.success'));
+      // Backend returns user object on successful registration
+      console.log('Registration successful:', response.data);
+      setSuccess('Registration successful! Redirecting to login...');
+      
+      // Redirect to login page after 2 seconds
       setTimeout(() => navigate('/login'), 2000);
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -441,6 +454,64 @@ const Register: React.FC = () => {
               onChange={handleChange}
               required
             />
+          </FormGroup>
+
+          <FormGroup>
+            <Label htmlFor="address">Address (Optional)</Label>
+            <Input
+              type="text"
+              id="address"
+              name="address"
+              placeholder="Enter your address"
+              value={formData.address}
+              onChange={handleChange}
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label htmlFor="language">Preferred Language</Label>
+            <select
+              id="language"
+              name="language"
+              value={formData.language}
+              onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+              style={{
+                padding: theme.spacing.md,
+                border: `2px solid ${theme.colors.text.disabled}`,
+                borderRadius: theme.borderRadius.md,
+                fontSize: '16px',
+                width: '100%',
+                backgroundColor: theme.colors.white.pure
+              }}
+            >
+              <option value="en">English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="mr">मराठी (Marathi)</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+              <option value="gu">ગુજરાતી (Gujarati)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="ml">മലയാളം (Malayalam)</option>
+              <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+              <option value="ur">اردو (Urdu)</option>
+              <option value="or">ଓଡ଼ିଆ (Odia)</option>
+            </select>
+          </FormGroup>
+
+          <FormGroup style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+            <input
+              type="checkbox"
+              id="acceptTerms"
+              name="acceptTerms"
+              checked={formData.acceptTerms}
+              onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+              required
+              style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+            />
+            <Label htmlFor="acceptTerms" style={{ margin: 0, cursor: 'pointer' }}>
+              I accept the <a href="/terms" target="_blank" style={{ color: theme.colors.primary[600], textDecoration: 'underline' }}>Terms & Conditions</a> and <a href="/privacy" target="_blank" style={{ color: theme.colors.primary[600], textDecoration: 'underline' }}>Privacy Policy</a>
+            </Label>
           </FormGroup>
 
           <Button type="submit" $loading={loading}>

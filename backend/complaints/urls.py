@@ -46,8 +46,16 @@ from .location_views import (
     assign_ward,
     get_supported_cities
 )
+from .metadata_views import (
+    CategoryListView,
+    DepartmentListView as MetadataDepartmentListView
+)
 
 urlpatterns = [
+    # Metadata endpoints (Categories & Departments)
+    path('categories/', CategoryListView.as_view(), name='complaint-categories'),
+    path('departments-list/', MetadataDepartmentListView.as_view(), name='departments-metadata'),
+    
     # Advanced Multi-Modal API endpoints
     path('api/process/', MultiModalComplaintProcessingView.as_view(), name='api-process-multimodal'),
     path('api/auth/', AuthenticationAPIView.as_view(), name='api-authentication'),

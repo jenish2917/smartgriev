@@ -27,7 +27,12 @@ test.describe('User Authentication Flow', () => {
     } catch (error) {
       console.log('Cleanup error:', error);
     }
-    await dbHelper.close();
+    // Always try to close, dbHelper.close() has null check
+    try {
+      await dbHelper.close();
+    } catch (error) {
+      console.log('Close connection error:', error);
+    }
   });
 
   test('should complete user signup flow with OTP verification', async ({ page }) => {
@@ -35,16 +40,37 @@ test.describe('User Authentication Flow', () => {
     await page.goto('/register');
     await expect(page).toHaveTitle(/SmartGriev/i); // Frontend uses generic title
 
-    // Fill signup form
-    await page.fill('input[name="name"], input[name="fullName"]', 'Test User');
-    await page.fill('input[name="email"], input[type="email"]', testEmail);
-    await page.fill('input[name="mobile"], input[name="phone"]', testMobile);
-    await page.fill('input[name="password"], input[type="password"]', testPassword);
+    // Fill signup form - Frontend uses firstName, lastName, not name/fullName
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="mobile"]', testMobile);
+    await page.fill('input[name="password"]', testPassword);
     
     // Check if confirm password field exists
     const confirmPasswordExists = await helpers.elementExists('input[name="confirmPassword"]');
     if (confirmPasswordExists) {
       await page.fill('input[name="confirmPassword"]', testPassword);
+    }
+
+    // NEW: Fill optional address field if it exists
+    const addressExists = await helpers.elementExists('input[name="address"]');
+    if (addressExists) {
+      await page.fill('input[name="address"]', '123 Test Street, Test City');
+    }
+
+    // NEW: Select language if dropdown exists (default is 'en')
+    const languageExists = await helpers.elementExists('.ant-select[name="language"], select[name="language"]');
+    if (languageExists) {
+      // Frontend defaults to English, so no action needed unless testing other languages
+      console.log('Language selector found, using default (English)');
+    }
+
+    // NEW: Accept terms and conditions checkbox (REQUIRED)
+    const termsCheckboxExists = await helpers.elementExists('input[name="acceptTerms"], input[type="checkbox"][name="terms"]');
+    if (termsCheckboxExists) {
+      await page.check('input[name="acceptTerms"], input[type="checkbox"][name="terms"]');
+      console.log('✓ Terms and conditions accepted');
     }
 
     // Take screenshot before submission
@@ -92,14 +118,41 @@ test.describe('User Authentication Flow', () => {
   });
 
   test('should login with valid credentials', async ({ page }) => {
-    // First create a user (assume user exists or create via API)
-    await page.goto('/login');
-    await expect(page).toHaveTitle(/SmartGriev/i); // Frontend uses generic title
-
-    // Fill login form with existing user (use env variables)
+    // IMPORTANT: This test requires the user to exist first
+    // Either run signup test first or create user via API
+    
     const loginEmail = process.env.TEST_USER_EMAIL || 'test@smartgriev.com';
     const loginPassword = process.env.TEST_USER_PASSWORD || 'TestPass123!';
 
+    // Check if user exists in database, if not create via signup
+    const user = await dbHelper.getUserByEmail(loginEmail);
+    if (!user) {
+      console.log('⚠️ User does not exist, creating via signup first...');
+      
+      // Navigate to register page and create user
+      await page.goto('/register');
+      await page.fill('input[name="firstName"]', 'Test');
+      await page.fill('input[name="lastName"]', 'User');
+      await page.fill('input[name="email"]', loginEmail);
+      await page.fill('input[name="mobile"]', testMobile);
+      await page.fill('input[name="password"]', loginPassword);
+      
+      // Submit signup form
+      await page.locator('button[type="submit"]').click();
+      
+      // Handle OTP if required (wait a bit for page to load)
+      await page.waitForTimeout(2000);
+      
+      // If OTP page appears, skip for now and go to login
+      await page.goto('/login');
+    } else {
+      console.log('✓ User already exists in database, proceeding with login');
+      await page.goto('/login');
+    }
+
+    await expect(page).toHaveTitle(/SmartGriev/i);
+
+    // Fill login form
     await page.fill('input[name="email"], input[type="email"]', loginEmail);
     await page.fill('input[name="password"], input[type="password"]', loginPassword);
     
@@ -108,11 +161,11 @@ test.describe('User Authentication Flow', () => {
     // Submit login form - use submit button to avoid multiple button issue
     await page.locator('button[type="submit"]').click();
 
-    // Wait for redirect to dashboard
-    await page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+    // Wait for redirect to home page
+    await page.waitForURL(/\/home/i, { timeout: 10000 });
     
-    // Verify we're on dashboard
-    expect(page.url()).toMatch(/dashboard|home/i);
+    // Verify we're on home page
+    expect(page.url()).toMatch(/\/home/i);
     console.log('✓ Successfully logged in and redirected to dashboard');
 
     // Take screenshot of dashboard
@@ -143,8 +196,9 @@ test.describe('User Authentication Flow', () => {
     await page.goto('/register');
 
     // Fill form with invalid email
-    await page.fill('input[name="email"], input[type="email"]', 'invalid-email');
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="email"]', 'invalid-email');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', testPassword);
 
@@ -166,7 +220,8 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with weak password
     await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', '123'); // Weak password
 
@@ -190,8 +245,8 @@ test.describe('User Authentication Flow', () => {
     
     await helpers.login(loginEmail, loginPassword);
     
-    // Verify on dashboard
-    expect(page.url()).toMatch(/dashboard|home/i);
+    // Verify on home page
+    expect(page.url()).toMatch(/\/home/i);
     
     // Logout
     await helpers.logout();
@@ -218,7 +273,7 @@ test.describe('User Authentication Flow', () => {
     });
 
     // Try to access protected page
-    await page.goto('/dashboard');
+    await page.goto('/home');
     await page.waitForTimeout(2000);
 
     // Should be redirected to login
@@ -233,8 +288,9 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with invalid mobile
     await page.fill('input[name="email"]', testEmail);
-    await page.fill('input[name="name"]', 'Test User');
-    await page.fill('input[name="mobile"], input[name="phone"]', '123'); // Invalid mobile
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
+    await page.fill('input[name="mobile"]', '123'); // Invalid mobile
     await page.fill('input[name="password"]', testPassword);
 
     // Try to submit
@@ -258,7 +314,8 @@ test.describe('User Authentication Flow', () => {
 
     // Fill form with existing email
     await page.fill('input[name="email"]', existingEmail);
-    await page.fill('input[name="name"]', 'Test User');
+    await page.fill('input[name="firstName"]', 'Test');
+    await page.fill('input[name="lastName"]', 'User');
     await page.fill('input[name="mobile"]', testMobile);
     await page.fill('input[name="password"]', testPassword);
 

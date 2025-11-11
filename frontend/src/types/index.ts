@@ -61,8 +61,8 @@ export interface Department {
 // Complaint Types
 export type ComplaintStatus = 'pending' | 'in_progress' | 'resolved' | 'rejected';
 export type ComplaintPriority = 'low' | 'medium' | 'high' | 'urgent';
-export type LocationMethod = 'gps' | 'manual' | 'address';
-export type AreaType = 'residential' | 'commercial' | 'industrial' | 'rural';
+export type LocationMethod = 'gps' | 'manual' | 'address' | 'plus_code';
+export type AreaType = 'residential' | 'commercial' | 'industrial' | 'rural' | 'public' | 'road' | 'park' | 'other';
 
 export interface Complaint {
   id: number;

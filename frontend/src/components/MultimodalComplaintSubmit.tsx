@@ -1,3 +1,4 @@
+/* eslint-disable react/no-inline-styles */
 import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './MultimodalComplaintSubmit.module.css';

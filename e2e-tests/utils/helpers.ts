@@ -166,8 +166,8 @@ export class TestHelpers {
     await this.page.fill('input[name="password"], input[type="password"]', password);
     await this.page.locator('button[type="submit"]').click();
     
-    // Wait for redirect to dashboard
-    await this.page.waitForURL(/dashboard|home/i, { timeout: 10000 });
+    // Wait for redirect to home page (user confirmed redirect goes to /home)
+    await this.page.waitForURL(/home/i, { timeout: 10000 });
   }
 
   /**
