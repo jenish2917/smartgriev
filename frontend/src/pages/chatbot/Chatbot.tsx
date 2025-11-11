@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import {
   Card,
   Input,
@@ -12,6 +13,7 @@ import {
   Row,
   Col,
   Tooltip,
+  message as antMessage,
 } from 'antd';
 import {
   SendOutlined,
@@ -21,6 +23,7 @@ import {
   DownloadOutlined,
   SoundOutlined,
 } from '@ant-design/icons';
+import { API_URLS } from '@/config/api.config';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -39,20 +42,23 @@ const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
-      text: "Hi — I'm your SmartGriev AI assistant. I can help you file complaints, check status, or answer questions. Ready to start?",
+      text: "Hi! I'm your SmartGriev AI assistant powered by Google Gemini. I can help you file complaints in your language. How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
       type: 'text',
       suggestions: [
         'File a complaint',
         'Track complaint',
-        'What documents do I need?',
+        'मुझे मदद चाहिए',
+        'મને મદદ જોઈએ છે',
       ],
     },
   ]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionId, setSessionId] = useState<string>('');
+  const [language, setLanguage] = useState<string>('en');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -78,47 +84,53 @@ const Chatbot: React.FC = () => {
     setInputText('');
     setIsTyping(true);
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(text);
-      setMessages(prev => [...prev, botResponse]);
+    try {
+      // Call real Gemini API
+      const response = await axios.post(API_URLS.CHATBOT_CHAT(), {
+        message: text.trim(),
+        session_id: sessionId || undefined,
+        language: language,
+      });
+
+      if (response.data) {
+        // Save session ID for context
+        if (response.data.session_id && !sessionId) {
+          setSessionId(response.data.session_id);
+        }
+
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.data.response || 'Sorry, I could not understand that.',
+          sender: 'bot',
+          timestamp: new Date(),
+          type: 'text',
+          suggestions: response.data.complaint_data?.category ? [
+            'Yes, submit this complaint',
+            'No, let me change details',
+            'Start over',
+          ] : [
+            'Tell me more',
+            'Change language',
+            'Talk to human agent',
+          ],
+        };
+
+        setMessages(prev => [...prev, botResponse]);
+      }
+    } catch (error) {
+      console.error('Chatbot error:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: 'Sorry, I am having trouble connecting. Please try again.',
+        sender: 'bot',
+        timestamp: new Date(),
+        type: 'text',
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      antMessage.error('Failed to get response from AI assistant');
+    } finally {
       setIsTyping(false);
-    }, 800 + Math.random() * 1200);
-  };
-
-  const generateBotResponse = (userText: string): Message => {
-    const text = userText.toLowerCase();
-    let response = '';
-    let suggestions: string[] = [];
-
-    if (text.includes('file') || text.includes('complaint') || text.includes('lodge')) {
-      response = 'To file a complaint:\n\n1. Click on "Lodge Complaint" in the main menu\n2. Fill in the complaint details\n3. Select the appropriate category\n4. Upload any supporting documents\n5. Submit your complaint\n\nYou\'ll receive a complaint ID for tracking. Would you like me to guide you through any specific step?';
-      suggestions = ['Guide me through filing', 'What documents do I need?', 'How to choose category?'];
-    } else if (text.includes('status') || text.includes('track') || text.includes('check')) {
-      response = 'To check your complaint status:\n\n1. Go to "Track Complaint" in the menu\n2. Enter your complaint ID\n3. View real-time status updates\n\nComplaint statuses:\n• Pending - Under review\n• In Progress - Being addressed\n• Resolved - Completed\n• Rejected - Not actionable\n\nDo you have a complaint ID you\'d like me to help you track?';
-      suggestions = ['I have a complaint ID', 'Why was my complaint rejected?', 'How to contact officer?'];
-    } else if (text.includes('category') || text.includes('categories') || text.includes('type')) {
-      response = 'Available complaint categories:\n\n🚰 Water Supply - Issues with water availability, quality\n🛣️ Road Maintenance - Potholes, traffic signals\n⚡ Electricity - Power outages, billing issues\n🗑️ Waste Management - Garbage collection, cleanliness\n🏥 Public Health - Sanitation, healthcare facilities\n🏗️ Infrastructure - Public buildings, parks\n👮 Law & Order - Safety, security concerns\n\nWhich category best describes your issue?';
-      suggestions = ['Water Supply issue', 'Road problem', 'Electricity complaint', 'Other category'];
-    } else if (text.includes('time') || text.includes('long') || text.includes('resolution')) {
-      response = 'Typical resolution times by category:\n\n⚡ Electricity: 2-3 days\n🚰 Water Supply: 3-5 days\n🗑️ Waste Management: 1-2 days\n🛣️ Road Maintenance: 7-14 days\n🏥 Public Health: 5-10 days\n\nActual times may vary based on complexity and resource availability. You can track progress in real-time through your complaint dashboard.';
-      suggestions = ['Why is my complaint delayed?', 'How to escalate?', 'Check complaint progress'];
-    } else if (text.includes('help') || text.includes('support')) {
-      response = 'I can help you with:\n\n✅ Filing new complaints\n✅ Tracking complaint status\n✅ Understanding the process\n✅ Choosing right category\n✅ Document requirements\n✅ Escalation procedures\n✅ Contact information\n\nWhat specific assistance do you need?';
-      suggestions = ['File a complaint', 'Track existing complaint', 'Contact support', 'Learn about process'];
-    } else {
-      response = 'I understand you need assistance. Let me help you with common tasks:\n\n• Filing a new complaint\n• Tracking existing complaints\n• Understanding categories\n• Getting resolution timeframes\n\nCould you please clarify what you\'d like help with?';
-      suggestions = ['File new complaint', 'Track complaint', 'Get help', 'Talk to human agent'];
     }
-
-    return {
-      id: Date.now().toString(),
-      text: response,
-      sender: 'bot',
-      timestamp: new Date(),
-      type: 'text',
-      suggestions,
-    };
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -127,6 +139,7 @@ const Chatbot: React.FC = () => {
 
   const clearChat = () => {
     setMessages([messages[0]]); // Keep only the welcome message
+    setSessionId(''); // Reset session
   };
 
   const exportChat = () => {

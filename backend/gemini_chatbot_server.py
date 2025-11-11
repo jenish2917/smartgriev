@@ -147,9 +147,9 @@ IMPORTANT:
                 'content': message
             })
             
-            # Call Gemini API (use stable 2.5-flash model)
+            # Call Gemini API (use stable 1.5-flash model)
             model = genai.GenerativeModel(
-                model_name='models/gemini-2.5-flash',
+                model_name='models/gemini-1.5-flash',
                 generation_config={
                     'temperature': 0.9,  # More natural
                     'top_p': 0.95,
