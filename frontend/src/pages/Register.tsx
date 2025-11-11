@@ -576,6 +576,8 @@ const Register: React.FC = () => {
               name="language"
               value={formData.language}
               onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+              aria-label="Preferred Language"
+              title="Select your preferred language"
               style={{
                 padding: theme.spacing.md,
                 border: `2px solid ${theme.colors.text.disabled}`,
@@ -608,6 +610,8 @@ const Register: React.FC = () => {
               checked={formData.acceptTerms}
               onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
               required
+              aria-label="Accept terms and conditions"
+              title="You must accept the terms and conditions"
               style={{ width: '20px', height: '20px', cursor: 'pointer' }}
             />
             <Label htmlFor="acceptTerms" style={{ margin: 0, cursor: 'pointer' }}>
