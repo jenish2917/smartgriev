@@ -58,6 +58,10 @@ class ChatLog(models.Model):
     escalated_to_human = models.BooleanField(default=False)
     escalation_reason = models.TextField(null=True, blank=True)
     
+    # Location tracking (GPS coordinates)
+    location_latitude = models.FloatField(null=True, blank=True)
+    location_longitude = models.FloatField(null=True, blank=True)
+    
     def __str__(self):
         return f"{self.user.username} - {self.timestamp}"
 

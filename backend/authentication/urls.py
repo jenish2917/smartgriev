@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     UserRegistrationView,
     UserLoginView,
+    LogoutView,
     UserProfileView,
     ChangePasswordView,
     UpdateLanguageView,
@@ -23,7 +24,9 @@ from .verification_views import (
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', UserProfileView.as_view(), name='profile'),
+    path('user/', UserProfileView.as_view(), name='current-user'),  # Frontend expects /user/
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('update-language/', UpdateLanguageView.as_view(), name='update-language'),
     path('check/', AuthCheckView.as_view(), name='auth-check'),

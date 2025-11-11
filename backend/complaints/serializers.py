@@ -37,28 +37,63 @@ class ComplaintSerializer(serializers.ModelSerializer):
         source='department'
     )
     incident_coordinates = serializers.SerializerMethodField(read_only=True)
+    
+    # Field aliases for frontend compatibility
+    citizen = serializers.IntegerField(source='user.id', read_only=True)
+    assigned_official = serializers.IntegerField(source='department.officer.id', read_only=True, allow_null=True)
+    urgency = serializers.CharField(source='urgency_level', required=False)
+    latitude = serializers.FloatField(source='incident_latitude', required=False, allow_null=True)
+    longitude = serializers.FloatField(source='incident_longitude', required=False, allow_null=True)
+    address = serializers.CharField(source='incident_address', required=False, allow_blank=True, allow_null=True)
+    landmark = serializers.CharField(source='incident_landmark', required=False, allow_blank=True, allow_null=True)
+    audio_file_url = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    resolved_at = serializers.DateTimeField(read_only=True, allow_null=True)
 
     class Meta:
         model = Complaint
-        fields = ('id', 'user', 'complaint_number', 'title', 'description', 'media', 'category',
-                 'sentiment', 'department', 'department_id', 'status', 'priority',
-                 # Multimodal input fields (video removed)
-                 'audio_file', 'image_file',
-                 # Multimodal analysis results (video removed)
+        fields = ('id', 'user', 'citizen', 'assigned_official', 'complaint_number', 'title', 'description', 
+                 'category', 'sentiment', 'department', 'department_id', 'status', 'priority',
+                 'urgency', 'urgency_level',
+                 # Multimodal input fields
+                 'audio_file', 'audio_file_url', 'image_file', 'image', 'media',
+                 # Multimodal analysis results
                  'audio_transcription', 'image_ocr_text', 'detected_objects',
-                 # Location fields
+                 # Location fields - original names
                  'incident_latitude', 'incident_longitude', 'incident_address', 
                  'incident_landmark', 'gps_accuracy', 'location_method', 'area_type',
                  'location_lat', 'location_lon', 'incident_coordinates',
+                 # Location fields - frontend aliases
+                 'latitude', 'longitude', 'address', 'landmark',
                  # AI processing results
                  'ai_confidence_score', 'ai_processed_text', 'department_classification',
                  'gemini_raw_response',
                  # Timestamps
-                 'created_at', 'updated_at')
+                 'created_at', 'updated_at', 'resolved_at')
         read_only_fields = ('user', 'complaint_number', 'sentiment', 'created_at', 'updated_at', 
-                           'video_analysis', 'audio_transcription', 'image_ocr_text', 
+                           'audio_transcription', 'image_ocr_text', 
                            'detected_objects', 'ai_confidence_score', 'ai_processed_text',
-                           'department_classification', 'gemini_raw_response')
+                           'department_classification', 'gemini_raw_response', 'resolved_at',
+                           'citizen', 'assigned_official', 'audio_file_url', 'image')
+    
+    def get_audio_file_url(self, obj):
+        """Return audio file URL if available"""
+        if obj.audio_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.audio_file.url)
+            return obj.audio_file.url
+        return None
+    
+    def get_image(self, obj):
+        """Return image URL - check both image_file and media fields"""
+        image = obj.image_file or obj.media
+        if image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(image.url)
+            return image.url
+        return None
 
     def get_incident_coordinates(self, obj):
         """Return formatted incident coordinates"""

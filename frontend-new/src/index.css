@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* CSS Variables for theming */
+    --radius: 0.5rem;
+    
+    /* Background Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    
+    /* Card Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    
+    /* Primary Colors */
+    --primary: 180 100% 31%; /* #0095a0 */
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary Colors */
+    --secondary: 38 100% 50%; /* #ff9000 */
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Muted Colors */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    
+    /* Accent Colors */
+    --accent: 38 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Border & Input */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 180 100% 31%;
+  }
+
+  .dark {
+    /* Dark Mode Variables */
+    --background: 220 27% 8%; /* #0a0f1e */
+    --foreground: 220 14% 91%; /* #e6e8f0 */
+    
+    --card: 220 23% 12%; /* #151b2e */
+    --card-foreground: 220 14% 91%;
+    
+    --primary: 189 80% 49%; /* #26c6da - lighter for dark bg */
+    --primary-foreground: 0 0% 10%;
+    
+    --secondary: 38 92% 65%; /* #ffb74d - lighter for dark bg */
+    --secondary-foreground: 0 0% 10%;
+    
+    --muted: 220 17% 17%; /* #2a3244 */
+    --muted-foreground: 218 11% 65%; /* #a0a6b8 */
+    
+    --accent: 38 92% 65%;
+    --accent-foreground: 0 0% 10%;
+    
+    --border: 220 17% 17%;
+    --input: 220 17% 17%;
+    --ring: 189 80% 49%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  /* Scrollbar Styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800 rounded-lg;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-md;
+  }
+
+  /* Card with shadow */
+  .card-shadow {
+    @apply shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.3),0_2px_4px_-2px_rgba(0,0,0,0.2)];
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-400 to-primary-600;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary-400 to-secondary-600;
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500;
+  }
+
+  /* Skeleton loader */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+  }
+
+  /* Focus visible styles for accessibility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-all focus-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    @apply bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 bg-[length:200%_100%] animate-shimmer;
+  }
+}
+
+@layer utilities {
+  /* Animation delays */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  /* Text shadow */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+

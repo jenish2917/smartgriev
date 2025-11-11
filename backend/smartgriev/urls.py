@@ -93,7 +93,7 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),        # ✅ Login, Register, Language
     path('api/complaints/', include('complaints.urls')),      # ✅ Complaint CRUD
     path('api/chatbot/', include('chatbot.urls')),           # ✅ AI Chatbot
-    path('api/ml/', include('machine_learning.urls')),       # ✅ OCR, Classification
+    # path('api/ml/', include('machine_learning.urls')),       # ⚠️ Temporarily disabled - PyTorch import issue
     path('api/notifications/', include('notifications.urls')), # ✅ Notifications
     path('api/analytics/', include('analytics.urls')),       # ✅ Analytics & Metrics
     # Advanced features (disabled - have dependency issues)

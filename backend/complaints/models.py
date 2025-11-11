@@ -186,6 +186,7 @@ class Complaint(models.Model):
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    resolved_at = models.DateTimeField(null=True, blank=True, help_text="When the complaint was resolved")
     
     class Meta:
         ordering = ['-created_at']
@@ -199,10 +200,21 @@ class Complaint(models.Model):
         return f"{self.complaint_number or self.title} - {self.status}"
     
     def save(self, *args, **kwargs):
-        """Override save to generate complaint number"""
+        """Override save to generate complaint number and update resolved_at"""
         # Generate complaint number if not exists
         if not self.complaint_number:
             self.complaint_number = self.generate_complaint_number()
+        
+        # Update resolved_at timestamp when status changes to resolved
+        if self.pk:  # Only for existing complaints
+            try:
+                old_complaint = Complaint.objects.get(pk=self.pk)
+                if old_complaint.status != 'resolved' and self.status == 'resolved':
+                    from django.utils import timezone
+                    self.resolved_at = timezone.now()
+            except Complaint.DoesNotExist:
+                pass
+        
         super().save(*args, **kwargs)
     
     def generate_complaint_number(self):

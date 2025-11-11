@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, ChangePasswordSerializer, UpdateLanguageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -38,11 +39,76 @@ class UserRegistrationView(generics.CreateAPIView):
                 {"password": ["Password fields didn't match."]},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return super().create(request, *args, **kwargs)
+        
+        # Create user
+        response = super().create(request, *args, **kwargs)
+        
+        # Generate JWT tokens for the new user
+        if response.status_code == status.HTTP_201_CREATED:
+            user_data = response.data
+            user = User.objects.get(username=user_data['username'])
+            
+            # Generate tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Return in the format frontend expects: {access, refresh, user}
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'user': user_data
+            }, status=status.HTTP_201_CREATED)
+        
+        return response
 
 class UserLoginView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = EmailTokenObtainPairSerializer
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        # Add user data to the response
+        if response.status_code == 200:
+            # Get the user from the validated token
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.user
+            
+            # Serialize user data
+            user_serializer = UserSerializer(user)
+            
+            # Add user data to response
+            response.data['user'] = user_serializer.data
+        
+        return response
+
+class LogoutView(APIView):
+    """
+    Logout endpoint with token blacklisting.
+    Blacklists the refresh token to prevent reuse.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response(
+                    {"message": "Successfully logged out."},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {"error": "Refresh token is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

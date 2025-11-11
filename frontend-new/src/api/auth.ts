@@ -1,0 +1,91 @@
+import apiClient, { handleApiError } from '@/lib/axios';
+import type { LoginCredentials, RegisterData, AuthResponse, User } from '@/types';
+
+/**
+ * Authentication API calls
+ */
+export const authApi = {
+  // Login
+  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    try {
+      const response = await apiClient.post<AuthResponse>('/api/auth/login/', credentials);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Register
+  register: async (data: RegisterData): Promise<AuthResponse> => {
+    try {
+      const response = await apiClient.post<AuthResponse>('/api/auth/register/', data);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Logout
+  logout: async (): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/logout/');
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Get current user
+  getCurrentUser: async (): Promise<User> => {
+    try {
+      const response = await apiClient.get<User>('/api/auth/user/');
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Verify email
+  verifyEmail: async (token: string): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/verify-email/', { token });
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Verify mobile OTP
+  verifyMobile: async (otp: string): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/verify-mobile/', { otp });
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Resend OTP
+  resendOTP: async (): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/resend-otp/');
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Forgot password
+  forgotPassword: async (email: string): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/forgot-password/', { email });
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Reset password
+  resetPassword: async (token: string, password: string): Promise<void> => {
+    try {
+      await apiClient.post('/api/auth/reset-password/', { token, password });
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+};

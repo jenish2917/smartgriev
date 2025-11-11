@@ -23,10 +23,24 @@ from .voice_views import (
     voice_health,
 )
 
+# Import unified views for frontend
+from .unified_views import (
+    unified_chat,
+    unified_voice,
+    unified_vision,
+    chatbot_health,
+)
+
 urlpatterns = [
-    # Simple ChatGPT-like chat (Google AI powered)
-    path('chat/', simple_chat, name='simple-chat'),
-    path('health/', chat_health, name='chat-health'),
+    # Unified endpoints for frontend (primary)
+    path('chat/', unified_chat, name='unified-chat'),
+    path('voice/', unified_voice, name='unified-voice'),
+    path('vision/', unified_vision, name='unified-vision'),
+    path('health/', chatbot_health, name='chatbot-health'),
+    
+    # Legacy simple chat endpoint
+    path('simple/chat/', simple_chat, name='simple-chat'),
+    path('simple/health/', chat_health, name='chat-health'),
     
     # Gemini AI chatbot endpoints
     path('gemini/chat/', gemini_chat, name='gemini-chat'),
