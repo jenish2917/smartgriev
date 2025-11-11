@@ -494,6 +494,8 @@ const Register: React.FC = () => {
                 name="countryCode"
                 value={formData.countryCode}
                 onChange={handleChange}
+                aria-label="Country Code"
+                title="Select country code"
                 style={{
                   width: '100px',
                   padding: '12px',
@@ -518,6 +520,8 @@ const Register: React.FC = () => {
                 type="tel"
                 id="phone"
                 name="phone"
+                aria-label="Phone number"
+                title="Enter phone number"
                 placeholder="9876543210"
                 value={formData.phone}
                 onChange={handleChange}
