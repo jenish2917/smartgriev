@@ -247,6 +247,7 @@ const Register: React.FC = () => {
     username: '',
     password: '',
     confirmPassword: '',
+    countryCode: '+91', // Default to India
     phone: '',
     address: '',
     language: 'en',
@@ -267,7 +268,50 @@ const Register: React.FC = () => {
     return strength;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Phone number validation rules by country code
+  const getPhoneValidationRules = (countryCode: string) => {
+    const rules: Record<string, { length: number; pattern: RegExp; example: string }> = {
+      '+91': { length: 10, pattern: /^[6-9]\d{9}$/, example: '9876543210' },        // India
+      '+1': { length: 10, pattern: /^\d{10}$/, example: '5551234567' },             // USA/Canada
+      '+44': { length: 10, pattern: /^\d{10}$/, example: '7911123456' },            // UK
+      '+86': { length: 11, pattern: /^1\d{10}$/, example: '13912345678' },          // China
+      '+81': { length: 10, pattern: /^\d{10}$/, example: '9012345678' },            // Japan
+      '+82': { length: 10, pattern: /^\d{10}$/, example: '1012345678' },            // South Korea
+      '+49': { length: 11, pattern: /^\d{10,11}$/, example: '15112345678' },        // Germany
+      '+33': { length: 9, pattern: /^[67]\d{8}$/, example: '612345678' },           // France
+      '+61': { length: 9, pattern: /^4\d{8}$/, example: '412345678' },              // Australia
+      '+971': { length: 9, pattern: /^5\d{8}$/, example: '501234567' },             // UAE
+    };
+    return rules[countryCode] || { length: 10, pattern: /^\d{7,15}$/, example: '1234567890' };
+  };
+
+  const validatePhoneNumber = (phone: string, countryCode: string): { valid: boolean; error?: string } => {
+    if (!phone) return { valid: true }; // Phone is optional
+
+    const rules = getPhoneValidationRules(countryCode);
+    
+    // Remove any spaces, hyphens, or parentheses
+    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+    
+    // Check if only digits
+    if (!/^\d+$/.test(cleanPhone)) {
+      return { valid: false, error: 'Phone number should contain only digits' };
+    }
+
+    // Check length
+    if (cleanPhone.length !== rules.length) {
+      return { valid: false, error: `Phone number should be ${rules.length} digits for ${countryCode}` };
+    }
+
+    // Check pattern
+    if (!rules.pattern.test(cleanPhone)) {
+      return { valid: false, error: `Invalid phone format. Example: ${rules.example}` };
+    }
+
+    return { valid: true };
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -277,6 +321,19 @@ const Register: React.FC = () => {
 
     if (name === 'password') {
       setPasswordStrength(calculatePasswordStrength(value));
+    }
+
+    // Validate phone number when it changes or country code changes
+    if (name === 'phone' || name === 'countryCode') {
+      const phoneToValidate = name === 'phone' ? value : formData.phone;
+      const codeToUse = name === 'countryCode' ? value : formData.countryCode;
+      
+      if (phoneToValidate) {
+        const validation = validatePhoneNumber(phoneToValidate, codeToUse);
+        if (!validation.valid) {
+          setError(validation.error || '');
+        }
+      }
     }
   };
 
@@ -299,6 +356,16 @@ const Register: React.FC = () => {
       return;
     }
 
+    // Validate phone number if provided
+    if (formData.phone) {
+      const phoneValidation = validatePhoneNumber(formData.phone, formData.countryCode);
+      if (!phoneValidation.valid) {
+        setError(phoneValidation.error || 'Invalid phone number');
+        setLoading(false);
+        return;
+      }
+    }
+
     if (!formData.acceptTerms) {
       setError('Please accept the Terms & Conditions to continue.');
       setLoading(false);
@@ -306,6 +373,9 @@ const Register: React.FC = () => {
     }
 
     try {
+      // Combine country code with phone number
+      const fullPhoneNumber = formData.phone ? `${formData.countryCode}${formData.phone}` : '';
+      
       const response = await axios.post(API_URLS.REGISTER(), {
         username: formData.username,
         email: formData.email,
@@ -313,7 +383,7 @@ const Register: React.FC = () => {
         confirm_password: formData.confirmPassword,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        mobile: formData.phone || '', // Backend expects 'mobile', optional
+        mobile: fullPhoneNumber, // Backend expects 'mobile' with country code
         address: formData.address || '', // Optional field
         language: formData.language // User selected language
       });
@@ -419,14 +489,41 @@ const Register: React.FC = () => {
 
           <FormGroup>
             <Label htmlFor="phone">{t('register.phone')}</Label>
-            <Input
-              type="tel"
-              id="phone"
-              name="phone"
-              placeholder={t('register.phonePlaceholder')}
-              value={formData.phone}
-              onChange={handleChange}
-            />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleChange}
+                style={{
+                  width: '100px',
+                  padding: '12px',
+                  border: `1px solid ${theme.colors.primary[300]}`,
+                  borderRadius: theme.borderRadius.md,
+                  fontSize: '14px',
+                  backgroundColor: theme.colors.white.pure
+                }}
+              >
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+86">🇨🇳 +86</option>
+                <option value="+81">🇯🇵 +81</option>
+                <option value="+82">🇰🇷 +82</option>
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+61">🇦🇺 +61</option>
+                <option value="+971">🇦🇪 +971</option>
+              </select>
+              <Input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="9876543210"
+                value={formData.phone}
+                onChange={handleChange}
+                style={{ flex: 1 }}
+              />
+            </div>
           </FormGroup>
 
           <FormGroup>

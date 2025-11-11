@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from .models import OTPVerification, User
+from .models import VerificationToken
 from .verification_serializers import (
     EmailVerificationSerializer,
     MobileVerificationSerializer,

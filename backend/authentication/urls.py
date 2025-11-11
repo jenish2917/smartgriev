@@ -5,6 +5,7 @@ from .views import (
     UserProfileView,
     ChangePasswordView,
     UpdateLanguageView,
+    AuthCheckView,
 )
 from .translation_views import (
     LanguageListView,
@@ -25,6 +26,7 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('update-language/', UpdateLanguageView.as_view(), name='update-language'),
+    path('check/', AuthCheckView.as_view(), name='auth-check'),
     
     # Verification Endpoints
     path('verify-email/', EmailVerificationView.as_view(), name='verify-email'),

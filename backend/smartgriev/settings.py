@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'smartgriev.middleware.observability.ObservabilityMiddleware',  # Prometheus metrics & tracing
+    # 'smartgriev.middleware.observability.ObservabilityMiddleware',  # Prometheus metrics & tracing - temporarily disabled
     # 'analytics.middleware.UserActivityMiddleware',  # Track user activity - temporarily disabled
     # 'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers - temporarily disabled
     # 'analytics.middleware.CacheControlMiddleware',  # Cache control - temporarily disabled
@@ -282,10 +282,9 @@ CHANNEL_LAYERS = {
     },
 }
 
-# SMS/Notification settings
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+# SMS/Notification settings - Console mode (for testing/development)
+# For production, integrate with your preferred SMS provider
+SMS_PROVIDER = os.getenv('SMS_PROVIDER', 'console')
 
 # Firebase settings for push notifications
 # For better security, store your Firebase credentials in a JSON file

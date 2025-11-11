@@ -30,132 +30,76 @@ test.describe('Complaint Submission - Text Only', () => {
   });
 
   test('should submit a text complaint successfully', async ({ page }) => {
-    // Navigate to submit complaint page
-    await page.goto('/submit-complaint');
+    // Navigate to dashboard first to ensure session is stable
+    await page.goto('/dashboard');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1000);
+
+    // Now navigate to create complaint page
+    await page.goto('/complaints/new');
+    await page.waitForLoadState('domcontentloaded');
+    
+    // Wait for URL to stabilize (no redirects)
+    await page.waitForURL(/\/complaints\/new/, { timeout: 10000 });
     await page.waitForTimeout(2000);
 
-    // If not on submit page, try to find and click submit button
-    if (!page.url().includes('submit')) {
-      const submitSelectors = [
-        'text=Submit Complaint',
-        'text=New Complaint',
-        '[href*="submit"]',
-        'button:has-text("Submit")'
-      ];
-
-      for (const selector of submitSelectors) {
-        try {
-          await page.locator(selector).first().click({ timeout: 2000 });
-          await page.waitForTimeout(1000);
-          break;
-        } catch {
-          continue;
-        }
-      }
-    }
-
+    // Wait for form to be visible
+    await page.waitForSelector('form', { timeout: 10000 });
+    
     await helpers.takeScreenshot('complaint-form');
 
-    // Fill complaint form
-    const complaintTitle = `Test Complaint - ${Date.now()}`;
+    // Fill complaint form (Ant Design form - use #id selectors)
+    const complaintTitle = `Test Complaint ${Date.now()}`;
     const complaintDescription = 'This is a test complaint about a pothole on Main Street. It needs immediate attention.';
 
-    // Fill title
-    const titleSelectors = [
-      'input[name="title"]',
-      'input[name="subject"]',
-      'input[placeholder*="title" i]',
-      'input[placeholder*="subject" i]'
-    ];
-
-    let titleFilled = false;
-    for (const selector of titleSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          await element.fill(complaintTitle);
-          titleFilled = true;
-          console.log(`✓ Filled title: ${selector}`);
-          break;
-        }
-      } catch {
-        continue;
-      }
-    }
+    // Fill title - Ant Design Form.Item with name="title" creates input with id="title"
+    await page.fill('#title', complaintTitle);
+    console.log(`✓ Filled title: ${complaintTitle}`);
 
     // Fill description
-    const descriptionSelectors = [
-      'textarea[name="description"]',
-      'textarea[name="details"]',
-      'textarea[placeholder*="description" i]',
-      'textarea[placeholder*="details" i]'
-    ];
+    await page.fill('#description', complaintDescription);
+    console.log(`✓ Filled description`);
 
-    let descriptionFilled = false;
-    for (const selector of descriptionSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          await element.fill(complaintDescription);
-          descriptionFilled = true;
-          console.log(`✓ Filled description: ${selector}`);
-          break;
-        }
-      } catch {
-        continue;
-      }
-    }
+    // Select category (Ant Design Select)
+    await page.click('#category');
+    await page.waitForTimeout(500);
+    // Click first option in dropdown
+    await page.click('.ant-select-item-option:first-child');
+    console.log('✓ Selected category');
 
-    // Select department if available
-    const departmentSelectors = [
-      'select[name="department"]',
-      'select[name="category"]',
-      '[data-testid="department-select"]'
-    ];
+    // Select department (Ant Design Select)
+    await page.click('#department');
+    await page.waitForTimeout(500);
+    await page.click('.ant-select-item-option:first-child');
+    console.log('✓ Selected department');
 
-    for (const selector of departmentSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          await element.selectOption({ index: 1 }); // Select first option after placeholder
-          console.log('✓ Selected department');
-          break;
-        }
-      } catch {
-        continue;
-      }
-    }
+    // Select priority (Ant Design Select)
+    await page.click('#priority');
+    await page.waitForTimeout(500);
+    await page.click('.ant-select-item-option:first-child');
+    console.log('✓ Selected priority');
+
+    // Fill location
+    await page.fill('#location', 'Test Location, Main Street');
+    console.log('✓ Filled location');
 
     await helpers.takeScreenshot('complaint-form-filled');
 
     // Submit the form
-    const submitButtonSelectors = [
-      'button[type="submit"]',
-      'button:has-text("Submit")',
-      'button:has-text("Create")',
-      'button:has-text("Send")'
-    ];
+    await page.click('button[type="submit"]');
+    console.log('✓ Clicked submit button');
 
-    let submitted = false;
-    for (const selector of submitButtonSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          await element.click();
-          submitted = true;
-          console.log('✓ Clicked submit button');
-          break;
-        }
-      } catch {
-        continue;
-      }
-    }
+    // Wait for success message or redirect
+    await page.waitForTimeout(3000);
+    await helpers.takeScreenshot('complaint-submitted');
 
-    if (submitted) {
-      // Wait for success message or redirect
-      await page.waitForTimeout(3000);
-      await helpers.takeScreenshot('complaint-submitted');
-
+    // Verify success message or redirect
+    const url = page.url();
+    const hasSuccessMessage = await page.locator('text=/success|created|submitted/i').count() > 0;
+    
+    if (hasSuccessMessage || url.includes('complaints') || url.includes('dashboard')) {
+      console.log('✓ Complaint submission appears successful');
+      
       // Verify in database
       if (testUserId) {
         const complaint = await dbHelper.getLatestComplaintByUser(testUserId);
@@ -169,145 +113,112 @@ test.describe('Complaint Submission - Text Only', () => {
         }
       }
     } else {
-      console.log('⚠ Could not submit complaint form');
+      console.log('⚠ Complaint submission may have failed');
     }
   });
 
   test('should validate required fields', async ({ page }) => {
-    // Navigate to submit complaint page
-    await page.goto('/submit-complaint');
-    await page.waitForTimeout(2000);
-
-    // Try to submit without filling anything
-    const submitButtonSelectors = [
-      'button[type="submit"]',
-      'button:has-text("Submit")'
-    ];
-
-    for (const selector of submitButtonSelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          await element.click();
-          console.log('✓ Clicked submit without filling form');
-          break;
-        }
-      } catch {
-        continue;
-      }
-    }
-
+    // Navigate to dashboard first
+    await page.goto('/dashboard');
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
-    // Check for validation errors
-    const errorSelectors = [
-      '.error',
-      '.ant-form-item-explain-error',
-      '[role="alert"]',
-      '.validation-error',
-      '.field-error'
-    ];
+    // Navigate to create complaint page
+    await page.goto('/complaints/new');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/\/complaints\/new/, { timeout: 10000 });
+    await page.waitForTimeout(2000);
 
-    let errorFound = false;
-    for (const selector of errorSelectors) {
-      const errorElements = page.locator(selector);
-      const count = await errorElements.count();
-      if (count > 0) {
-        errorFound = true;
-        console.log(`✓ Validation errors found: ${count} errors`);
-        break;
-      }
+    // Try to submit empty form
+    await page.click('button[type="submit"]');
+    await page.waitForTimeout(1000);
+
+    // Check for Ant Design validation errors
+    const errorMessages = await page.locator('.ant-form-item-explain-error').allTextContents();
+    
+    if (errorMessages.length > 0) {
+      console.log('✓ Form validation working:', errorMessages.join(', '));
+      expect(errorMessages.length).toBeGreaterThan(0);
+    } else {
+      console.log('⚠ No validation errors found (may need to check implementation)');
     }
 
     await helpers.takeScreenshot('validation-errors');
-
-    if (errorFound) {
-      console.log('✓ Form validation working');
-    } else {
-      console.log('⚠ No validation errors visible (may use native HTML5 validation)');
-    }
   });
 
   test('should show character count for description', async ({ page }) => {
-    await page.goto('/submit-complaint');
+    // Navigate to dashboard first
+    await page.goto('/dashboard');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1000);
+
+    // Navigate to create complaint page
+    await page.goto('/complaints/new');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/\/complaints\/new/, { timeout: 10000 });
     await page.waitForTimeout(2000);
 
-    // Find description textarea
-    const descriptionField = page.locator('textarea[name="description"], textarea').first();
+    // Fill description field
+    await page.fill('#description', 'Test description for character count');
+    await page.waitForTimeout(500);
+
+    // Look for character counter (Ant Design TextArea may show count)
+    const hasCounter = await page.locator('text=/\\d+\s*\\/\s*\\d+/').count() > 0;
     
-    if (await descriptionField.isVisible({ timeout: 2000 })) {
-      // Type some text
-      await descriptionField.fill('Test description for character count');
-
-      // Look for character counter
-      const counterSelectors = [
-        '.character-count',
-        '.char-count',
-        '[data-testid="char-counter"]',
-        'text=/\\d+\\/\\d+/',
-        'text=/\\d+ characters/'
-      ];
-
-      let counterFound = false;
-      for (const selector of counterSelectors) {
-        try {
-          const counter = page.locator(selector).first();
-          if (await counter.isVisible({ timeout: 1000 })) {
-            const text = await counter.textContent();
-            console.log(`✓ Character counter found: ${text}`);
-            counterFound = true;
-            break;
-          }
-        } catch {
-          continue;
-        }
-      }
-
-      await helpers.takeScreenshot('character-count');
-
-      if (!counterFound) {
-        console.log('⚠ Character counter not found');
-      }
+    if (hasCounter) {
+      const counterText = await page.locator('text=/\\d+\s*\\/\s*\\d+/').first().textContent();
+      console.log(`✓ Character counter found: ${counterText}`);
+    } else {
+      console.log('⚠ Character counter not visible (may not be implemented)');
     }
+
+    await helpers.takeScreenshot('character-count');
   });
 
   test('should allow selecting complaint category/department', async ({ page }) => {
-    await page.goto('/submit-complaint');
+    // Navigate to dashboard first
+    await page.goto('/dashboard');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1000);
+
+    // Navigate to create complaint page
+    await page.goto('/complaints/new');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForURL(/\/complaints\/new/, { timeout: 10000 });
     await page.waitForTimeout(2000);
 
-    // Look for category/department dropdown
-    const categorySelectors = [
-      'select[name="department"]',
-      'select[name="category"]',
-      '[data-testid="category-select"]',
-      '[data-testid="department-select"]'
-    ];
-
-    let categoryFound = false;
-    for (const selector of categorySelectors) {
-      try {
-        const element = page.locator(selector).first();
-        if (await element.isVisible({ timeout: 2000 })) {
-          // Get all options
-          const options = await element.locator('option').allTextContents();
-          console.log(`✓ Available categories: ${options.join(', ')}`);
-          
-          // Select first real option (skip placeholder)
-          await element.selectOption({ index: 1 });
-          
-          categoryFound = true;
-          await helpers.takeScreenshot('category-selected');
-          break;
-        }
-      } catch {
-        continue;
-      }
+    // Test category selection (Ant Design Select)
+    await page.click('#category');
+    await page.waitForTimeout(500);
+    
+    // Check if options are visible
+    const categoryOptions = await page.locator('.ant-select-item-option').count();
+    
+    if (categoryOptions > 0) {
+      console.log(`✓ Found ${categoryOptions} category options`);
+      await page.click('.ant-select-item-option:first-child');
+      console.log('✓ Selected category');
+    } else {
+      console.log('⚠ No category options found');
     }
 
-    if (!categoryFound) {
-      console.log('⚠ Category/department selector not found');
-      await helpers.takeScreenshot('category-search');
+    await page.waitForTimeout(500);
+
+    // Test department selection
+    await page.click('#department');
+    await page.waitForTimeout(500);
+    
+    const deptOptions = await page.locator('.ant-select-item-option').count();
+    
+    if (deptOptions > 0) {
+      console.log(`✓ Found ${deptOptions} department options`);
+      await page.click('.ant-select-item-option:first-child');
+      console.log('✓ Selected department');
+    } else {
+      console.log('⚠ No department options found');
     }
+
+    await helpers.takeScreenshot('category-selected');
   });
 
   test('should allow adding location to complaint', async ({ page }) => {

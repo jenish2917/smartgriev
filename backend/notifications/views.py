@@ -209,6 +209,7 @@ def sms_service_status(request):
     
     return Response({
         'enabled': sms_service.enabled,
-        'provider': 'Twilio',
-        'configured': bool(sms_service.account_sid and sms_service.auth_token)
+        'provider': 'Console (Testing Mode)',
+        'configured': True
     })
+

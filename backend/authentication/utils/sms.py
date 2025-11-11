@@ -1,4 +1,3 @@
-from twilio.rest import Client
 from django.conf import settings
 import logging
 
@@ -6,27 +5,20 @@ logger = logging.getLogger(__name__)
 
 def send_sms(to_number, message):
     """
-    Send SMS using Twilio
+    Send SMS - Console mode only (for testing/development)
+    For production SMS, integrate with your preferred SMS provider
     :param to_number: Recipient's phone number
     :param message: SMS content
     :return: bool indicating success/failure
     """
     try:
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        
-        # Format the number to E.164 format for Indian numbers
-        if to_number.startswith('0'):
-            to_number = '+91' + to_number[1:]
-        elif not to_number.startswith('+'):
-            to_number = '+91' + to_number
-
-        message = client.messages.create(
-            body=message,
-            from_=settings.TWILIO_FROM_NUMBER,
-            to=to_number
-        )
-        
-        logger.info(f"SMS sent successfully to {to_number}. SID: {message.sid}")
+        # Console mode - log the message for testing/development
+        logger.info(f"[SMS] To: {to_number}")
+        logger.info(f"[SMS] Message: {message}")
+        print(f"\n{'='*60}")
+        print(f"📱 SMS TO: {to_number}")
+        print(f"📨 MESSAGE: {message}")
+        print(f"{'='*60}\n")
         return True
         
     except Exception as e:

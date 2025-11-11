@@ -45,9 +45,41 @@ def api_root(request):
         }
     })
 
+@api_view(['GET'])
+def api_config(request):
+    """API Configuration endpoint for frontend"""
+    protocol = 'https' if request.is_secure() else 'http'
+    host = request.get_host()
+    ws_protocol = 'wss' if request.is_secure() else 'ws'
+    
+    return Response({
+        'success': True,
+        'config': {
+            'apiUrl': f'{protocol}://{host}/api',
+            'websocketUrl': f'{ws_protocol}://{host}/ws',
+            'version': '1.0.0',
+            'features': {
+                'voice': True,
+                'chatbot': True,
+                'ml': True,
+                'analytics': True,
+                'notifications': True,
+                'geospatial': False,  # Disabled due to GDAL dependency
+            },
+            'limits': {
+                'maxFileSize': 10 * 1024 * 1024,  # 10MB
+                'maxFilesPerComplaint': 5,
+                'allowedFileTypes': ['image/jpeg', 'image/png', 'image/gif', 'audio/mp3', 'audio/wav', 'application/pdf'],
+            }
+        }
+    })
+
 urlpatterns = [
     path('', api_root, name='api_root'),
     path('admin/', admin.site.urls),
+    
+    # Configuration endpoint
+    path('api/config/', api_config, name='api_config'),
     
     # Observability endpoints
     path('metrics', MetricsView.as_view(), name='prometheus_metrics'),

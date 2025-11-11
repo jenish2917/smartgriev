@@ -1,0 +1,516 @@
+
+    Error Context: test-results\10-admin-Admin-Officer-Fun-abbe6-ould-view-complaint-details-Microsoft-Edge\error-context.md
+
+  496 failed
+    [chromium] › tests\01-authentication.spec.ts:144:7 › User Authentication Flow › should login with valid credentials
+    [chromium] › tests\01-authentication.spec.ts:304:7 › User Authentication Flow › should logout successfully
+    [chromium] › tests\01-authentication.spec.ts:328:7 › User Authentication Flow › should handle session timeout
+    [chromium] › tests\02-dashboard.spec.ts:24:7 › Dashboard & Navigation Tests › should display dashboard with statistics
+    [chromium] › tests\02-dashboard.spec.ts:74:7 › Dashboard & Navigation Tests › should navigate to My Complaints page
+    [chromium] › tests\02-dashboard.spec.ts:110:7 › Dashboard & Navigation Tests › should navigate to Submit Complaint page
+    [chromium] › tests\02-dashboard.spec.ts:151:7 › Dashboard & Navigation Tests › should navigate to Chatbot
+    [chromium] › tests\02-dashboard.spec.ts:190:7 › Dashboard & Navigation Tests › should display user profile information
+    [chromium] › tests\02-dashboard.spec.ts:234:7 › Dashboard & Navigation Tests › should switch language to Hindi
+    [chromium] › tests\02-dashboard.spec.ts:298:7 › Dashboard & Navigation Tests › should switch language to Marathi
+    [chromium] › tests\02-dashboard.spec.ts:348:7 › Dashboard & Navigation Tests › should display navigation menu
+    [chromium] › tests\02-dashboard.spec.ts:370:7 › Dashboard & Navigation Tests › should be responsive on mobile viewport
+    [chromium] › tests\02-dashboard.spec.ts:405:7 › Dashboard & Navigation Tests › should display welcome message
+    [chromium] › tests\02-dashboard.spec.ts:421:7 › Dashboard & Navigation Tests › should handle dashboard statistics from database
+    [chromium] › tests\02-dashboard.spec.ts:443:7 › Dashboard & Navigation Tests › should navigate back to dashboard from other pages
+    [chromium] › tests\02-dashboard.spec.ts:483:7 › Dashboard & Navigation Tests › should display notifications bell/icon
+    [chromium] › tests\03-complaint-submission.spec.ts:32:7 › Complaint Submission - Text Only › should submit a text complaint successfully
+    [chromium] › tests\03-complaint-submission.spec.ts:176:7 › Complaint Submission - Text Only › should validate required fields
+    [chromium] › tests\03-complaint-submission.spec.ts:231:7 › Complaint Submission - Text Only › should show character count for description
+    [chromium] › tests\03-complaint-submission.spec.ts:274:7 › Complaint Submission - Text Only › should allow selecting complaint category/department
+    [chromium] › tests\03-complaint-submission.spec.ts:313:7 › Complaint Submission - Text Only › should allow adding location to complaint
+    [chromium] › tests\03-complaint-submission.spec.ts:370:7 › Complaint Submission - Text Only › should show preview before submission
+    [chromium] › tests\03-complaint-submission.spec.ts:411:7 › Complaint Submission - Text Only › should track complaint status in database
+    [chromium] › tests\03-complaint-submission.spec.ts:443:7 › Complaint Submission - Text Only › should handle form cancellation
+    [chromium] › tests\03-complaint-submission.spec.ts:488:7 › Complaint Submission - Text Only › should display complaint submission success message
+    [chromium] › tests\03-complaint-submission.spec.ts:536:7 › Complaint Submission - Text Only › should validate description length limits
+    [chromium] › tests\03-complaint-submission.spec.ts:569:7 › Complaint Submission - Text Only › should submit complaint with all enhanced fields (GPS, urgency, location)
+    [chromium] › tests\03-complaint-submission.spec.ts:674:7 › Complaint Submission - Text Only › should handle GPS location capture button
+    [chromium] › tests\04-multimodal-complaint.spec.ts:36:7 › Complaint Submission - Multimodal › should upload image to complaint
+    [chromium] › tests\04-multimodal-complaint.spec.ts:93:7 › Complaint Submission - Multimodal › should show image preview after upload
+    [chromium] › tests\04-multimodal-complaint.spec.ts:135:7 › Complaint Submission - Multimodal › should validate image file type
+    [chromium] › tests\04-multimodal-complaint.spec.ts:182:7 › Complaint Submission - Multimodal › should validate image file size
+    [chromium] › tests\04-multimodal-complaint.spec.ts:228:7 › Complaint Submission - Multimodal › should allow removing uploaded image
+    [chromium] › tests\04-multimodal-complaint.spec.ts:280:7 › Complaint Submission - Multimodal › should upload multiple images
+    [chromium] › tests\04-multimodal-complaint.spec.ts:314:7 › Complaint Submission - Multimodal › should record audio for complaint
+    [chromium] › tests\04-multimodal-complaint.spec.ts:380:7 › Complaint Submission - Multimodal › should upload audio file
+    [chromium] › tests\04-multimodal-complaint.spec.ts:416:7 › Complaint Submission - Multimodal › should upload video file
+    [chromium] › tests\04-multimodal-complaint.spec.ts:452:7 › Complaint Submission - Multimodal › should show media preview before submission
+    [chromium] › tests\04-multimodal-complaint.spec.ts:499:7 › Complaint Submission - Multimodal › should verify media upload in database
+    [chromium] › tests\04-multimodal-complaint.spec.ts:529:7 › Complaint Submission - Multimodal › should handle Vision AI image analysis
+    [chromium] › tests\04-multimodal-complaint.spec.ts:575:7 › Complaint Submission - Multimodal › should show upload progress indicator
+    [chromium] › tests\04-multimodal-complaint.spec.ts:623:7 › Complaint Submission - Multimodal › should submit complaint with media successfully
+    [chromium] › tests\05-chatbot.spec.ts:171:7 › Chatbot - Text Conversation › should send and receive messages in English
+    [chromium] › tests\05-chatbot.spec.ts:191:7 › Chatbot - Text Conversation › should handle complaint-related queries
+    [chromium] › tests\05-chatbot.spec.ts:211:7 › Chatbot - Text Conversation › should handle multi-turn conversation
+    [chromium] › tests\05-chatbot.spec.ts:238:7 › Chatbot - Text Conversation › should switch to Hindi language
+    [chromium] › tests\05-chatbot.spec.ts:295:7 › Chatbot - Text Conversation › should switch to Marathi language
+    [chromium] › tests\05-chatbot.spec.ts:328:7 › Chatbot - Text Conversation › should display chat history
+    [chromium] › tests\05-chatbot.spec.ts:368:7 › Chatbot - Text Conversation › should handle location-based queries
+    [chromium] › tests\05-chatbot.spec.ts:385:7 › Chatbot - Text Conversation › should allow clearing chat history
+    [chromium] › tests\05-chatbot.spec.ts:422:7 › Chatbot - Text Conversation › should handle emoji input
+    [chromium] › tests\05-chatbot.spec.ts:431:7 › Chatbot - Text Conversation › should show typing indicator when bot is responding
+    [chromium] › tests\05-chatbot.spec.ts:465:7 › Chatbot - Text Conversation › should handle special characters and numbers
+    [chromium] › tests\05-chatbot.spec.ts:475:7 › Chatbot - Text Conversation › should allow minimizing/maximizing chat window
+    [chromium] › tests\05-chatbot.spec.ts:510:7 › Chatbot - Text Conversation › should create complaint from chat conversation
+    [chromium] › tests\05-chatbot.spec.ts:546:7 › Chatbot - Text Conversation › should handle error when backend is unreachable
+    [chromium] › tests\06-voice-input.spec.ts:63:7 › Chatbot - Voice Input › should have voice input button
+    [chromium] › tests\06-voice-input.spec.ts:98:7 › Chatbot - Voice Input › should start voice recording
+    [chromium] › tests\06-voice-input.spec.ts:150:7 › Chatbot - Voice Input › should stop voice recording
+    [chromium] › tests\06-voice-input.spec.ts:196:7 › Chatbot - Voice Input › should convert speech to text in English
+    [chromium] › tests\06-voice-input.spec.ts:223:7 › Chatbot - Voice Input › should handle voice input in Hindi
+    [chromium] › tests\06-voice-input.spec.ts:254:7 › Chatbot - Voice Input › should handle voice input in Marathi
+    [chromium] › tests\06-voice-input.spec.ts:283:7 › Chatbot - Voice Input › should show microphone permission prompt
+    [chromium] › tests\06-voice-input.spec.ts:326:7 › Chatbot - Voice Input › should display voice waveform while recording
+    [chromium] › tests\06-voice-input.spec.ts:367:7 › Chatbot - Voice Input › should show transcription in real-time
+    [chromium] › tests\06-voice-input.spec.ts:407:7 › Chatbot - Voice Input › should handle voice input errors gracefully
+    [chromium] › tests\06-voice-input.spec.ts:452:7 › Chatbot - Voice Input › should send voice message after recording
+    [chromium] › tests\06-voice-input.spec.ts:493:7 › Chatbot - Voice Input › should support voice commands
+    [chromium] › tests\06-voice-input.spec.ts:515:7 › Chatbot - Voice Input › should switch between text and voice input
+    [chromium] › tests\06-voice-input.spec.ts:545:7 › Chatbot - Voice Input › should display voice input language selector
+    [chromium] › tests\06-voice-input.spec.ts:581:7 › Chatbot - Voice Input › should handle ambient noise gracefully
+    [chromium] › tests\07-location.spec.ts:32:7 › Location Services Testing › should detect current location (Mumbai coordinates)
+    [chromium] › tests\07-location.spec.ts:93:7 › Location Services Testing › should display coordinates in correct format
+    [chromium] › tests\07-location.spec.ts:145:7 › Location Services Testing › should perform reverse geocoding
+    [chromium] › tests\07-location.spec.ts:185:7 › Location Services Testing › should generate Plus Code for location
+    [chromium] › tests\07-location.spec.ts:233:7 › Location Services Testing › should allow manual location entry
+    [chromium] › tests\07-location.spec.ts:278:7 › Location Services Testing › should show location on map
+    [chromium] › tests\07-location.spec.ts:328:7 › Location Services Testing › should filter complaints by location
+    [chromium] › tests\07-location.spec.ts:368:7 › Location Services Testing › should show nearby complaints
+    [chromium] › tests\07-location.spec.ts:404:7 › Location Services Testing › should calculate distance from user location
+    [chromium] › tests\07-location.spec.ts:438:7 › Location Services Testing › should handle location permission denial
+    [chromium] › tests\07-location.spec.ts:489:7 › Location Services Testing › should geocode manually entered address
+    [chromium] › tests\07-location.spec.ts:537:7 › Location Services Testing › should validate location is within service area
+    [chromium] › tests\07-location.spec.ts:584:7 › Location Services Testing › should save location with complaint in database
+    [chromium] › tests\08-realtime.spec.ts:30:7 › Real-time Features Testing › should display notification bell icon
+    [chromium] › tests\08-realtime.spec.ts:58:7 › Real-time Features Testing › should show notification count badge
+    [chromium] › tests\08-realtime.spec.ts:89:7 › Real-time Features Testing › should open notifications dropdown
+    [chromium] › tests\08-realtime.spec.ts:122:7 › Real-time Features Testing › should display notification list
+    [chromium] › tests\08-realtime.spec.ts:160:7 › Real-time Features Testing › should mark notification as read
+    [chromium] › tests\08-realtime.spec.ts:186:7 › Real-time Features Testing › should show real-time complaint status updates
+    [chromium] › tests\08-realtime.spec.ts:221:7 › Real-time Features Testing › should receive real-time notifications
+    [chromium] › tests\08-realtime.spec.ts:251:7 › Real-time Features Testing › should show typing indicator in chat
+    [chromium] › tests\08-realtime.spec.ts:290:7 › Real-time Features Testing › should update complaint list in real-time
+    [chromium] › tests\08-realtime.spec.ts:315:7 › Real-time Features Testing › should show live status changes
+    [chromium] › tests\08-realtime.spec.ts:340:7 › Real-time Features Testing › should display online/offline status
+    [chromium] › tests\08-realtime.spec.ts:369:7 › Real-time Features Testing › should handle WebSocket connection
+    [chromium] › tests\08-realtime.spec.ts:401:7 › Real-time Features Testing › should auto-refresh complaint list
+    [chromium] › tests\08-realtime.spec.ts:427:7 › Real-time Features Testing › should show toast notifications
+    [chromium] › tests\08-realtime.spec.ts:460:7 › Real-time Features Testing › should verify notifications in database
+    [chromium] › tests\09-ai-features.spec.ts:30:7 › AI Features Testing › should auto-classify complaint department
+    [chromium] › tests\09-ai-features.spec.ts:64:7 › AI Features Testing › should detect complaint urgency
+    [chromium] › tests\09-ai-features.spec.ts:108:7 › AI Features Testing › should assign priority level automatically
+    [chromium] › tests\09-ai-features.spec.ts:146:7 › AI Features Testing › should provide AI suggestions while typing
+    [chromium] › tests\09-ai-features.spec.ts:181:7 › AI Features Testing › should analyze uploaded image with Vision AI
+    [chromium] › tests\09-ai-features.spec.ts:231:7 › AI Features Testing › should perform OCR on uploaded image
+    [chromium] › tests\09-ai-features.spec.ts:271:7 › AI Features Testing › should detect objects in image
+    [chromium] › tests\09-ai-features.spec.ts:311:7 › AI Features Testing › should suggest similar resolved complaints
+    [chromium] › tests\09-ai-features.spec.ts:347:7 › AI Features Testing › should provide smart reply suggestions in chat
+    [chromium] › tests\09-ai-features.spec.ts:387:7 › AI Features Testing › should show AI confidence score
+    [chromium] › tests\09-ai-features.spec.ts:425:7 › AI Features Testing › should categorize complaint automatically
+    [chromium] › tests\09-ai-features.spec.ts:462:7 › AI Features Testing › should estimate resolution time
+    [chromium] › tests\09-ai-features.spec.ts:499:7 › AI Features Testing › should provide multilingual AI support
+    [chromium] › tests\09-ai-features.spec.ts:525:7 › AI Features Testing › should verify AI classifications in database
+    [chromium] › tests\10-admin.spec.ts:58:7 › Admin & Officer Functions Testing › should display admin dashboard
+    [chromium] › tests\10-admin.spec.ts:93:7 › Admin & Officer Functions Testing › should view all complaints list
+    [chromium] › tests\10-admin.spec.ts:136:7 › Admin & Officer Functions Testing › should filter complaints by status
+    [chromium] › tests\10-admin.spec.ts:172:7 › Admin & Officer Functions Testing › should assign complaint to officer
+    [chromium] › tests\10-admin.spec.ts:232:7 › Admin & Officer Functions Testing › should update complaint status
+    [chromium] › tests\10-admin.spec.ts:286:7 › Admin & Officer Functions Testing › should add comment to complaint
+    [chromium] › tests\10-admin.spec.ts:334:7 › Admin & Officer Functions Testing › should perform bulk operations
+    [chromium] › tests\10-admin.spec.ts:376:7 › Admin & Officer Functions Testing › should manage users
+    [chromium] › tests\10-admin.spec.ts:419:7 › Admin & Officer Functions Testing › should view analytics and reports
+    [chromium] › tests\10-admin.spec.ts:470:7 › Admin & Officer Functions Testing › should export complaints data
+    [chromium] › tests\10-admin.spec.ts:513:7 › Admin & Officer Functions Testing › should search complaints by keyword
+    [chromium] › tests\10-admin.spec.ts:554:7 › Admin & Officer Functions Testing › should view complaint details
+    [firefox] › tests\01-authentication.spec.ts:38:7 › User Authentication Flow › should complete user signup flow with OTP verification
+    [firefox] › tests\01-authentication.spec.ts:144:7 › User Authentication Flow › should login with valid credentials
+    [firefox] › tests\01-authentication.spec.ts:180:7 › User Authentication Flow › should show error for invalid credentials
+    [firefox] › tests\01-authentication.spec.ts:230:7 › User Authentication Flow › should validate email format
+    [firefox] › tests\01-authentication.spec.ts:271:7 › User Authentication Flow › should validate password strength
+    [firefox] › tests\01-authentication.spec.ts:304:7 › User Authentication Flow › should logout successfully
+    [firefox] › tests\01-authentication.spec.ts:328:7 › User Authentication Flow › should handle session timeout
+    [firefox] › tests\01-authentication.spec.ts:360:7 › User Authentication Flow › should validate mobile number format
+    [firefox] › tests\01-authentication.spec.ts:393:7 › User Authentication Flow › should prevent duplicate email registration
+    [firefox] › tests\01-authentication.spec.ts:435:7 › User Authentication Flow › should handle password visibility toggle
+    [firefox] › tests\02-dashboard.spec.ts:24:7 › Dashboard & Navigation Tests › should display dashboard with statistics
+    [firefox] › tests\02-dashboard.spec.ts:74:7 › Dashboard & Navigation Tests › should navigate to My Complaints page
+    [firefox] › tests\02-dashboard.spec.ts:110:7 › Dashboard & Navigation Tests › should navigate to Submit Complaint page
+    [firefox] › tests\02-dashboard.spec.ts:151:7 › Dashboard & Navigation Tests › should navigate to Chatbot
+    [firefox] › tests\02-dashboard.spec.ts:190:7 › Dashboard & Navigation Tests › should display user profile information
+    [firefox] › tests\02-dashboard.spec.ts:234:7 › Dashboard & Navigation Tests › should switch language to Hindi
+    [firefox] › tests\02-dashboard.spec.ts:298:7 › Dashboard & Navigation Tests › should switch language to Marathi
+    [firefox] › tests\02-dashboard.spec.ts:348:7 › Dashboard & Navigation Tests › should display navigation menu
+    [firefox] › tests\02-dashboard.spec.ts:370:7 › Dashboard & Navigation Tests › should be responsive on mobile viewport
+    [firefox] › tests\02-dashboard.spec.ts:405:7 › Dashboard & Navigation Tests › should display welcome message
+    [firefox] › tests\02-dashboard.spec.ts:421:7 › Dashboard & Navigation Tests › should handle dashboard statistics from database
+    [firefox] › tests\02-dashboard.spec.ts:443:7 › Dashboard & Navigation Tests › should navigate back to dashboard from other pages
+    [firefox] › tests\02-dashboard.spec.ts:483:7 › Dashboard & Navigation Tests › should display notifications bell/icon
+    [firefox] › tests\03-complaint-submission.spec.ts:32:7 › Complaint Submission - Text Only › should submit a text complaint successfully
+    [firefox] › tests\03-complaint-submission.spec.ts:176:7 › Complaint Submission - Text Only › should validate required fields
+    [firefox] › tests\03-complaint-submission.spec.ts:231:7 › Complaint Submission - Text Only › should show character count for description
+    [firefox] › tests\03-complaint-submission.spec.ts:274:7 › Complaint Submission - Text Only › should allow selecting complaint category/department
+    [firefox] › tests\03-complaint-submission.spec.ts:313:7 › Complaint Submission - Text Only › should allow adding location to complaint
+    [firefox] › tests\03-complaint-submission.spec.ts:370:7 › Complaint Submission - Text Only › should show preview before submission
+    [firefox] › tests\03-complaint-submission.spec.ts:411:7 › Complaint Submission - Text Only › should track complaint status in database
+    [firefox] › tests\03-complaint-submission.spec.ts:443:7 › Complaint Submission - Text Only › should handle form cancellation
+    [firefox] › tests\03-complaint-submission.spec.ts:488:7 › Complaint Submission - Text Only › should display complaint submission success message
+    [firefox] › tests\03-complaint-submission.spec.ts:536:7 › Complaint Submission - Text Only › should validate description length limits
+    [firefox] › tests\03-complaint-submission.spec.ts:569:7 › Complaint Submission - Text Only › should submit complaint with all enhanced fields (GPS, urgency, location)
+    [firefox] › tests\03-complaint-submission.spec.ts:674:7 › Complaint Submission - Text Only › should handle GPS location capture button
+    [firefox] › tests\04-multimodal-complaint.spec.ts:36:7 › Complaint Submission - Multimodal › should upload image to complaint
+    [firefox] › tests\04-multimodal-complaint.spec.ts:93:7 › Complaint Submission - Multimodal › should show image preview after upload
+    [firefox] › tests\04-multimodal-complaint.spec.ts:135:7 › Complaint Submission - Multimodal › should validate image file type
+    [firefox] › tests\04-multimodal-complaint.spec.ts:182:7 › Complaint Submission - Multimodal › should validate image file size
+    [firefox] › tests\04-multimodal-complaint.spec.ts:228:7 › Complaint Submission - Multimodal › should allow removing uploaded image
+    [firefox] › tests\04-multimodal-complaint.spec.ts:280:7 › Complaint Submission - Multimodal › should upload multiple images
+    [firefox] › tests\04-multimodal-complaint.spec.ts:314:7 › Complaint Submission - Multimodal › should record audio for complaint
+    [firefox] › tests\04-multimodal-complaint.spec.ts:380:7 › Complaint Submission - Multimodal › should upload audio file
+    [firefox] › tests\04-multimodal-complaint.spec.ts:416:7 › Complaint Submission - Multimodal › should upload video file
+    [firefox] › tests\04-multimodal-complaint.spec.ts:452:7 › Complaint Submission - Multimodal › should show media preview before submission
+    [firefox] › tests\04-multimodal-complaint.spec.ts:499:7 › Complaint Submission - Multimodal › should verify media upload in database
+    [firefox] › tests\04-multimodal-complaint.spec.ts:529:7 › Complaint Submission - Multimodal › should handle Vision AI image analysis
+    [firefox] › tests\04-multimodal-complaint.spec.ts:575:7 › Complaint Submission - Multimodal › should show upload progress indicator
+    [firefox] › tests\04-multimodal-complaint.spec.ts:623:7 › Complaint Submission - Multimodal › should submit complaint with media successfully
+    [firefox] › tests\05-chatbot.spec.ts:171:7 › Chatbot - Text Conversation › should send and receive messages in English
+    [firefox] › tests\05-chatbot.spec.ts:191:7 › Chatbot - Text Conversation › should handle complaint-related queries
+    [firefox] › tests\05-chatbot.spec.ts:211:7 › Chatbot - Text Conversation › should handle multi-turn conversation
+    [firefox] › tests\05-chatbot.spec.ts:238:7 › Chatbot - Text Conversation › should switch to Hindi language
+    [firefox] › tests\05-chatbot.spec.ts:295:7 › Chatbot - Text Conversation › should switch to Marathi language
+    [firefox] › tests\05-chatbot.spec.ts:328:7 › Chatbot - Text Conversation › should display chat history
+    [firefox] › tests\05-chatbot.spec.ts:368:7 › Chatbot - Text Conversation › should handle location-based queries
+    [firefox] › tests\05-chatbot.spec.ts:385:7 › Chatbot - Text Conversation › should allow clearing chat history
+    [firefox] › tests\05-chatbot.spec.ts:422:7 › Chatbot - Text Conversation › should handle emoji input
+    [firefox] › tests\05-chatbot.spec.ts:431:7 › Chatbot - Text Conversation › should show typing indicator when bot is responding
+    [firefox] › tests\05-chatbot.spec.ts:465:7 › Chatbot - Text Conversation › should handle special characters and numbers
+    [firefox] › tests\05-chatbot.spec.ts:475:7 › Chatbot - Text Conversation › should allow minimizing/maximizing chat window
+    [firefox] › tests\05-chatbot.spec.ts:510:7 › Chatbot - Text Conversation › should create complaint from chat conversation
+    [firefox] › tests\05-chatbot.spec.ts:546:7 › Chatbot - Text Conversation › should handle error when backend is unreachable
+    [firefox] › tests\06-voice-input.spec.ts:63:7 › Chatbot - Voice Input › should have voice input button
+    [firefox] › tests\06-voice-input.spec.ts:98:7 › Chatbot - Voice Input › should start voice recording
+    [firefox] › tests\06-voice-input.spec.ts:150:7 › Chatbot - Voice Input › should stop voice recording
+    [firefox] › tests\06-voice-input.spec.ts:196:7 › Chatbot - Voice Input › should convert speech to text in English
+    [firefox] › tests\06-voice-input.spec.ts:223:7 › Chatbot - Voice Input › should handle voice input in Hindi
+    [firefox] › tests\06-voice-input.spec.ts:254:7 › Chatbot - Voice Input › should handle voice input in Marathi
+    [firefox] › tests\06-voice-input.spec.ts:283:7 › Chatbot - Voice Input › should show microphone permission prompt
+    [firefox] › tests\06-voice-input.spec.ts:326:7 › Chatbot - Voice Input › should display voice waveform while recording
+    [firefox] › tests\06-voice-input.spec.ts:367:7 › Chatbot - Voice Input › should show transcription in real-time
+    [firefox] › tests\06-voice-input.spec.ts:407:7 › Chatbot - Voice Input › should handle voice input errors gracefully
+    [firefox] › tests\06-voice-input.spec.ts:452:7 › Chatbot - Voice Input › should send voice message after recording
+    [firefox] › tests\06-voice-input.spec.ts:493:7 › Chatbot - Voice Input › should support voice commands
+    [firefox] › tests\06-voice-input.spec.ts:515:7 › Chatbot - Voice Input › should switch between text and voice input
+    [firefox] › tests\06-voice-input.spec.ts:545:7 › Chatbot - Voice Input › should display voice input language selector
+    [firefox] › tests\06-voice-input.spec.ts:581:7 › Chatbot - Voice Input › should handle ambient noise gracefully
+    [firefox] › tests\07-location.spec.ts:32:7 › Location Services Testing › should detect current location (Mumbai coordinates)
+    [firefox] › tests\07-location.spec.ts:93:7 › Location Services Testing › should display coordinates in correct format
+    [firefox] › tests\07-location.spec.ts:145:7 › Location Services Testing › should perform reverse geocoding
+    [firefox] › tests\07-location.spec.ts:185:7 › Location Services Testing › should generate Plus Code for location
+    [firefox] › tests\07-location.spec.ts:233:7 › Location Services Testing › should allow manual location entry
+    [firefox] › tests\07-location.spec.ts:278:7 › Location Services Testing › should show location on map
+    [firefox] › tests\07-location.spec.ts:328:7 › Location Services Testing › should filter complaints by location
+    [firefox] › tests\07-location.spec.ts:368:7 › Location Services Testing › should show nearby complaints
+    [firefox] › tests\07-location.spec.ts:404:7 › Location Services Testing › should calculate distance from user location
+    [firefox] › tests\07-location.spec.ts:438:7 › Location Services Testing › should handle location permission denial
+    [firefox] › tests\07-location.spec.ts:489:7 › Location Services Testing › should geocode manually entered address
+    [firefox] › tests\07-location.spec.ts:537:7 › Location Services Testing › should validate location is within service area
+    [firefox] › tests\07-location.spec.ts:584:7 › Location Services Testing › should save location with complaint in database
+    [firefox] › tests\08-realtime.spec.ts:30:7 › Real-time Features Testing › should display notification bell icon
+    [firefox] › tests\08-realtime.spec.ts:58:7 › Real-time Features Testing › should show notification count badge
+    [firefox] › tests\08-realtime.spec.ts:89:7 › Real-time Features Testing › should open notifications dropdown
+    [firefox] › tests\08-realtime.spec.ts:122:7 › Real-time Features Testing › should display notification list
+    [firefox] › tests\08-realtime.spec.ts:160:7 › Real-time Features Testing › should mark notification as read
+    [firefox] › tests\08-realtime.spec.ts:186:7 › Real-time Features Testing › should show real-time complaint status updates
+    [firefox] › tests\08-realtime.spec.ts:221:7 › Real-time Features Testing › should receive real-time notifications
+    [firefox] › tests\08-realtime.spec.ts:251:7 › Real-time Features Testing › should show typing indicator in chat
+    [firefox] › tests\08-realtime.spec.ts:290:7 › Real-time Features Testing › should update complaint list in real-time
+    [firefox] › tests\08-realtime.spec.ts:315:7 › Real-time Features Testing › should show live status changes
+    [firefox] › tests\08-realtime.spec.ts:340:7 › Real-time Features Testing › should display online/offline status
+    [firefox] › tests\08-realtime.spec.ts:369:7 › Real-time Features Testing › should handle WebSocket connection
+    [firefox] › tests\08-realtime.spec.ts:401:7 › Real-time Features Testing › should auto-refresh complaint list
+    [firefox] › tests\08-realtime.spec.ts:427:7 › Real-time Features Testing › should show toast notifications
+    [firefox] › tests\08-realtime.spec.ts:460:7 › Real-time Features Testing › should verify notifications in database
+    [firefox] › tests\09-ai-features.spec.ts:30:7 › AI Features Testing › should auto-classify complaint department
+    [firefox] › tests\09-ai-features.spec.ts:64:7 › AI Features Testing › should detect complaint urgency
+    [firefox] › tests\09-ai-features.spec.ts:108:7 › AI Features Testing › should assign priority level automatically
+    [firefox] › tests\09-ai-features.spec.ts:146:7 › AI Features Testing › should provide AI suggestions while typing
+    [firefox] › tests\09-ai-features.spec.ts:181:7 › AI Features Testing › should analyze uploaded image with Vision AI
+    [firefox] › tests\09-ai-features.spec.ts:231:7 › AI Features Testing › should perform OCR on uploaded image
+    [firefox] › tests\09-ai-features.spec.ts:271:7 › AI Features Testing › should detect objects in image
+    [firefox] › tests\09-ai-features.spec.ts:311:7 › AI Features Testing › should suggest similar resolved complaints
+    [firefox] › tests\09-ai-features.spec.ts:347:7 › AI Features Testing › should provide smart reply suggestions in chat
+    [firefox] › tests\09-ai-features.spec.ts:387:7 › AI Features Testing › should show AI confidence score
+    [firefox] › tests\09-ai-features.spec.ts:425:7 › AI Features Testing › should categorize complaint automatically
+    [firefox] › tests\09-ai-features.spec.ts:462:7 › AI Features Testing › should estimate resolution time
+    [firefox] › tests\09-ai-features.spec.ts:499:7 › AI Features Testing › should provide multilingual AI support
+    [firefox] › tests\09-ai-features.spec.ts:525:7 › AI Features Testing › should verify AI classifications in database
+    [Mobile Chrome] › tests\01-authentication.spec.ts:144:7 › User Authentication Flow › should login with valid credentials
+    [Mobile Chrome] › tests\01-authentication.spec.ts:304:7 › User Authentication Flow › should logout successfully
+    [Mobile Chrome] › tests\01-authentication.spec.ts:328:7 › User Authentication Flow › should handle session timeout
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:24:7 › Dashboard & Navigation Tests › should display dashboard with statistics
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:74:7 › Dashboard & Navigation Tests › should navigate to My Complaints page
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:110:7 › Dashboard & Navigation Tests › should navigate to Submit Complaint page
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:151:7 › Dashboard & Navigation Tests › should navigate to Chatbot
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:190:7 › Dashboard & Navigation Tests › should display user profile information
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:234:7 › Dashboard & Navigation Tests › should switch language to Hindi
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:298:7 › Dashboard & Navigation Tests › should switch language to Marathi
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:348:7 › Dashboard & Navigation Tests › should display navigation menu
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:370:7 › Dashboard & Navigation Tests › should be responsive on mobile viewport
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:405:7 › Dashboard & Navigation Tests › should display welcome message
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:421:7 › Dashboard & Navigation Tests › should handle dashboard statistics from database
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:443:7 › Dashboard & Navigation Tests › should navigate back to dashboard from other pages
+    [Mobile Chrome] › tests\02-dashboard.spec.ts:483:7 › Dashboard & Navigation Tests › should display notifications bell/icon
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:32:7 › Complaint Submission - Text Only › should submit a text complaint successfully
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:176:7 › Complaint Submission - Text Only › should validate required fields
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:231:7 › Complaint Submission - Text Only › should show character count for description
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:274:7 › Complaint Submission - Text Only › should allow selecting complaint category/department
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:313:7 › Complaint Submission - Text Only › should allow adding location to complaint
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:370:7 › Complaint Submission - Text Only › should show preview before submission
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:411:7 › Complaint Submission - Text Only › should track complaint status in database
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:443:7 › Complaint Submission - Text Only › should handle form cancellation
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:488:7 › Complaint Submission - Text Only › should display complaint submission success message
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:536:7 › Complaint Submission - Text Only › should validate description length limits
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:569:7 › Complaint Submission - Text Only › should submit complaint with all enhanced fields (GPS, urgency, location)
+    [Mobile Chrome] › tests\03-complaint-submission.spec.ts:674:7 › Complaint Submission - Text Only › should handle GPS location capture button
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:36:7 › Complaint Submission - Multimodal › should upload image to complaint
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:93:7 › Complaint Submission - Multimodal › should show image preview after upload
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:135:7 › Complaint Submission - Multimodal › should validate image file type
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:182:7 › Complaint Submission - Multimodal › should validate image file size
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:228:7 › Complaint Submission - Multimodal › should allow removing uploaded image
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:280:7 › Complaint Submission - Multimodal › should upload multiple images
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:314:7 › Complaint Submission - Multimodal › should record audio for complaint
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:380:7 › Complaint Submission - Multimodal › should upload audio file
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:416:7 › Complaint Submission - Multimodal › should upload video file
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:452:7 › Complaint Submission - Multimodal › should show media preview before submission
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:499:7 › Complaint Submission - Multimodal › should verify media upload in database
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:529:7 › Complaint Submission - Multimodal › should handle Vision AI image analysis
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:575:7 › Complaint Submission - Multimodal › should show upload progress indicator
+    [Mobile Chrome] › tests\04-multimodal-complaint.spec.ts:623:7 › Complaint Submission - Multimodal › should submit complaint with media successfully
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:171:7 › Chatbot - Text Conversation › should send and receive messages in English
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:191:7 › Chatbot - Text Conversation › should handle complaint-related queries
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:211:7 › Chatbot - Text Conversation › should handle multi-turn conversation
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:238:7 › Chatbot - Text Conversation › should switch to Hindi language
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:295:7 › Chatbot - Text Conversation › should switch to Marathi language
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:328:7 › Chatbot - Text Conversation › should display chat history
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:368:7 › Chatbot - Text Conversation › should handle location-based queries
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:385:7 › Chatbot - Text Conversation › should allow clearing chat history
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:422:7 › Chatbot - Text Conversation › should handle emoji input
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:431:7 › Chatbot - Text Conversation › should show typing indicator when bot is responding
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:465:7 › Chatbot - Text Conversation › should handle special characters and numbers
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:475:7 › Chatbot - Text Conversation › should allow minimizing/maximizing chat window
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:510:7 › Chatbot - Text Conversation › should create complaint from chat conversation
+    [Mobile Chrome] › tests\05-chatbot.spec.ts:546:7 › Chatbot - Text Conversation › should handle error when backend is unreachable
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:63:7 › Chatbot - Voice Input › should have voice input button
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:98:7 › Chatbot - Voice Input › should start voice recording
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:150:7 › Chatbot - Voice Input › should stop voice recording
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:196:7 › Chatbot - Voice Input › should convert speech to text in English
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:223:7 › Chatbot - Voice Input › should handle voice input in Hindi
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:254:7 › Chatbot - Voice Input › should handle voice input in Marathi
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:283:7 › Chatbot - Voice Input › should show microphone permission prompt
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:326:7 › Chatbot - Voice Input › should display voice waveform while recording
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:367:7 › Chatbot - Voice Input › should show transcription in real-time
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:407:7 › Chatbot - Voice Input › should handle voice input errors gracefully
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:452:7 › Chatbot - Voice Input › should send voice message after recording
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:493:7 › Chatbot - Voice Input › should support voice commands
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:515:7 › Chatbot - Voice Input › should switch between text and voice input
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:545:7 › Chatbot - Voice Input › should display voice input language selector
+    [Mobile Chrome] › tests\06-voice-input.spec.ts:581:7 › Chatbot - Voice Input › should handle ambient noise gracefully
+    [Mobile Chrome] › tests\07-location.spec.ts:32:7 › Location Services Testing › should detect current location (Mumbai coordinates)
+    [Mobile Chrome] › tests\07-location.spec.ts:93:7 › Location Services Testing › should display coordinates in correct format
+    [Mobile Chrome] › tests\07-location.spec.ts:145:7 › Location Services Testing › should perform reverse geocoding
+    [Mobile Chrome] › tests\07-location.spec.ts:185:7 › Location Services Testing › should generate Plus Code for location
+    [Mobile Chrome] › tests\07-location.spec.ts:233:7 › Location Services Testing › should allow manual location entry
+    [Mobile Chrome] › tests\07-location.spec.ts:278:7 › Location Services Testing › should show location on map
+    [Mobile Chrome] › tests\07-location.spec.ts:328:7 › Location Services Testing › should filter complaints by location
+    [Mobile Chrome] › tests\07-location.spec.ts:368:7 › Location Services Testing › should show nearby complaints
+    [Mobile Chrome] › tests\07-location.spec.ts:404:7 › Location Services Testing › should calculate distance from user location
+    [Mobile Chrome] › tests\07-location.spec.ts:438:7 › Location Services Testing › should handle location permission denial
+    [Mobile Chrome] › tests\07-location.spec.ts:489:7 › Location Services Testing › should geocode manually entered address
+    [Mobile Chrome] › tests\07-location.spec.ts:537:7 › Location Services Testing › should validate location is within service area
+    [Mobile Chrome] › tests\07-location.spec.ts:584:7 › Location Services Testing › should save location with complaint in database
+    [Mobile Chrome] › tests\08-realtime.spec.ts:30:7 › Real-time Features Testing › should display notification bell icon
+    [Mobile Chrome] › tests\08-realtime.spec.ts:58:7 › Real-time Features Testing › should show notification count badge
+    [Mobile Chrome] › tests\08-realtime.spec.ts:89:7 › Real-time Features Testing › should open notifications dropdown
+    [Mobile Chrome] › tests\08-realtime.spec.ts:122:7 › Real-time Features Testing › should display notification list
+    [Mobile Chrome] › tests\08-realtime.spec.ts:160:7 › Real-time Features Testing › should mark notification as read
+    [Mobile Chrome] › tests\08-realtime.spec.ts:186:7 › Real-time Features Testing › should show real-time complaint status updates
+    [Mobile Chrome] › tests\08-realtime.spec.ts:221:7 › Real-time Features Testing › should receive real-time notifications
+    [Mobile Chrome] › tests\08-realtime.spec.ts:251:7 › Real-time Features Testing › should show typing indicator in chat
+    [Mobile Chrome] › tests\08-realtime.spec.ts:290:7 › Real-time Features Testing › should update complaint list in real-time
+    [Mobile Chrome] › tests\08-realtime.spec.ts:315:7 › Real-time Features Testing › should show live status changes
+    [Mobile Chrome] › tests\08-realtime.spec.ts:340:7 › Real-time Features Testing › should display online/offline status
+    [Mobile Chrome] › tests\08-realtime.spec.ts:369:7 › Real-time Features Testing › should handle WebSocket connection
+    [Mobile Chrome] › tests\08-realtime.spec.ts:401:7 › Real-time Features Testing › should auto-refresh complaint list
+    [Mobile Chrome] › tests\08-realtime.spec.ts:427:7 › Real-time Features Testing › should show toast notifications
+    [Mobile Chrome] › tests\08-realtime.spec.ts:460:7 › Real-time Features Testing › should verify notifications in database
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:30:7 › AI Features Testing › should auto-classify complaint department
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:64:7 › AI Features Testing › should detect complaint urgency
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:108:7 › AI Features Testing › should assign priority level automatically
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:146:7 › AI Features Testing › should provide AI suggestions while typing
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:181:7 › AI Features Testing › should analyze uploaded image with Vision AI
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:231:7 › AI Features Testing › should perform OCR on uploaded image
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:271:7 › AI Features Testing › should detect objects in image
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:311:7 › AI Features Testing › should suggest similar resolved complaints
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:347:7 › AI Features Testing › should provide smart reply suggestions in chat
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:387:7 › AI Features Testing › should show AI confidence score
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:425:7 › AI Features Testing › should categorize complaint automatically
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:462:7 › AI Features Testing › should estimate resolution time
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:499:7 › AI Features Testing › should provide multilingual AI support
+    [Mobile Chrome] › tests\09-ai-features.spec.ts:525:7 › AI Features Testing › should verify AI classifications in database
+    [Mobile Chrome] › tests\10-admin.spec.ts:20:7 › Admin & Officer Functions Testing › should login as admin/officer
+    [Mobile Chrome] › tests\10-admin.spec.ts:58:7 › Admin & Officer Functions Testing › should display admin dashboard
+    [Mobile Chrome] › tests\10-admin.spec.ts:93:7 › Admin & Officer Functions Testing › should view all complaints list
+    [Mobile Chrome] › tests\10-admin.spec.ts:136:7 › Admin & Officer Functions Testing › should filter complaints by status
+    [Mobile Chrome] › tests\10-admin.spec.ts:172:7 › Admin & Officer Functions Testing › should assign complaint to officer
+    [Mobile Chrome] › tests\10-admin.spec.ts:232:7 › Admin & Officer Functions Testing › should update complaint status
+    [Mobile Chrome] › tests\10-admin.spec.ts:286:7 › Admin & Officer Functions Testing › should add comment to complaint
+    [Mobile Chrome] › tests\10-admin.spec.ts:334:7 › Admin & Officer Functions Testing › should perform bulk operations
+    [Mobile Chrome] › tests\10-admin.spec.ts:376:7 › Admin & Officer Functions Testing › should manage users
+    [Mobile Chrome] › tests\10-admin.spec.ts:419:7 › Admin & Officer Functions Testing › should view analytics and reports
+    [Mobile Chrome] › tests\10-admin.spec.ts:470:7 › Admin & Officer Functions Testing › should export complaints data
+    [Mobile Chrome] › tests\10-admin.spec.ts:513:7 › Admin & Officer Functions Testing › should search complaints by keyword
+    [Mobile Chrome] › tests\10-admin.spec.ts:554:7 › Admin & Officer Functions Testing › should view complaint details
+    [Microsoft Edge] › tests\01-authentication.spec.ts:144:7 › User Authentication Flow › should login with valid credentials
+    [Microsoft Edge] › tests\01-authentication.spec.ts:304:7 › User Authentication Flow › should logout successfully
+    [Microsoft Edge] › tests\01-authentication.spec.ts:328:7 › User Authentication Flow › should handle session timeout
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:24:7 › Dashboard & Navigation Tests › should display dashboard with statistics
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:74:7 › Dashboard & Navigation Tests › should navigate to My Complaints page
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:110:7 › Dashboard & Navigation Tests › should navigate to Submit Complaint page
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:151:7 › Dashboard & Navigation Tests › should navigate to Chatbot
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:190:7 › Dashboard & Navigation Tests › should display user profile information
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:234:7 › Dashboard & Navigation Tests › should switch language to Hindi
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:298:7 › Dashboard & Navigation Tests › should switch language to Marathi
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:348:7 › Dashboard & Navigation Tests › should display navigation menu
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:370:7 › Dashboard & Navigation Tests › should be responsive on mobile viewport
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:405:7 › Dashboard & Navigation Tests › should display welcome message
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:421:7 › Dashboard & Navigation Tests › should handle dashboard statistics from database
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:443:7 › Dashboard & Navigation Tests › should navigate back to dashboard from other pages
+    [Microsoft Edge] › tests\02-dashboard.spec.ts:483:7 › Dashboard & Navigation Tests › should display notifications bell/icon
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:32:7 › Complaint Submission - Text Only › should submit a text complaint successfully
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:176:7 › Complaint Submission - Text Only › should validate required fields
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:231:7 › Complaint Submission - Text Only › should show character count for description
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:274:7 › Complaint Submission - Text Only › should allow selecting complaint category/department
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:313:7 › Complaint Submission - Text Only › should allow adding location to complaint
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:370:7 › Complaint Submission - Text Only › should show preview before submission
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:411:7 › Complaint Submission - Text Only › should track complaint status in database
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:443:7 › Complaint Submission - Text Only › should handle form cancellation
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:488:7 › Complaint Submission - Text Only › should display complaint submission success message
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:536:7 › Complaint Submission - Text Only › should validate description length limits
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:569:7 › Complaint Submission - Text Only › should submit complaint with all enhanced fields (GPS, urgency, location)
+    [Microsoft Edge] › tests\03-complaint-submission.spec.ts:674:7 › Complaint Submission - Text Only › should handle GPS location capture button
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:36:7 › Complaint Submission - Multimodal › should upload image to complaint
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:93:7 › Complaint Submission - Multimodal › should show image preview after upload
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:135:7 › Complaint Submission - Multimodal › should validate image file type
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:182:7 › Complaint Submission - Multimodal › should validate image file size
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:228:7 › Complaint Submission - Multimodal › should allow removing uploaded image
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:280:7 › Complaint Submission - Multimodal › should upload multiple images
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:314:7 › Complaint Submission - Multimodal › should record audio for complaint
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:380:7 › Complaint Submission - Multimodal › should upload audio file
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:416:7 › Complaint Submission - Multimodal › should upload video file
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:452:7 › Complaint Submission - Multimodal › should show media preview before submission
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:499:7 › Complaint Submission - Multimodal › should verify media upload in database
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:529:7 › Complaint Submission - Multimodal › should handle Vision AI image analysis
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:575:7 › Complaint Submission - Multimodal › should show upload progress indicator
+    [Microsoft Edge] › tests\04-multimodal-complaint.spec.ts:623:7 › Complaint Submission - Multimodal › should submit complaint with media successfully
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:171:7 › Chatbot - Text Conversation › should send and receive messages in English
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:191:7 › Chatbot - Text Conversation › should handle complaint-related queries
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:211:7 › Chatbot - Text Conversation › should handle multi-turn conversation
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:238:7 › Chatbot - Text Conversation › should switch to Hindi language
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:295:7 › Chatbot - Text Conversation › should switch to Marathi language
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:328:7 › Chatbot - Text Conversation › should display chat history
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:368:7 › Chatbot - Text Conversation › should handle location-based queries
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:385:7 › Chatbot - Text Conversation › should allow clearing chat history
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:422:7 › Chatbot - Text Conversation › should handle emoji input
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:431:7 › Chatbot - Text Conversation › should show typing indicator when bot is responding
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:465:7 › Chatbot - Text Conversation › should handle special characters and numbers
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:475:7 › Chatbot - Text Conversation › should allow minimizing/maximizing chat window
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:510:7 › Chatbot - Text Conversation › should create complaint from chat conversation
+    [Microsoft Edge] › tests\05-chatbot.spec.ts:546:7 › Chatbot - Text Conversation › should handle error when backend is unreachable
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:63:7 › Chatbot - Voice Input › should have voice input button
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:98:7 › Chatbot - Voice Input › should start voice recording
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:150:7 › Chatbot - Voice Input › should stop voice recording
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:196:7 › Chatbot - Voice Input › should convert speech to text in English
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:223:7 › Chatbot - Voice Input › should handle voice input in Hindi
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:254:7 › Chatbot - Voice Input › should handle voice input in Marathi
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:283:7 › Chatbot - Voice Input › should show microphone permission prompt
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:326:7 › Chatbot - Voice Input › should display voice waveform while recording
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:367:7 › Chatbot - Voice Input › should show transcription in real-time
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:407:7 › Chatbot - Voice Input › should handle voice input errors gracefully
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:452:7 › Chatbot - Voice Input › should send voice message after recording
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:493:7 › Chatbot - Voice Input › should support voice commands
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:515:7 › Chatbot - Voice Input › should switch between text and voice input
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:545:7 › Chatbot - Voice Input › should display voice input language selector
+    [Microsoft Edge] › tests\06-voice-input.spec.ts:581:7 › Chatbot - Voice Input › should handle ambient noise gracefully
+    [Microsoft Edge] › tests\07-location.spec.ts:32:7 › Location Services Testing › should detect current location (Mumbai coordinates)
+    [Microsoft Edge] › tests\07-location.spec.ts:93:7 › Location Services Testing › should display coordinates in correct format
+    [Microsoft Edge] › tests\07-location.spec.ts:145:7 › Location Services Testing › should perform reverse geocoding
+    [Microsoft Edge] › tests\07-location.spec.ts:185:7 › Location Services Testing › should generate Plus Code for location
+    [Microsoft Edge] › tests\07-location.spec.ts:233:7 › Location Services Testing › should allow manual location entry
+    [Microsoft Edge] › tests\07-location.spec.ts:278:7 › Location Services Testing › should show location on map
+    [Microsoft Edge] › tests\07-location.spec.ts:328:7 › Location Services Testing › should filter complaints by location
+    [Microsoft Edge] › tests\07-location.spec.ts:368:7 › Location Services Testing › should show nearby complaints
+    [Microsoft Edge] › tests\07-location.spec.ts:404:7 › Location Services Testing › should calculate distance from user location
+    [Microsoft Edge] › tests\07-location.spec.ts:438:7 › Location Services Testing › should handle location permission denial
+    [Microsoft Edge] › tests\07-location.spec.ts:489:7 › Location Services Testing › should geocode manually entered address
+    [Microsoft Edge] › tests\07-location.spec.ts:537:7 › Location Services Testing › should validate location is within service area
+    [Microsoft Edge] › tests\07-location.spec.ts:584:7 › Location Services Testing › should save location with complaint in database
+    [Microsoft Edge] › tests\08-realtime.spec.ts:30:7 › Real-time Features Testing › should display notification bell icon
+    [Microsoft Edge] › tests\08-realtime.spec.ts:58:7 › Real-time Features Testing › should show notification count badge
+    [Microsoft Edge] › tests\08-realtime.spec.ts:89:7 › Real-time Features Testing › should open notifications dropdown
+    [Microsoft Edge] › tests\08-realtime.spec.ts:122:7 › Real-time Features Testing › should display notification list
+    [Microsoft Edge] › tests\08-realtime.spec.ts:160:7 › Real-time Features Testing › should mark notification as read
+    [Microsoft Edge] › tests\08-realtime.spec.ts:186:7 › Real-time Features Testing › should show real-time complaint status updates
+    [Microsoft Edge] › tests\08-realtime.spec.ts:221:7 › Real-time Features Testing › should receive real-time notifications
+    [Microsoft Edge] › tests\08-realtime.spec.ts:251:7 › Real-time Features Testing › should show typing indicator in chat
+    [Microsoft Edge] › tests\08-realtime.spec.ts:290:7 › Real-time Features Testing › should update complaint list in real-time
+    [Microsoft Edge] › tests\08-realtime.spec.ts:315:7 › Real-time Features Testing › should show live status changes
+    [Microsoft Edge] › tests\08-realtime.spec.ts:340:7 › Real-time Features Testing › should display online/offline status
+    [Microsoft Edge] › tests\08-realtime.spec.ts:369:7 › Real-time Features Testing › should handle WebSocket connection
+    [Microsoft Edge] › tests\08-realtime.spec.ts:401:7 › Real-time Features Testing › should auto-refresh complaint list
+    [Microsoft Edge] › tests\08-realtime.spec.ts:427:7 › Real-time Features Testing › should show toast notifications
+    [Microsoft Edge] › tests\08-realtime.spec.ts:460:7 › Real-time Features Testing › should verify notifications in database
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:30:7 › AI Features Testing › should auto-classify complaint department
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:64:7 › AI Features Testing › should detect complaint urgency
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:108:7 › AI Features Testing › should assign priority level automatically
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:146:7 › AI Features Testing › should provide AI suggestions while typing
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:181:7 › AI Features Testing › should analyze uploaded image with Vision AI
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:231:7 › AI Features Testing › should perform OCR on uploaded image
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:271:7 › AI Features Testing › should detect objects in image
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:311:7 › AI Features Testing › should suggest similar resolved complaints
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:347:7 › AI Features Testing › should provide smart reply suggestions in chat
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:387:7 › AI Features Testing › should show AI confidence score
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:425:7 › AI Features Testing › should categorize complaint automatically
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:462:7 › AI Features Testing › should estimate resolution time
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:499:7 › AI Features Testing › should provide multilingual AI support
+    [Microsoft Edge] › tests\09-ai-features.spec.ts:525:7 › AI Features Testing › should verify AI classifications in database
+    [Microsoft Edge] › tests\10-admin.spec.ts:58:7 › Admin & Officer Functions Testing › should display admin dashboard
+    [Microsoft Edge] › tests\10-admin.spec.ts:93:7 › Admin & Officer Functions Testing › should view all complaints list
+    [Microsoft Edge] › tests\10-admin.spec.ts:136:7 › Admin & Officer Functions Testing › should filter complaints by status
+    [Microsoft Edge] › tests\10-admin.spec.ts:172:7 › Admin & Officer Functions Testing › should assign complaint to officer
+    [Microsoft Edge] › tests\10-admin.spec.ts:232:7 › Admin & Officer Functions Testing › should update complaint status
+    [Microsoft Edge] › tests\10-admin.spec.ts:286:7 › Admin & Officer Functions Testing › should add comment to complaint
+    [Microsoft Edge] › tests\10-admin.spec.ts:334:7 › Admin & Officer Functions Testing › should perform bulk operations
+    [Microsoft Edge] › tests\10-admin.spec.ts:376:7 › Admin & Officer Functions Testing › should manage users
+    [Microsoft Edge] › tests\10-admin.spec.ts:419:7 › Admin & Officer Functions Testing › should view analytics and reports
+    [Microsoft Edge] › tests\10-admin.spec.ts:470:7 › Admin & Officer Functions Testing › should export complaints data
+    [Microsoft Edge] › tests\10-admin.spec.ts:513:7 › Admin & Officer Functions Testing › should search complaints by keyword
+    [Microsoft Edge] › tests\10-admin.spec.ts:554:7 › Admin & Officer Functions Testing › should view complaint details
+  40 passed (1.8h)
+
+To open last HTML report run:
+
+  npx playwright show-report reports\html
+
+PS D:\SmartGriev\e2e-tests> 1`qA|;LA
+At line:1 char:6
++ 1`qA|;LA
++      ~
+An empty pipe element is not allowed.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : EmptyPipeElement
+
+PS D:\SmartGriev\e2e-tests> 
+PS D:\SmartGriev\e2e-tests> 
