@@ -1,31 +1,20 @@
 import { Button } from '@/components/atoms';
-import { useThemeStore } from '@/store/themeStore';
+import { Navbar } from '@/components/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const App = () => {
-  const { isDarkMode, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      {/* Theme Toggle */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleTheme}
-          className="rounded-full shadow-lg"
-        >
-          {isDarkMode ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800">
+      {/* Navbar */}
+      <Navbar />
 
-      <div className="max-w-2xl w-full">
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-screen p-4 pt-20">
+        <div className="max-w-2xl w-full">
         <div className="text-center space-y-6 animate-fade-in">
           {/* Logo/Icon */}
           <div className="flex justify-center">
@@ -50,10 +39,10 @@ const App = () => {
           {/* Title */}
           <div className="space-y-2">
             <h1 className="text-5xl font-bold text-gradient animate-slide-in-from-bottom animation-delay-100">
-              SmartGriev 2.0
+              {t('common.appName')}
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 animate-slide-in-from-bottom animation-delay-200">
-              AI-Powered Civic Engagement Platform
+            <p className="text-xl text-gray-600 dark:text-gray-300 font-medium animate-slide-in-from-bottom animation-delay-150">
+              {t('common.tagline')}
             </p>
           </div>
 
@@ -76,8 +65,8 @@ const App = () => {
                   />
                 </svg>
               }
-              title="AI Chatbot"
-              description="Natural conversation for complaint submission"
+              title={t('features.aiChatbot')}
+              description={t('features.aiChatbotDesc')}
             />
             <FeatureCard
               icon={
@@ -96,8 +85,8 @@ const App = () => {
                   />
                 </svg>
               }
-              title="12 Languages"
-              description="Full support for Indian languages"
+              title={t('features.languages')}
+              description={t('features.languagesDesc')}
             />
             <FeatureCard
               icon={
@@ -116,18 +105,9 @@ const App = () => {
                   />
                 </svg>
               }
-              title="Voice & Vision"
-              description="Multi-modal input support"
+              title={t('features.voiceVision')}
+              description={t('features.voiceVisionDesc')}
             />
-          </div>
-
-          {/* Status Badge */}
-          <div className="flex justify-center mt-8 animate-slide-in-from-bottom animation-delay-500">
-            <div className="glass px-6 py-3 rounded-full">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                🚀 Under Active Development - Phase 1 Complete
-              </p>
-            </div>
           </div>
 
           {/* Loading Indicator */}
@@ -145,12 +125,13 @@ const App = () => {
               className="shadow-xl"
               onClick={() => navigate('/login')}
             >
-              Get Started
+              {t('actions.getStarted')}
             </Button>
             <Button variant="outline" size="lg" onClick={() => navigate('/register')}>
-              Register Now
+              {t('actions.registerNow')}
             </Button>
           </div>
+        </div>
         </div>
       </div>
     </div>

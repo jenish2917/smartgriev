@@ -1,4 +1,4 @@
-import apiClient, { handleApiError } from '@/lib/axios';
+import { apiClient, handleApiError } from '@/lib/axios';
 import type { ChatMessage } from '@/types';
 
 /**

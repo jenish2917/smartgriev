@@ -1,4 +1,4 @@
-import apiClient, { handleApiError } from '@/lib/axios';
+import { apiClient, handleApiError } from '@/lib/axios';
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '@/types';
 
 /**

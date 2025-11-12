@@ -11,7 +11,7 @@ import { handleApiError } from '@/lib/axios';
 import { LANGUAGES } from '@/utils/constants';
 
 export const RegisterPage = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
@@ -24,7 +24,7 @@ export const RegisterPage = () => {
     last_name: '',
     mobile_number: '',
     address: '',
-    language_preference: i18n.language,
+    language_preference: 'en',
     terms_accepted: false,
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -101,7 +101,7 @@ export const RegisterPage = () => {
               {t('auth.register')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Create your SmartGriev account
+              {t('auth.createAccount')}
             </p>
           </div>
 
@@ -123,8 +123,8 @@ export const RegisterPage = () => {
               <Input
                 id="first_name"
                 type="text"
-                label="First Name"
-                placeholder="John"
+                label={t('auth.firstName')}
+                placeholder="Rahul"
                 value={formData.first_name}
                 onChange={(e) =>
                   setFormData({ ...formData, first_name: e.target.value })
@@ -136,8 +136,8 @@ export const RegisterPage = () => {
               <Input
                 id="last_name"
                 type="text"
-                label="Last Name"
-                placeholder="Doe"
+                label={t('auth.lastName')}
+                placeholder="Sharma"
                 value={formData.last_name}
                 onChange={(e) =>
                   setFormData({ ...formData, last_name: e.target.value })
@@ -153,8 +153,8 @@ export const RegisterPage = () => {
               <Input
                 id="username"
                 type="text"
-                label="Username"
-                placeholder="johndoe"
+                label={t('auth.username')}
+                placeholder="rahulsharma"
                 value={formData.username}
                 onChange={(e) =>
                   setFormData({ ...formData, username: e.target.value })
@@ -167,7 +167,7 @@ export const RegisterPage = () => {
                 id="email"
                 type="email"
                 label={t('auth.email')}
-                placeholder="john@example.com"
+                placeholder="rahul@example.com"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -183,8 +183,8 @@ export const RegisterPage = () => {
               <Input
                 id="mobile_number"
                 type="tel"
-                label="Mobile Number"
-                placeholder="+91 1234567890"
+                label={t('auth.mobileNumber')}
+                placeholder="+91 9876543210"
                 value={formData.mobile_number}
                 onChange={(e) =>
                   setFormData({ ...formData, mobile_number: e.target.value })
@@ -195,7 +195,7 @@ export const RegisterPage = () => {
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   <Globe className="w-4 h-4 inline mr-1" />
-                  Language
+                  {t('auth.language')}
                 </label>
                 <select
                   value={formData.language_preference}
@@ -218,8 +218,8 @@ export const RegisterPage = () => {
             <Input
               id="address"
               type="text"
-              label="Address"
-              placeholder="123 Main St, City"
+              label={t('auth.address')}
+              placeholder="MG Road, Mumbai"
               value={formData.address}
               onChange={(e) =>
                 setFormData({ ...formData, address: e.target.value })
@@ -298,19 +298,19 @@ export const RegisterPage = () => {
                   className="w-4 h-4 mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
-                  I agree to the{' '}
+                  {t('auth.termsAccept')}{' '}
                   <Link
                     to="/terms"
                     className="text-primary-600 hover:text-primary-700 dark:text-primary-400"
                   >
-                    Terms and Conditions
+                    {t('auth.termsConditions')}
                   </Link>{' '}
-                  and{' '}
+                  {t('auth.and')}{' '}
                   <Link
                     to="/privacy"
                     className="text-primary-600 hover:text-primary-700 dark:text-primary-400"
                   >
-                    Privacy Policy
+                    {t('auth.privacyPolicy')}
                   </Link>
                 </span>
               </label>
@@ -331,7 +331,7 @@ export const RegisterPage = () => {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Creating account...
+                  {t('auth.creatingAccount')}
                 </>
               ) : (
                 t('auth.register')

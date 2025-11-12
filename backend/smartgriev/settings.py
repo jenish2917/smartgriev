@@ -23,10 +23,10 @@ if os.name == 'nt':  # Windows
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-fallback-key-for-development-only-change-in-production-12345')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
 # Set this in your .env file for production
 # For example: DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com

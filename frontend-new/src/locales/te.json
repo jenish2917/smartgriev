@@ -1,0 +1,11 @@
+{
+  "common": {
+    "appName": "SmartGriev",
+    "welcome": "స్వాగతం"
+  },
+  "navigation": {
+    "home": "హోమ్",
+    "login": "లాగిన్",
+    "register": "నమోదు"
+  }
+}
