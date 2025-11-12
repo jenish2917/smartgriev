@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import LanguageSwitcher from './common/LanguageSwitcher';
@@ -381,8 +382,14 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation('common');
 
-  const isActive = (path: string) => location.pathname === path;
+  // Treat a route as active when it exactly matches OR when the current
+  // location starts with the route (handles nested routes like /complaints/123)
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -441,13 +448,12 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
           {/* Desktop Navigation */}
           <DesktopNavLinks>
-            <NavLink to="/" $isActive={isActive('/')}>Home</NavLink>
+            <NavLink to="/" $isActive={isActive('/')}>{t('home')}</NavLink>
             {user && (
               <>
-                <NavLink to="/dashboard" $isActive={isActive('/dashboard')}>Dashboard</NavLink>
-                <NavLink to="/chatbot" $isActive={isActive('/chatbot')}>AI Chatbot</NavLink>
-                <NavLink to="/multimodal-submit" $isActive={isActive('/multimodal-submit')}>Submit Complaint</NavLink>
-                <NavLink to="/my-complaints" $isActive={isActive('/my-complaints')}>My Complaints</NavLink>
+                <NavLink to="/dashboard" $isActive={isActive('/dashboard')}>{t('dashboard')}</NavLink>
+                <NavLink to="/multimodal-submit" $isActive={isActive('/multimodal-submit')}>{t('submitComplaint')}</NavLink>
+                <NavLink to="/my-complaints" $isActive={isActive('/my-complaints')}>{t('myComplaints', 'My Complaints')}</NavLink>
               </>
             )}
           </DesktopNavLinks>
@@ -461,14 +467,14 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
                 <UserAvatar title={user.email}>
                   {user.name.charAt(0).toUpperCase()}
                 </UserAvatar>
-                <Button onClick={handleLogout} $variant="outline">Logout</Button>
+                <Button onClick={handleLogout} $variant="outline">{t('logout')}</Button>
               </UserMenu>
             </DesktopAuthButtons>
           ) : (
             <DesktopAuthButtons>
               <LanguageSwitcher />
-              <Button onClick={() => navigate('/login')} $variant="outline">Login</Button>
-              <Button onClick={() => navigate('/register')} $variant="primary">Sign Up</Button>
+              <Button onClick={() => navigate('/login')} $variant="outline">{t('login', 'Login')}</Button>
+              <Button onClick={() => navigate('/register')} $variant="primary">{t('signup', 'Sign Up')}</Button>
             </DesktopAuthButtons>
           )}
 
@@ -503,22 +509,19 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
           {/* Navigation Links */}
           <MobileNavLink to="/" $isActive={isActive('/')}>
-            🏠 Home
+            🏠 {t('home')}
           </MobileNavLink>
 
           {user && (
             <>
               <MobileNavLink to="/dashboard" $isActive={isActive('/dashboard')}>
-                📊 Dashboard
-              </MobileNavLink>
-              <MobileNavLink to="/chatbot" $isActive={isActive('/chatbot')}>
-                🤖 AI Chatbot
+                📊 {t('dashboard')}
               </MobileNavLink>
               <MobileNavLink to="/multimodal-submit" $isActive={isActive('/multimodal-submit')}>
-                📝 Submit Complaint
+                📝 {t('submitComplaint')}
               </MobileNavLink>
               <MobileNavLink to="/my-complaints" $isActive={isActive('/my-complaints')}>
-                📋 My Complaints
+                📋 {t('myComplaints', 'My Complaints')}
               </MobileNavLink>
             </>
           )}
@@ -535,15 +538,15 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           {/* Auth Buttons */}
           {user ? (
             <MobileButton onClick={handleLogout} $variant="outline">
-              🚪 Logout
+              🚪 {t('logout')}
             </MobileButton>
           ) : (
             <>
               <MobileButton onClick={() => handleMobileNavigation('/login')} $variant="outline">
-                🔐 Login
+                🔐 {t('login', 'Login')}
               </MobileButton>
               <MobileButton onClick={() => handleMobileNavigation('/register')} $variant="primary">
-                ✨ Sign Up
+                ✨ {t('signup', 'Sign Up')}
               </MobileButton>
             </>
           )}

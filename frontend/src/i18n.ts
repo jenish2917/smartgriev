@@ -56,18 +56,23 @@ i18n
       convertDetectedLanguage: (lng: string) => lng,
     },
     
-    // Backend options
+    // Backend / Local options
     backend: {
-      // Load translations from Django API
-      loadPath: 'http://localhost:8000/api/auth/translations/?lang={{lng}}',
-      
-      // Parse response to get translations
+      // Prefer local public translations during frontend development (served by Vite).
+      // Allow overriding via VITE_API_TRANSLATIONS_URL (for production or backend-driven translations).
+      loadPath: (import.meta && (import.meta as any).env && (import.meta as any).env.VITE_API_TRANSLATIONS_URL)
+        ? (import.meta as any).env.VITE_API_TRANSLATIONS_URL
+        : '/locales/{{lng}}/{{ns}}.json',
+
+      // If API returns a wrapper object, the parse function will normalize it. For local files this will be a no-op.
       parse: (data: string) => {
-        const parsed = JSON.parse(data);
-        return parsed.translations || {};
+        try {
+          const parsed = JSON.parse(data);
+          return parsed.translations || parsed || {};
+        } catch (e) {
+          return {};
+        }
       },
-      
-      // Allow cross-origin requests
       crossDomain: true,
     },
     

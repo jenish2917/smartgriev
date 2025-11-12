@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
@@ -270,24 +271,20 @@ const CTADescription = styled.p`
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   return (
     <HomeContainer>
       <HeroSection>
         <HeroContent>
-          <HeroTitle>
-            Smart Grievance Management System
-          </HeroTitle>
-          <HeroSubtitle>
-            Submit and track your complaints effortlessly with AI-powered assistance. 
-            Get instant responses, multimodal submissions, and real-time updates.
-          </HeroSubtitle>
+          <HeroTitle>{t('homeTitle', 'Smart Grievance Management System')}</HeroTitle>
+          <HeroSubtitle>{t('homeSubtitle', 'Submit and track your complaints effortlessly with AI-powered assistance. Get instant responses, multimodal submissions, and real-time updates.')}</HeroSubtitle>
           <HeroButtons>
             <Button onClick={() => navigate('/chatbot')} $variant="primary">
-              🤖 Try AI Chatbot
+              🤖 {t('tryChatbot', 'Try AI Chatbot')}
             </Button>
             <Button onClick={() => navigate('/multimodal-submit')} $variant="outline">
-              📝 Submit Complaint
+              📝 {t('submitComplaint', 'Submit Complaint')}
             </Button>
           </HeroButtons>
         </HeroContent>
@@ -295,26 +292,24 @@ const Home: React.FC = () => {
         <HeroImage>
           <ChatbotPreview>
             <ChatbotHeader>
-              <ChatbotTitle>🤖 SmartGriev AI Assistant</ChatbotTitle>
-              <ChatbotSubtitle>Powered by Advanced AI</ChatbotSubtitle>
-            </ChatbotHeader>
+                <ChatbotTitle>🤖 {t('aiAssistantTitle', 'SmartGriev AI Assistant')}</ChatbotTitle>
+                <ChatbotSubtitle>{t('aiAssistantSubtitle', 'Powered by Advanced AI')}</ChatbotSubtitle>
+              </ChatbotHeader>
             <ChatMessages>
               <Message $isBot>
-                👋 Hello! I'm your SmartGriev AI assistant. How can I help you today?
+                👋 {t('chatbotGreeting', 'Hello! I\'m your SmartGriev AI assistant. How can I help you today?')}
               </Message>
               <Message>
-                I need to report a road damage issue
+                {t('chatbotUserMsg1', 'I need to report a road damage issue')}
               </Message>
               <Message $isBot>
-                I can help you with that! Let me guide you through the complaint submission process. 
-                First, could you provide the location of the damage?
+                {t('chatbotBotMsg1', 'I can help you with that! Let me guide you through the complaint submission process. First, could you provide the location of the damage?')}
               </Message>
               <Message>
-                Main Street, near City Hall
+                {t('chatbotUserMsg2', 'Main Street, near City Hall')}
               </Message>
               <Message $isBot>
-                ✅ Great! I've identified this as a Public Works issue. Would you like to upload 
-                a photo of the damage?
+                {t('chatbotBotMsg2', '✅ Great! I\'ve identified this as a Public Works issue. Would you like to upload a photo of the damage?')}
               </Message>
             </ChatMessages>
           </ChatbotPreview>
@@ -322,17 +317,14 @@ const Home: React.FC = () => {
       </HeroSection>
 
       <CTASection>
-        <CTATitle>Ready to Get Started?</CTATitle>
-        <CTADescription>
-          Join thousands of citizens using SmartGriev to make their voices heard 
-          and create positive change in their communities.
-        </CTADescription>
+        <CTATitle>{t('ctaTitle', 'Ready to Get Started?')}</CTATitle>
+        <CTADescription>{t('ctaDescription', 'Join thousands of citizens using SmartGriev to make their voices heard and create positive change in their communities.')}</CTADescription>
         <Button onClick={() => navigate('/register')} $variant="primary" style={{ 
           background: theme.colors.white.pure, 
           color: theme.colors.primary[600],
           border: 'none'
         }}>
-          Create Free Account →
+          {t('createAccount', 'Create Free Account →')}
         </Button>
       </CTASection>
     </HomeContainer>
