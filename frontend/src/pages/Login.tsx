@@ -249,8 +249,12 @@ const Login: React.FC = () => {
         password: formData.password
       });
 
+      console.log('Login response:', response.data); // Debug log
+
       // Store token
-      localStorage.setItem('token', response.data.access);
+      if (response.data.access) {
+        localStorage.setItem('token', response.data.access);
+      }
       
       // Store user data with proper structure for Navbar
       const userData = {
@@ -268,8 +272,11 @@ const Login: React.FC = () => {
         console.error('Error dispatching user change event:', eventError);
       }
       
+      console.log('Navigating to dashboard...'); // Debug log
       navigate('/dashboard');
+      console.log('Navigate called'); // Debug log
     } catch (err: any) {
+      console.error('Login error:', err); // Debug log
       setError(err.response?.data?.detail || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);

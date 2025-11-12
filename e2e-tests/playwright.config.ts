@@ -11,7 +11,7 @@ export default defineConfig({
   testDir: './tests',
   
   /* Run tests in files in parallel */
-  fullyParallel: false,
+  fullyParallel: true, // Enable full parallelization
   
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -19,8 +19,8 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 1, // Run sequentially for database consistency
+  /* Run tests in parallel - 4 workers is safer for database operations */
+  workers: process.env.CI ? 2 : 4, // 4 workers locally, 2 on CI (safer for DB)
   
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
@@ -69,9 +69,30 @@ export default defineConfig({
       name: 'firefox',
       use: { 
         ...devices['Desktop Firefox'],
+        // Firefox-specific baseURL using 127.0.0.1 instead of localhost
+        baseURL: 'http://127.0.0.1:3000',
         // Firefox doesn't support microphone permission in Playwright
         // Remove microphone from permissions for Firefox only
         permissions: ['geolocation', 'notifications'],
+        // Relax Firefox security for testing
+        launchOptions: {
+          firefoxUserPrefs: {
+            // Disable strict file URI policy
+            'security.fileuri.strict_origin_policy': false,
+            // Allow mixed content (HTTP on HTTPS)
+            'security.mixed_content.block_active_content': false,
+            // Allow insecure WebSocket from HTTPS
+            'network.websocket.allowInsecureFromHTTPS': true,
+            // Disable HTTPS-first mode
+            'dom.security.https_first': false,
+            // Disable CSP for testing (allows all connections)
+            'security.csp.enable': false,
+            // Disable DNS prefetching issues
+            'network.dns.disablePrefetch': false,
+            // Set localhost resolution
+            'network.proxy.type': 0,
+          }
+        }
       },
     },
 

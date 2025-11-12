@@ -4,9 +4,6 @@
 # Firebase Cloud Messaging for push notifications
 firebase-admin>=6.2.0
 
-# SMS notifications via Twilio
-twilio>=8.5.0
-
 # Additional monitoring and error tracking
 sentry-sdk[django]>=1.29.0
 

@@ -92,7 +92,8 @@ class ObservabilityMiddleware(MiddlewareMixin):
             active_requests.dec()
             
             # Record request/response sizes
-            request_size_bytes = int(request.META.get('CONTENT_LENGTH', 0))
+            content_length = request.META.get('CONTENT_LENGTH', '0')
+            request_size_bytes = int(content_length) if content_length and content_length.isdigit() else 0
             response_size_bytes = len(response.content) if hasattr(response, 'content') else 0
             
             request_size.labels(

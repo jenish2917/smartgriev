@@ -1,40 +1,26 @@
 """
-SMS Notification Service using Twilio
+SMS Notification Service - Console Mode
+For production, integrate with your preferred SMS provider
 """
 
 import os
 import logging
-from twilio.rest import Client
-from twilio.base.exceptions import TwilioRestException
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
 class SMSService:
-    """SMS notification service using Twilio"""
+    """SMS notification service - Console mode for testing"""
     
     def __init__(self):
-        """Initialize Twilio client"""
-        self.account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-        self.auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-        self.from_number = os.getenv('TWILIO_FROM_NUMBER')
-        
-        self.enabled = all([self.account_sid, self.auth_token, self.from_number])
-        
-        if self.enabled:
-            try:
-                self.client = Client(self.account_sid, self.auth_token)
-            except Exception as e:
-                logger.error(f"Twilio initialization error: {e}")
-                self.enabled = False
-        else:
-            logger.warning("SMS service disabled - Twilio credentials not configured")
-            self.client = None
+        """Initialize SMS service"""
+        self.enabled = True
+        logger.info("SMS service initialized in console mode")
     
     def send_sms(self, to_number: str, message: str) -> dict:
         """
-        Send SMS to a phone number
+        Send SMS to a phone number (Console mode - prints to terminal)
         
         Args:
             to_number: Recipient phone number (with country code, e.g., +919876543210)
@@ -43,36 +29,26 @@ class SMSService:
         Returns:
             dict with success status and message
         """
-        if not self.enabled:
-            return {
-                'success': False,
-                'error': 'SMS service not configured'
-            }
-        
         # Validate phone number format
         if not to_number.startswith('+'):
             to_number = f'+91{to_number}'  # Default to India (+91)
         
         try:
-            message_obj = self.client.messages.create(
-                body=message,
-                from_=self.from_number,
-                to=to_number
-            )
+            # Console mode - log the message
+            logger.info(f"[SMS] To: {to_number}")
+            logger.info(f"[SMS] Message: {message}")
+            print(f"\n{'='*60}")
+            print(f"📱 SMS TO: {to_number}")
+            print(f"📨 MESSAGE: {message}")
+            print(f"{'='*60}\n")
             
             return {
                 'success': True,
-                'message_sid': message_obj.sid,
-                'status': message_obj.status,
+                'message_sid': 'console-mode',
+                'status': 'sent',
                 'to': to_number
             }
             
-        except TwilioRestException as e:
-            return {
-                'success': False,
-                'error': str(e),
-                'error_code': e.code
-            }
         except Exception as e:
             return {
                 'success': False,

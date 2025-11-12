@@ -6,7 +6,6 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
-from django.core.exceptions import ImproperlyConfigured
 
 # Load environment variables
 load_dotenv()
@@ -25,15 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-
-# Development fallback: if SECRET_KEY is not set but DEBUG is enabled, use a
-# fixed development key so local runs don't fail. In production this must be
-# explicitly set via environment variables.
-if not SECRET_KEY:
-    if os.getenv('DJANGO_DEBUG', 'False') == 'True':
-        SECRET_KEY = 'dev-secret-key'
-    else:
-        raise ImproperlyConfigured('The SECRET_KEY setting must not be empty.')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
@@ -79,7 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'smartgriev.middleware.observability.ObservabilityMiddleware',  # Prometheus metrics & tracing
+    # 'smartgriev.middleware.observability.ObservabilityMiddleware',  # Prometheus metrics & tracing - temporarily disabled
     # 'analytics.middleware.UserActivityMiddleware',  # Track user activity - temporarily disabled
     # 'analytics.middleware.SecurityHeadersMiddleware',  # Add security headers - temporarily disabled
     # 'analytics.middleware.CacheControlMiddleware',  # Cache control - temporarily disabled
@@ -270,11 +260,6 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@smartgriev.com')
 
-# For development/debugging, print emails to the console instead of attempting
-# to send via SMTP. This avoids send_mail raising configuration errors locally.
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 # Caching
 CACHES = {
     'default': {
@@ -297,34 +282,9 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Development-friendly fallbacks: if django_redis or channels_redis are
-# not installed on the developer machine, fall back to local in-memory
-# cache and a simple channel layer so the app can start for development
-# and tests without requiring Redis.
-try:
-    # Try to import redis-backed cache/channel backends
-    import django_redis  # type: ignore
-    import channels_redis  # type: ignore
-except Exception:
-    # Fallback to local memory cache
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-sg-cache'
-        }
-    }
-
-    # Simple in-memory channel layer (not for production)
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels.layers.InMemoryChannelLayer',
-        },
-    }
-
-# SMS/Notification settings
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
+# SMS/Notification settings - Console mode (for testing/development)
+# For production, integrate with your preferred SMS provider
+SMS_PROVIDER = os.getenv('SMS_PROVIDER', 'console')
 
 # Firebase settings for push notifications
 # For better security, store your Firebase credentials in a JSON file

@@ -4,9 +4,25 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, ChangePasswordSerializer, UpdateLanguageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Custom serializer that allows login with email"""
+    
+    def validate(self, attrs):
+        # Check if username is actually an email
+        username = attrs.get('username', '')
+        if '@' in username:
+            # Try to find user by email
+            try:
+                user = User.objects.get(email=username)
+                attrs['username'] = user.username
+            except User.DoesNotExist:
+                pass  # Let parent handle the error
+        
+        return super().validate(attrs)
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -26,7 +42,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 class UserLoginView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = CustomTokenObtainPairSerializer
+    serializer_class = EmailTokenObtainPairSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -89,3 +105,31 @@ class UpdateLanguageView(APIView):
             'language': user.preferred_language,
             'language_display': user.get_display_language()
         }, status=status.HTTP_200_OK)
+
+class AuthCheckView(APIView):
+    """
+    Fast authentication check endpoint for frontend
+    Returns authentication status and basic user info
+    """
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        if request.user and request.user.is_authenticated:
+            return Response({
+                'authenticated': True,
+                'user': {
+                    'id': request.user.id,
+                    'username': request.user.username,
+                    'email': request.user.email,
+                    'phone': getattr(request.user, 'phone', None),
+                    'first_name': request.user.first_name,
+                    'last_name': request.user.last_name,
+                    'is_verified': getattr(request.user, 'is_verified', False),
+                    'preferred_language': getattr(request.user, 'preferred_language', 'en'),
+                }
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'authenticated': False,
+                'user': None
+            }, status=status.HTTP_200_OK)

@@ -28,15 +28,16 @@ EMAIL_HOST_USER = 'your-email@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'your-app-password'  # Replace with your app password
 DEFAULT_FROM_EMAIL = 'SmartGriev <noreply@smartgriev.com>'
 
+
 # Frontend URL for email verification and password reset
 FRONTEND_URL = 'http://localhost:3000'  # Change in production
 
-# SMS Settings (Twilio)
-TWILIO_ACCOUNT_SID = 'your-account-sid'  # Replace with your Twilio SID
-TWILIO_AUTH_TOKEN = 'your-auth-token'    # Replace with your Twilio token
-TWILIO_FROM_NUMBER = '+1234567890'       # Replace with your Twilio number
+# SMS Settings - Console mode (for testing/development)
+# For production, integrate with your preferred SMS provider (Twilio, AWS SNS, etc.)
+SMS_PROVIDER = 'console'
 
 # Verification Settings
 VERIFICATION_TOKEN_EXPIRY = 24  # hours
 OTP_EXPIRY = 10  # minutes
 MAX_OTP_ATTEMPTS = 3
+

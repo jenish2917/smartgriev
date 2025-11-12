@@ -55,8 +55,7 @@ asyncio-throttle>=1.0.2
 geopy>=2.3.0
 phonenumbers>=8.13.0
 
-# SMS and Email services
-twilio>=8.5.0
+# Email services
 sendgrid>=6.10.0
 
 # Django specific for AI
