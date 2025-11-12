@@ -9,81 +9,70 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Civic Tech Primary Colors - Trust & Government
+        // Primary - Navy Blue (#12436D) - Authority & Professionalism
         primary: {
-          50: '#e6f7f7',
-          100: '#b3e7e6',
-          200: '#80d6d5',
-          300: '#4dc5c3',
-          400: '#1ab4b2',
-          500: '#0095a0', // Main brand color
-          600: '#007882',
-          700: '#005a63',
-          800: '#003d45',
-          900: '#002026',
+          50: '#e8eef4',
+          100: '#c5d3e3',
+          200: '#9fb6d1',
+          300: '#7899bf',
+          400: '#5b83b1',
+          500: '#12436D', // Main brand color - Navy Blue
+          600: '#0f3a5e',
+          700: '#0c2f4d',
+          800: '#09253d',
+          900: '#051a2c',
         },
-        // Secondary Colors - Action & Urgency
+        // Accent/Action - Bright Teal (#28A197) - CTA & Links
         secondary: {
-          50: '#fff4e6',
-          100: '#ffe0b3',
-          200: '#ffcc80',
-          300: '#ffb84d',
-          400: '#ffa41a',
-          500: '#ff9000', // Call-to-action
-          600: '#cc7300',
-          700: '#995600',
-          800: '#663a00',
-          900: '#331d00',
+          50: '#e7f7f5',
+          100: '#c2ebe7',
+          200: '#9dded8',
+          300: '#78d1c9',
+          400: '#5ec8bd',
+          500: '#28A197', // Call-to-action - Bright Teal
+          600: '#249387',
+          700: '#1f7d73',
+          800: '#1a685f',
+          900: '#15534b',
         },
-        // Semantic Colors
+        // Success - Forest Green (#4CAF50)
         success: {
           50: '#e8f5e9',
           100: '#c8e6c9',
           200: '#a5d6a7',
           300: '#81c784',
           400: '#66bb6a',
-          500: '#4caf50', // Resolved state
+          500: '#4CAF50', // Complaint Submitted/Resolved
           600: '#43a047',
           700: '#388e3c',
           800: '#2e7d32',
           900: '#1b5e20',
         },
-        warning: {
-          50: '#fffde7',
-          100: '#fff9c4',
-          200: '#fff59d',
-          300: '#fff176',
-          400: '#ffee58',
-          500: '#ffeb3b', // Medium urgency
-          600: '#fdd835',
-          700: '#fbc02d',
-          800: '#f9a825',
-          900: '#f57f17',
-        },
+        // Error - Deep Red (#CC0000)
         error: {
-          50: '#ffebee',
-          100: '#ffcdd2',
-          200: '#ef9a9a',
-          300: '#e57373',
-          400: '#ef5350',
-          500: '#f44336', // Critical urgency
-          600: '#e53935',
-          700: '#d32f2f',
-          800: '#c62828',
-          900: '#b71c1c',
+          50: '#ffe6e6',
+          100: '#ffcccc',
+          200: '#ff9999',
+          300: '#ff6666',
+          400: '#ff3333',
+          500: '#CC0000', // Critical warnings & errors
+          600: '#b30000',
+          700: '#990000',
+          800: '#800000',
+          900: '#660000',
         },
-        // Neutral Colors
+        // Neutral Colors - Dark Gray (#3D3D3D) for text, White (#FFFFFF) for background
         gray: {
-          50: '#fafafa',
-          100: '#f5f5f5',
+          50: '#FFFFFF',   // Clean White - Background
+          100: '#f9f9f9',
           200: '#eeeeee',
           300: '#e0e0e0',
           400: '#bdbdbd',
           500: '#9e9e9e',
           600: '#757575',
           700: '#616161',
-          800: '#424242',
-          900: '#212121',
+          800: '#3D3D3D',  // Dark Gray - Body text
+          900: '#2a2a2a',
         },
       },
       borderRadius: {
