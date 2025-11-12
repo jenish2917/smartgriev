@@ -13,7 +13,41 @@ const resources = {
       navigation: {
         home: 'Home',
         login: 'Login',
-        register: 'Register'
+        register: 'Register',
+        dashboard: 'Dashboard',
+        aiChat: 'AI Chat',
+        myComplaints: 'My Complaints',
+        profile: 'Profile',
+        settings: 'Settings',
+        logout: 'Logout'
+      },
+      dashboard: {
+        welcomeBack: 'Welcome back',
+        totalComplaints: 'Total Complaints',
+        pending: 'Pending',
+        inProgress: 'In Progress',
+        resolved: 'Resolved',
+        thisWeek: 'this week',
+        needAttention: 'need attention',
+        updatedToday: 'Updated today',
+        satisfaction: 'satisfaction',
+        recentComplaints: 'Recent Complaints',
+        viewAll: 'View All Complaints'
+      },
+      chatbot: {
+        greeting: "I'm your AI assistant for SmartGriev. I'll help you submit complaints through natural conversation. Just tell me about the issue, and I'll guide you through the process. You can also send photos, videos, or voice messages. What civic issue would you like to report today?",
+        quickActions: 'Quick actions:',
+        fileComplaint: 'File a new complaint',
+        reportPothole: 'Report pothole with photo',
+        garbageIssue: 'Garbage collection issue',
+        streetLight: 'Street light not working',
+        typeMessage: 'Type your message...',
+        recording: 'Recording... Click mic button to stop',
+        enableGPS: 'Enable GPS',
+        enterManually: 'Enter Manually',
+        aiAssistant: 'AI Assistant',
+        online: 'Online',
+        alwaysHelp: 'Always here to help • Smart complaint filing'
       },
       features: {
         aiChatbot: 'AI Chatbot',
@@ -63,7 +97,41 @@ const resources = {
       navigation: {
         home: 'होम',
         login: 'लॉगिन',
-        register: 'रजिस्टर'
+        register: 'रजिस्टर',
+        dashboard: 'डैशबोर्ड',
+        aiChat: 'एआई चैट',
+        myComplaints: 'मेरी शिकायतें',
+        profile: 'प्रोफाइल',
+        settings: 'सेटिंग्स',
+        logout: 'लॉगआउट'
+      },
+      dashboard: {
+        welcomeBack: 'वापसी में आपका स्वागत है',
+        totalComplaints: 'कुल शिकायतें',
+        pending: 'लंबित',
+        inProgress: 'प्रगति में',
+        resolved: 'हल किया गया',
+        thisWeek: 'इस सप्ताह',
+        needAttention: 'ध्यान देने की आवश्यकता है',
+        updatedToday: 'आज अपडेट किया गया',
+        satisfaction: 'संतुष्टि',
+        recentComplaints: 'हाल की शिकायतें',
+        viewAll: 'सभी शिकायतें देखें'
+      },
+      chatbot: {
+        greeting: "मैं स्मार्टग्रीव के लिए आपका एआई सहायक हूं। मैं प्राकृतिक बातचीत के माध्यम से शिकायतें दर्ज करने में आपकी मदद करूंगा। बस मुझे समस्या के बारे में बताएं, और मैं आपको प्रक्रिया के माध्यम से मार्गदर्शन करूंगा। आप फोटो, वीडियो या ध्वनि संदेश भी भेज सकते हैं। आज आप कौन सी नागरिक समस्या की रिपोर्ट करना चाहेंगे?",
+        quickActions: 'त्वरित क्रियाएं:',
+        fileComplaint: 'नई शिकायत दर्ज करें',
+        reportPothole: 'फोटो के साथ गड्ढे की रिपोर्ट करें',
+        garbageIssue: 'कचरा संग्रहण समस्या',
+        streetLight: 'स्ट्रीट लाइट काम नहीं कर रही',
+        typeMessage: 'अपना संदेश टाइप करें...',
+        recording: 'रिकॉर्डिंग... रोकने के लिए माइक बटन पर क्लिक करें',
+        enableGPS: 'GPS सक्षम करें',
+        enterManually: 'मैन्युअल रूप से दर्ज करें',
+        aiAssistant: 'एआई सहायक',
+        online: 'ऑनलाइन',
+        alwaysHelp: 'हमेशा मदद के लिए यहाँ • स्मार्ट शिकायत दाखिल करना'
       },
       features: {
         aiChatbot: 'एआई चैटबॉट',
@@ -113,7 +181,26 @@ const resources = {
       navigation: {
         home: 'হোম',
         login: 'লগইন',
-        register: 'নিবন্ধন'
+        register: 'নিবন্ধন',
+        dashboard: 'ড্যাশবোর্ড',
+        aiChat: 'এআই চ্যাট',
+        myComplaints: 'আমার অভিযোগ',
+        profile: 'প্রোফাইল',
+        settings: 'সেটিংস',
+        logout: 'লগআউট'
+      },
+      dashboard: {
+        welcomeBack: 'ফিরে এসেছেন স্বাগতম',
+        totalComplaints: 'মোট অভিযোগ',
+        pending: 'অপেক্ষমাণ',
+        inProgress: 'অগ্রগতিতে',
+        resolved: 'সমাধান হয়েছে',
+        thisWeek: 'এই সপ্তাহে',
+        needAttention: 'মনোযোগ প্রয়োজন',
+        updatedToday: 'আজ আপডেট করা হয়েছে',
+        satisfaction: 'সন্তুষ্টি',
+        recentComplaints: 'সাম্প্রতিক অভিযোগ',
+        viewAll: 'সমস্ত অভিযোগ দেখুন'
       },
       features: {
         aiChatbot: 'এআই চ্যাটবট',
@@ -163,7 +250,26 @@ const resources = {
       navigation: {
         home: 'హోమ్',
         login: 'లాగిన్',
-        register: 'రిజిస్టర్'
+        register: 'రిజిస్టర్',
+        dashboard: 'డ్యాష్‌బోర్డ్',
+        aiChat: 'AI చాట్',
+        myComplaints: 'నా ఫిర్యాదులు',
+        profile: 'ప్రొఫైల్',
+        settings: 'సెట్టింగులు',
+        logout: 'లాగౌట్'
+      },
+      dashboard: {
+        welcomeBack: 'తిరిగి స్వాగతం',
+        totalComplaints: 'మొత్తం ఫిర్యాదులు',
+        pending: 'పెండింగ్',
+        inProgress: 'ప్రగతిలో',
+        resolved: 'పరిష్కరించబడింది',
+        thisWeek: 'ఈ వారం',
+        needAttention: 'దృష్టి అవసరం',
+        updatedToday: 'నేడు అప్‌డేట్ చేయబడింది',
+        satisfaction: 'సంతృప్తి',
+        recentComplaints: 'ఇటీవలి ఫిర్యాదులు',
+        viewAll: 'అన్ని ఫిర్యాదులు చూడండి'
       },
       features: {
         aiChatbot: 'AI చాట్‌బాట్',
@@ -213,7 +319,26 @@ const resources = {
       navigation: {
         home: 'होम',
         login: 'लॉगिन',
-        register: 'नोंदणी'
+        register: 'नोंदणी',
+        dashboard: 'डॅशबोर्ड',
+        aiChat: 'AI चॅट',
+        myComplaints: 'माझ्या तक्रारी',
+        profile: 'प्रोफाइल',
+        settings: 'सेटिंग्ज',
+        logout: 'लॉगआउट'
+      },
+      dashboard: {
+        welcomeBack: 'परत स्वागत आहे',
+        totalComplaints: 'एकूण तक्रारी',
+        pending: 'प्रलंबित',
+        inProgress: 'प्रगतीपथावर',
+        resolved: 'निराकरण झाले',
+        thisWeek: 'या आठवड्यात',
+        needAttention: 'लक्ष देणे आवश्यक',
+        updatedToday: 'आज अद्यतनित',
+        satisfaction: 'समाधान',
+        recentComplaints: 'अलीकडील तक्रारी',
+        viewAll: 'सर्व तक्रारी पहा'
       },
       features: {
         aiChatbot: 'AI चॅटबॉट',
@@ -263,7 +388,26 @@ const resources = {
       navigation: {
         home: 'முகப்பு',
         login: 'உள்நுழைவு',
-        register: 'பதிவு'
+        register: 'பதிவு',
+        dashboard: 'டாஷ்போர்டு',
+        aiChat: 'AI அரட்டை',
+        myComplaints: 'எனது புகார்கள்',
+        profile: 'சுயவிவரம்',
+        settings: 'அமைப்புகள்',
+        logout: 'வெளியேறு'
+      },
+      dashboard: {
+        welcomeBack: 'மீண்டும் வரவேற்கிறோம்',
+        totalComplaints: 'மொத்த புகார்கள்',
+        pending: 'நிலுவையில்',
+        inProgress: 'முன்னேற்றத்தில்',
+        resolved: 'தீர்க்கப்பட்டது',
+        thisWeek: 'இந்த வாரம்',
+        needAttention: 'கவனம் தேவை',
+        updatedToday: 'இன்று புதுப்பிக்கப்பட்டது',
+        satisfaction: 'திருப்தி',
+        recentComplaints: 'சமீபத்திய புகார்கள்',
+        viewAll: 'அனைத்து புகார்களையும் காண்க'
       },
       features: {
         aiChatbot: 'AI சாட்பாட்',
@@ -313,7 +457,26 @@ const resources = {
       navigation: {
         home: 'હોમ',
         login: 'લૉગિન',
-        register: 'નોંધણી'
+        register: 'નોંધણી',
+        dashboard: 'ડૅશબોર્ડ',
+        aiChat: 'AI ચેટ',
+        myComplaints: 'મારી ફરિયાદો',
+        profile: 'પ્રોફાઇલ',
+        settings: 'સેટિંગ્સ',
+        logout: 'લૉગઆઉટ'
+      },
+      dashboard: {
+        welcomeBack: 'પાછા સ્વાગત છે',
+        totalComplaints: 'કુલ ફરિયાદો',
+        pending: 'બાકી',
+        inProgress: 'પ્રગતિમાં',
+        resolved: 'ઉકેલાયેલ',
+        thisWeek: 'આ અઠવાડિયે',
+        needAttention: 'ધ્યાન જરૂરી છે',
+        updatedToday: 'આજે અપડેટ કરેલ',
+        satisfaction: 'સંતોષ',
+        recentComplaints: 'તાજેતરની ફરિયાદો',
+        viewAll: 'બધી ફરિયાદો જુઓ'
       },
       features: {
         aiChatbot: 'AI ચેટબોટ',
@@ -363,7 +526,26 @@ const resources = {
       navigation: {
         home: 'ಮುಖಪುಟ',
         login: 'ಲಾಗಿನ್',
-        register: 'ನೋಂದಣಿ'
+        register: 'ನೋಂದಣಿ',
+        dashboard: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+        aiChat: 'AI ಚಾಟ್',
+        myComplaints: 'ನನ್ನ ದೂರುಗಳು',
+        profile: 'ಪ್ರೊಫೈಲ್',
+        settings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+        logout: 'ಲಾಗ್‌ಔಟ್'
+      },
+      dashboard: {
+        welcomeBack: 'ಮತ್ತೆ ಸ್ವಾಗತ',
+        totalComplaints: 'ಒಟ್ಟು ದೂರುಗಳು',
+        pending: 'ಬಾಕಿ',
+        inProgress: 'ಪ್ರಗತಿಯಲ್ಲಿ',
+        resolved: 'ಪರಿಹರಿಸಲಾಗಿದೆ',
+        thisWeek: 'ಈ ವಾರ',
+        needAttention: 'ಗಮನ ಬೇಕು',
+        updatedToday: 'ಇಂದು ನವೀಕರಿಸಲಾಗಿದೆ',
+        satisfaction: 'ತೃಪ್ತಿ',
+        recentComplaints: 'ಇತ್ತೀಚಿನ ದೂರುಗಳು',
+        viewAll: 'ಎಲ್ಲಾ ದೂರುಗಳನ್ನು ವೀಕ್ಷಿಸಿ'
       },
       features: {
         aiChatbot: 'AI ಚಾಟ್‌ಬಾಟ್',
@@ -413,7 +595,26 @@ const resources = {
       navigation: {
         home: 'ഹോം',
         login: 'ലോഗിൻ',
-        register: 'രജിസ്റ്റർ'
+        register: 'രജിസ്റ്റർ',
+        dashboard: 'ഡാഷ്ബോർഡ്',
+        aiChat: 'AI ചാറ്റ്',
+        myComplaints: 'എന്റെ പരാതികൾ',
+        profile: 'പ്രൊഫൈൽ',
+        settings: 'ക്രമീകരണങ്ങൾ',
+        logout: 'ലോഗൗട്ട്'
+      },
+      dashboard: {
+        welcomeBack: 'തിരികെ സ്വാഗതം',
+        totalComplaints: 'മൊത്തം പരാതികൾ',
+        pending: 'തീർപ്പാക്കാത്തത്',
+        inProgress: 'പുരോഗമിക്കുന്നു',
+        resolved: 'പരിഹരിച്ചു',
+        thisWeek: 'ഈ ആഴ്ച',
+        needAttention: 'ശ്രദ്ധ ആവശ്യമാണ്',
+        updatedToday: 'ഇന്ന് അപ്ഡേറ്റ് ചെയ്തു',
+        satisfaction: 'സംതൃപ്തി',
+        recentComplaints: 'സമീപകാല പരാതികൾ',
+        viewAll: 'എല്ലാ പരാതികളും കാണുക'
       },
       features: {
         aiChatbot: 'AI ചാറ്റ്ബോട്ട്',
@@ -463,7 +664,26 @@ const resources = {
       navigation: {
         home: 'ହୋମ୍',
         login: 'ଲଗଇନ୍',
-        register: 'ରେଜିଷ୍ଟର'
+        register: 'ରେଜିଷ୍ଟର',
+        dashboard: 'ଡ୍ୟାସବୋର୍ଡ',
+        aiChat: 'AI ଚାଟ୍',
+        myComplaints: 'ମୋର ଅଭିଯୋଗ',
+        profile: 'ପ୍ରୋଫାଇଲ୍',
+        settings: 'ସେଟିଂସ',
+        logout: 'ଲଗଆଉଟ୍'
+      },
+      dashboard: {
+        welcomeBack: 'ଫେରି ସ୍ୱାଗତ',
+        totalComplaints: 'ମୋଟ ଅଭିଯୋଗ',
+        pending: 'ବିଚାରାଧୀନ',
+        inProgress: 'ଅଗ୍ରଗତିରେ',
+        resolved: 'ସମାଧାନ ହୋଇଛି',
+        thisWeek: 'ଏହି ସପ୍ତାହ',
+        needAttention: 'ଧ୍ୟାନ ଆବଶ୍ୟକ',
+        updatedToday: 'ଆଜି ଅପଡେଟ୍ ହୋଇଛି',
+        satisfaction: 'ସନ୍ତୋଷ',
+        recentComplaints: 'ସାମ୍ପ୍ରତିକ ଅଭିଯୋଗ',
+        viewAll: 'ସମସ୍ତ ଅଭିଯୋଗ ଦେଖନ୍ତୁ'
       },
       features: {
         aiChatbot: 'AI ଚାଟବଟ୍',
@@ -513,7 +733,26 @@ const resources = {
       navigation: {
         home: 'ਹੋਮ',
         login: 'ਲੌਗਇਨ',
-        register: 'ਰਜਿਸਟਰ'
+        register: 'ਰਜਿਸਟਰ',
+        dashboard: 'ਡੈਸ਼ਬੋਰਡ',
+        aiChat: 'AI ਚੈਟ',
+        myComplaints: 'ਮੇਰੀਆਂ ਸ਼ਿਕਾਇਤਾਂ',
+        profile: 'ਪ੍ਰੋਫਾਈਲ',
+        settings: 'ਸੈਟਿੰਗਾਂ',
+        logout: 'ਲੌਗਆਊਟ'
+      },
+      dashboard: {
+        welcomeBack: 'ਵਾਪਸੀ ਤੇ ਸੁਆਗਤ ਹੈ',
+        totalComplaints: 'ਕੁੱਲ ਸ਼ਿਕਾਇਤਾਂ',
+        pending: 'ਬਕਾਇਆ',
+        inProgress: 'ਪ੍ਰਗਤੀ ਵਿੱਚ',
+        resolved: 'ਹੱਲ ਹੋ ਗਿਆ',
+        thisWeek: 'ਇਸ ਹਫ਼ਤੇ',
+        needAttention: 'ਧਿਆਨ ਦੀ ਲੋੜ ਹੈ',
+        updatedToday: 'ਅੱਜ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ',
+        satisfaction: 'ਸੰਤੁਸ਼ਟੀ',
+        recentComplaints: 'ਤਾਜ਼ਾ ਸ਼ਿਕਾਇਤਾਂ',
+        viewAll: 'ਸਾਰੀਆਂ ਸ਼ਿਕਾਇਤਾਂ ਦੇਖੋ'
       },
       features: {
         aiChatbot: 'AI ਚੈਟਬੋਟ',
@@ -563,7 +802,26 @@ const resources = {
       navigation: {
         home: 'ہوم',
         login: 'لاگ ان',
-        register: 'رجسٹر'
+        register: 'رجسٹر',
+        dashboard: 'ڈیش بورڈ',
+        aiChat: 'AI چیٹ',
+        myComplaints: 'میری شکایات',
+        profile: 'پروفائل',
+        settings: 'ترتیبات',
+        logout: 'لاگ آؤٹ'
+      },
+      dashboard: {
+        welcomeBack: 'واپسی پر خوش آمدید',
+        totalComplaints: 'کل شکایات',
+        pending: 'زیر التواء',
+        inProgress: 'جاری',
+        resolved: 'حل ہو گئی',
+        thisWeek: 'اس ہفتے',
+        needAttention: 'توجہ کی ضرورت ہے',
+        updatedToday: 'آج اپ ڈیٹ کیا گیا',
+        satisfaction: 'اطمینان',
+        recentComplaints: 'حالیہ شکایات',
+        viewAll: 'تمام شکایات دیکھیں'
       },
       features: {
         aiChatbot: 'AI چیٹ بوٹ',

@@ -41,11 +41,16 @@ class AdvancedAIProcessor:
         try:
             # Initialize Groq client if available
             if GROQ_AVAILABLE and os.getenv('GROQ_API_KEY'):
-                self.groq_client = Groq(
-                    api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
-                )
-                self.use_ai = True
-                logger.info("AdvancedAIProcessor initialized with Groq AI")
+                try:
+                    self.groq_client = Groq(
+                        api_key=os.getenv('GROQ_API_KEY', 'gsk_...your_api_key_here...')
+                    )
+                    self.use_ai = True
+                    logger.info("AdvancedAIProcessor initialized with Groq AI")
+                except Exception as groq_error:
+                    logger.warning(f"Failed to initialize Groq client: {groq_error}. Using fallback methods.")
+                    self.groq_client = None
+                    self.use_ai = False
             else:
                 self.groq_client = None
                 self.use_ai = False

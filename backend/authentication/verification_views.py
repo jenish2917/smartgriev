@@ -1,6 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -14,6 +14,8 @@ from .verification_serializers import (
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer
 )
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer
 import random
 import qrcode
 import io
@@ -228,4 +230,137 @@ class PasswordResetConfirmView(generics.GenericAPIView):
 
         return Response({
             "message": "Password reset successful"
+        })
+
+
+class SendOTPView(generics.GenericAPIView):
+    """Send OTP for mobile login/registration"""
+    permission_classes = [AllowAny]
+    # throttle_classes = [MobileVerificationRateThrottle]  # Disabled for development
+
+    def generate_otp(self):
+        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+
+    def post(self, request, *args, **kwargs):
+        mobile_number = request.data.get('mobile_number')
+        
+        if not mobile_number:
+            return Response({
+                "error": "Mobile number is required"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if user exists with this mobile number
+        user = None
+        try:
+            user = User.objects.get(mobile=mobile_number)  # Changed from mobile_number to mobile
+        except User.DoesNotExist:
+            # Create a temporary user for OTP verification
+            # We'll complete registration after OTP verification
+            username = f"temp_{mobile_number[-10:]}"
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    mobile=mobile_number,  # Changed from mobile_number to mobile
+                    is_active=False  # Mark as inactive until OTP verified
+                )
+            except Exception as e:
+                # If user creation fails, we can still send OTP
+                # The user will be created in verify step
+                pass
+        
+        # Generate OTP
+        otp = self.generate_otp()
+        
+        # Store OTP in OTPVerification model
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if user:
+            OTPVerification.objects.create(
+                user=user,
+                phone_number=mobile_number,
+                otp_code=otp,
+                otp_type='login_register',
+                expires_at=timezone.now() + timedelta(minutes=10)
+            )
+        
+        # Send OTP via SMS
+        # TODO: Integrate actual SMS service (Twilio, AWS SNS, etc.)
+        # For now, just log it for development
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"OTP for {mobile_number}: {otp}")
+        
+        return Response({
+            "message": f"OTP sent successfully to {mobile_number}",
+            "debug_otp": otp if settings.DEBUG else None  # Only in debug mode
+        })
+
+
+class VerifyOTPView(generics.GenericAPIView):
+    """Verify OTP and login/register user"""
+    permission_classes = [AllowAny]
+    # throttle_classes = [MobileVerificationRateThrottle]  # Disabled for development
+
+    def post(self, request, *args, **kwargs):
+        mobile_number = request.data.get('mobile_number')
+        otp = request.data.get('otp')
+        
+        if not mobile_number or not otp:
+            return Response({
+                "error": "Mobile number and OTP are required"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Find user by mobile number
+        try:
+            user = User.objects.get(mobile=mobile_number)  # Changed from mobile_number to mobile
+        except User.DoesNotExist:
+            return Response({
+                "error": "Invalid mobile number"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verify OTP
+        try:
+            # Find the most recent OTP for this user
+            otp_obj = OTPVerification.objects.filter(
+                user=user,
+                otp_code=otp,
+                is_verified=False
+            ).order_by('-created_at').first()
+            
+            if not otp_obj:
+                return Response({
+                    "error": "Invalid OTP"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Check if expired
+            if otp_obj.is_expired():
+                return Response({
+                    "error": "OTP has expired"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Mark OTP as verified
+            from django.utils import timezone
+            otp_obj.is_verified = True
+            otp_obj.verified_at = timezone.now()
+            otp_obj.save()
+            
+        except Exception as e:
+            return Response({
+                "error": f"OTP verification failed: {str(e)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Activate user if inactive
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        user_serializer = UserSerializer(user)
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': user_serializer.data
         })

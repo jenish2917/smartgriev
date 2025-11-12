@@ -8,6 +8,7 @@ import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { ChatbotPage } from '@/pages/chatbot/ChatbotPage';
 import { ComplaintsPage } from '@/pages/complaints/ComplaintsPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { SettingsPage } from '@/pages/settings/SettingsPage';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -81,6 +82,14 @@ const router = createBrowserRouter([
       element: (
         <ProtectedRoute>
           <ProfilePage />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: '/settings',
+      element: (
+        <ProtectedRoute>
+          <SettingsPage />
         </ProtectedRoute>
       ),
     },

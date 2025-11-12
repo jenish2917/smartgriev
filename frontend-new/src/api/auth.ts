@@ -71,6 +71,31 @@ export const authApi = {
     }
   },
 
+  // Send OTP for login
+  sendOTP: async (mobileNumber: string): Promise<{ message: string }> => {
+    try {
+      const response = await apiClient.post<{ message: string }>('/api/auth/send-otp/', {
+        mobile_number: mobileNumber
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Verify OTP and login
+  verifyOTP: async (mobileNumber: string, otp: string): Promise<AuthResponse> => {
+    try {
+      const response = await apiClient.post<AuthResponse>('/api/auth/verify-otp/', {
+        mobile_number: mobileNumber,
+        otp
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
   // Forgot password
   forgotPassword: async (email: string): Promise<void> => {
     try {

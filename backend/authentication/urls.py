@@ -19,6 +19,8 @@ from .verification_views import (
     TwoFactorAuthenticationView,
     PasswordResetRequestView,
     PasswordResetConfirmView,
+    SendOTPView,
+    VerifyOTPView,
 )
 
 urlpatterns = [
@@ -34,6 +36,8 @@ urlpatterns = [
     # Verification Endpoints
     path('verify-email/', EmailVerificationView.as_view(), name='verify-email'),
     path('verify-mobile/', MobileVerificationView.as_view(), name='verify-mobile'),
+    path('send-otp/', SendOTPView.as_view(), name='send-otp'),
+    path('verify-otp/', VerifyOTPView.as_view(), name='verify-otp'),
     path('2fa/', TwoFactorAuthenticationView.as_view(), name='two-factor-auth'),
     path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),

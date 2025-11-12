@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Image as ImageIcon, Video, Loader2, Bot, User as UserIcon, X, FileImage } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Input } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -23,11 +24,13 @@ interface Message {
 
 export const ChatbotPage = () => {
   const { user } = useAuthStore();
+  const { i18n, t } = useTranslation();
+  const [sessionId] = useState<string>(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: `Hello ${user?.first_name || 'there'}! 👋 I'm your AI assistant for SmartGriev. I'll help you submit complaints through natural conversation. Just tell me about the issue, and I'll guide you through the process. You can also send photos, videos, or voice messages. What civic issue would you like to report today?`,
+      content: `${t('common.welcome')}, ${user?.first_name || 'there'}! 👋 ${t('chatbot.greeting')}`,
       timestamp: new Date(),
     },
   ]);
@@ -229,7 +232,7 @@ export const ChatbotPage = () => {
     setMessages((prev) => [...prev, loadingMessage]);
 
     try {
-      const response = await chatbotApi.sendVoiceMessage(audioFile);
+      const response = await chatbotApi.sendVoiceMessage(audioFile, i18n.language);
       
       // Add user message showing voice was sent
       setMessages((prev) => [
@@ -307,8 +310,8 @@ export const ChatbotPage = () => {
         // Send image or video to chatbot with location if available
         response = await chatbotApi.sendImage(fileToSend, messageText, currentLocation);
       } else {
-        // Send text message with location if available
-        response = await chatbotApi.sendMessage(messageText, 'en', currentLocation);
+        // Send text message with location if available - use current language and session ID
+        response = await chatbotApi.sendMessage(messageText, i18n.language, currentLocation, sessionId);
       }
 
       // Remove loading message and add real response
@@ -318,11 +321,12 @@ export const ChatbotPage = () => {
           .concat({
             id: Date.now().toString(),
             role: 'assistant',
-            content: response.response || 'I analyzed your media. How can I help you further?',
+            content: response.response || 'I analyzed your message. How can I help you further?',
             timestamp: new Date(),
           })
       );
     } catch (error) {
+      console.error('Chatbot error:', error);
       // Remove loading message and add error
       setMessages((prev) =>
         prev
@@ -349,10 +353,10 @@ export const ChatbotPage = () => {
   };
 
   const quickReplies = [
-    'File a new complaint',
-    'Report pothole with photo',
-    'Garbage collection issue',
-    'Street light not working',
+    t('chatbot.fileComplaint'),
+    t('chatbot.reportPothole'),
+    t('chatbot.garbageIssue'),
+    t('chatbot.streetLight'),
   ];
 
   const handleQuickReply = (reply: string) => {
@@ -401,16 +405,16 @@ export const ChatbotPage = () => {
           </div>
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              AI Assistant
+              {t('chatbot.aiAssistant')}
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Always here to help • Smart complaint filing
+              {t('chatbot.alwaysHelp')}
             </p>
           </div>
           <div className="ml-auto">
             <span className="flex items-center gap-2 text-xs text-success-600 dark:text-success-400">
               <span className="w-2 h-2 bg-success-500 rounded-full animate-pulse"></span>
-              Online
+              {t('chatbot.online')}
             </span>
           </div>
         </div>
@@ -533,7 +537,7 @@ export const ChatbotPage = () => {
         {messages.length <= 2 && (
           <div className="px-4 pb-2">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-              Quick actions:
+              {t('chatbot.quickActions')}
             </p>
             <div className="flex flex-wrap gap-2">
               {quickReplies.map((reply) => (
@@ -562,7 +566,7 @@ export const ChatbotPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>}
               >
-                Enable GPS
+                {t('chatbot.enableGPS')}
               </Button>
               <Button
                 variant="outline"
@@ -579,7 +583,7 @@ export const ChatbotPage = () => {
                   ]);
                 }}
               >
-                Enter Manually
+                {t('chatbot.enterManually')}
               </Button>
             </div>
           </div>
@@ -592,7 +596,7 @@ export const ChatbotPage = () => {
             <div className="mb-3 flex items-center gap-2 px-4 py-2 bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-lg">
               <div className="w-3 h-3 bg-error-500 rounded-full animate-pulse"></div>
               <span className="text-sm font-medium text-error-700 dark:text-error-400">
-                Recording... Click mic button to stop
+                {t('chatbot.recording')}
               </span>
             </div>
           )}
@@ -638,12 +642,15 @@ export const ChatbotPage = () => {
                 if (file) handleFileSelect(file);
               }}
               className="hidden"
+              title="Upload image file"
+              placeholder="Upload image"
             />
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload image"
+              aria-label="Upload image"
             >
               <ImageIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
@@ -658,12 +665,15 @@ export const ChatbotPage = () => {
                 if (file) handleFileSelect(file);
               }}
               className="hidden"
+              title="Upload video file"
+              placeholder="Upload video"
             />
             <button
               onClick={() => videoInputRef.current?.click()}
               disabled={isLoading}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Upload video"
+              aria-label="Upload video"
             >
               <Video className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
@@ -687,7 +697,7 @@ export const ChatbotPage = () => {
               <Input
                 ref={inputRef}
                 type="text"
-                placeholder={selectedFile ? "Add a message (optional)..." : "Type your message..."}
+                placeholder={t('chatbot.typeMessage')}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}

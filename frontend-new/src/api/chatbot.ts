@@ -9,10 +9,17 @@ export const chatbotApi = {
   sendMessage: async (
     message: string, 
     language = 'en',
-    location?: { latitude: number; longitude: number } | null
-  ): Promise<{ response: string }> => {
+    location?: { latitude: number; longitude: number } | null,
+    sessionId?: string
+  ): Promise<{ response: string; session_id?: string }> => {
     try {
-      const payload: { message: string; language: string; latitude?: number; longitude?: number } = {
+      const payload: { 
+        message: string; 
+        language: string; 
+        latitude?: number; 
+        longitude?: number;
+        session_id?: string;
+      } = {
         message,
         language,
       };
@@ -22,7 +29,11 @@ export const chatbotApi = {
         payload.longitude = location.longitude;
       }
       
-      const response = await apiClient.post<{ response: string }>('/api/chatbot/chat/', payload);
+      if (sessionId) {
+        payload.session_id = sessionId;
+      }
+      
+      const response = await apiClient.post<{ response: string; session_id?: string }>('/api/chatbot/chat/', payload);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

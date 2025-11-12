@@ -202,6 +202,8 @@ export const RegisterPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, language_preference: e.target.value })
                   }
+                  title="Select language preference"
+                  aria-label="Language preference"
                   className="flex w-full h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={loading}
                 >

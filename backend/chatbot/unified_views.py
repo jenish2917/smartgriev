@@ -66,8 +66,23 @@ def unified_chat(request):
             logger.warning(f"Invalid location data: lat={latitude}, lng={longitude}")
     
     try:
+        # Check if Gemini chatbot is available
+        if gemini_chatbot is None:
+            logger.error("Gemini chatbot not initialized")
+            return Response({
+                'error': 'AI service temporarily unavailable. Please try again later.',
+                'session_id': session_id
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        
+        # Initialize conversation if this is a new session
+        if session_id not in gemini_chatbot.conversations:
+            logger.info(f"Starting new conversation for session: {session_id}")
+            gemini_chatbot.start_conversation(session_id, language)
+        
         # Get response from Gemini with location context
         enhanced_message = message + location_context if location_context else message
+        
+        logger.info(f"Processing message in language: {language}, session: {session_id}")
         
         result = gemini_chatbot.chat(
             session_id=session_id,

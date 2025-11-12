@@ -98,7 +98,7 @@ export const LoginPage = () => {
             </motion.div>
           )}
 
-          {/* Form */}
+          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               id="username"
@@ -183,18 +183,6 @@ export const LoginPage = () => {
               )}
             </Button>
           </form>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
-                OR
-              </span>
-            </div>
-          </div>
 
           {/* Register Link */}
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">

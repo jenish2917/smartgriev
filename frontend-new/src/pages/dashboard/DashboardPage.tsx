@@ -7,6 +7,7 @@ import {
   MessageSquare,
   FileText,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -16,34 +17,35 @@ import { useNavigate } from 'react-router-dom';
 export const DashboardPage = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const stats = [
     {
       icon: FileText,
-      label: 'Total Complaints',
+      label: t('dashboard.totalComplaints'),
       value: '12',
-      change: '+2 this week',
+      change: `+2 ${t('dashboard.thisWeek')}`,
       color: 'primary',
     },
     {
       icon: Clock,
-      label: 'Pending',
+      label: t('dashboard.pending'),
       value: '5',
-      change: '2 need attention',
+      change: `2 ${t('dashboard.needAttention')}`,
       color: 'warning',
     },
     {
       icon: TrendingUp,
-      label: 'In Progress',
+      label: t('dashboard.inProgress'),
       value: '4',
-      change: 'Updated today',
+      change: t('dashboard.updatedToday'),
       color: 'secondary',
     },
     {
       icon: CheckCircle,
-      label: 'Resolved',
+      label: t('dashboard.resolved'),
       value: '3',
-      change: '100% satisfaction',
+      change: `100% ${t('dashboard.satisfaction')}`,
       color: 'success',
     },
   ];
@@ -95,7 +97,7 @@ export const DashboardPage = () => {
           className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-8 text-white"
         >
           <h2 className="text-3xl font-bold mb-2">
-            Welcome back, {user?.first_name}! 👋
+            {t('dashboard.welcomeBack')}, {user?.first_name}! 👋
           </h2>
           <p className="text-primary-100 mb-6">
             You have 2 complaints that need your attention today.
@@ -107,14 +109,14 @@ export const DashboardPage = () => {
               onClick={() => navigate('/chat')}
               leftIcon={<MessageSquare className="w-5 h-5" />}
             >
-              Chat with AI
+              {t('navigation.aiChat')}
             </Button>
             <Button
               variant="outline"
               size="lg"
               className="border-white text-white hover:bg-white/10"
             >
-              View All Complaints
+              {t('dashboard.viewAll')}
             </Button>
           </div>
         </motion.div>
@@ -160,7 +162,7 @@ export const DashboardPage = () => {
         >
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Recent Complaints
+              {t('dashboard.recentComplaints')}
             </h3>
           </div>
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -193,7 +195,7 @@ export const DashboardPage = () => {
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <Button variant="ghost" fullWidth>
-              View All Complaints
+              {t('dashboard.viewAll')}
             </Button>
           </div>
         </motion.div>
