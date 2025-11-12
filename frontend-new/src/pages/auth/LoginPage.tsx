@@ -210,7 +210,7 @@ export const LoginPage = () => {
 
         {/* Footer */}
         <p className="text-center text-xs text-gray-500 mt-6">
-          © 2024 SmartGriev. All rights reserved.
+          © 2025 SmartGriev. All rights reserved.
         </p>
       </motion.div>
     </div>
