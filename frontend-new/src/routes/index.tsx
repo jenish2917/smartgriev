@@ -4,7 +4,6 @@ import { useAuthStore } from '@/store/authStore';
 import App from '@/App';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { ChatbotPage } from '@/pages/chatbot/ChatbotPage';
 import { ComplaintsPage } from '@/pages/complaints/ComplaintsPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
@@ -21,12 +20,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Public Route wrapper (redirect to dashboard if already logged in)
+// Public Route wrapper (redirect to complaints if already logged in)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/complaints" replace />;
   }
 
   return <>{children}</>;
@@ -55,11 +54,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: (
-      <ProtectedRoute>
-        <DashboardPage />
-      </ProtectedRoute>
-    ),
+    element: <Navigate to="/complaints" replace />,
   },
     {
       path: '/chat',

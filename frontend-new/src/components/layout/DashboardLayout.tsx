@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard,
   MessageSquare,
   FileText,
   User,
@@ -40,24 +39,23 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
-    { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
-    { code: 'te', name: 'తెలుగు', flag: '🇮🇳' },
-    { code: 'mr', name: 'मराठी', flag: '🇮🇳' },
-    { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
-    { code: 'gu', name: 'ગુજરાતી', flag: '🇮🇳' },
-    { code: 'kn', name: 'ಕನ್ನಡ', flag: '🇮🇳' },
-    { code: 'ml', name: 'മലയാളം', flag: '🇮🇳' },
-    { code: 'pa', name: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
-    { code: 'ur', name: 'اردو', flag: '🇵🇰' },
-    { code: 'or', name: 'ଓଡ଼ିଆ', flag: '🇮🇳' },
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'हिंदी' },
+    { code: 'bn', name: 'বাংলা' },
+    { code: 'te', name: 'తెలుగు' },
+    { code: 'mr', name: 'मराठी' },
+    { code: 'ta', name: 'தமிழ்' },
+    { code: 'gu', name: 'ગુજરાતી' },
+    { code: 'kn', name: 'ಕನ್ನಡ' },
+    { code: 'ml', name: 'മലയാളം' },
+    { code: 'pa', name: 'ਪੰਜਾਬੀ' },
+    { code: 'ur', name: 'اردو' },
+    { code: 'or', name: 'ଓଡ଼ିଆ' },
   ];
 
   const menuItems = [
-    { icon: LayoutDashboard, label: t('navigation.dashboard'), path: '/dashboard' },
-    { icon: MessageSquare, label: t('navigation.aiChat'), path: '/chat' },
     { icon: FileText, label: t('navigation.myComplaints'), path: '/complaints' },
+    { icon: MessageSquare, label: t('navigation.aiChat'), path: '/chat' },
     { icon: User, label: t('navigation.profile'), path: '/profile' },
     { icon: Settings, label: t('navigation.settings'), path: '/settings' },
   ];
@@ -176,11 +174,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 onChange={handleLanguageChange}
                 title="Select language"
                 aria-label="Select language"
-                className="text-sm bg-transparent text-gray-900 dark:text-white focus:outline-none cursor-pointer"
+                className="text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none cursor-pointer [&>option]:bg-white [&>option]:dark:bg-gray-800 [&>option]:text-gray-900 [&>option]:dark:text-white"
               >
                 {languages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.flag} {lang.name}
+                  <option key={lang.code} value={lang.code} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    {lang.name}
                   </option>
                 ))}
               </select>

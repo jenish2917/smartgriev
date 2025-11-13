@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -23,13 +23,27 @@ export const ComplaintsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter] = useState<string>('all');
+  const [showLoading, setShowLoading] = useState(false);
 
   // Fetch complaints with React Query
   const { data, isLoading, error } = useQuery({
     queryKey: ['complaints', statusFilter, categoryFilter],
     queryFn: () => complaintApi.getComplaints(),
     staleTime: 30000, // 30 seconds
+    retry: 1, // Only retry once
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
+
+  // Debounce loading state to prevent flickering
+  useEffect(() => {
+    let timer: number;
+    if (isLoading) {
+      timer = window.setTimeout(() => setShowLoading(true), 200);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const complaints = data?.results || [];
   const totalCount = data?.count || 0;
@@ -154,7 +168,7 @@ export const ComplaintsPage = () => {
         </div>
 
         {/* Complaints List */}
-        {isLoading ? (
+        {showLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div

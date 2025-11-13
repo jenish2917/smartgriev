@@ -66,7 +66,7 @@ export const RegisterPage = () => {
 
       if (response.access && response.refresh && response.user) {
         setAuth(response.user, response.access, response.refresh);
-        navigate('/dashboard');
+        navigate('/complaints');
       } else {
         setErrors({ general: 'Invalid response from server' });
       }

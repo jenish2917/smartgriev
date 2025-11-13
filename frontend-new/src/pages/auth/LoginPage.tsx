@@ -36,7 +36,7 @@ export const LoginPage = () => {
 
       if (response.access && response.refresh && response.user) {
         setAuth(response.user, response.access, response.refresh);
-        navigate('/dashboard');
+        navigate('/complaints');
       } else {
         setError('Invalid response from server');
       }
