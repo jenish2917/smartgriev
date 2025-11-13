@@ -26,14 +26,30 @@ export const ChatbotPage = () => {
   const { user } = useAuthStore();
   const { i18n, t } = useTranslation();
   const [sessionId] = useState<string>(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: `${t('common.welcome')}, ${user?.first_name || 'there'}! 👋 ${t('chatbot.greeting')}`,
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+
+  // Re-initialize welcome message when language changes
+  useEffect(() => {
+    if (i18n.language !== currentLanguage) {
+      setMessages([{
+        id: '1',
+        role: 'assistant',
+        content: `${t('common.welcome')}, ${user?.first_name || 'there'}! 👋 ${t('chatbot.greeting')}`,
+        timestamp: new Date(),
+      }]);
+      setCurrentLanguage(i18n.language);
+    } else if (!isInitialized) {
+      setMessages([{
+        id: '1',
+        role: 'assistant',
+        content: `${t('common.welcome')}, ${user?.first_name || 'there'}! 👋 ${t('chatbot.greeting')}`,
+        timestamp: new Date(),
+      }]);
+      setIsInitialized(true);
+    }
+  }, [t, user?.first_name, i18n.language, isInitialized, currentLanguage]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -164,7 +180,7 @@ export const ChatbotPage = () => {
         {
           id: Date.now().toString(),
           role: 'assistant',
-          content: 'GPS is not available on your device. No problem! Please type your address manually, and I\'ll continue helping you.',
+          content: t('chatbot.gpsNotAvailable'),
           timestamp: new Date(),
         },
       ]);
@@ -181,7 +197,7 @@ export const ChatbotPage = () => {
           {
             id: Date.now().toString(),
             role: 'assistant',
-            content: `✅ Great! I've captured your location (${latitude.toFixed(4)}, ${longitude.toFixed(4)}). Now, please describe the issue you're facing. What's the problem?`,
+            content: `${t('chatbot.locationCaptured')} (${latitude.toFixed(4)}, ${longitude.toFixed(4)}). ${t('chatbot.describeIssue')}`,
             timestamp: new Date(),
           },
         ]);
@@ -189,14 +205,14 @@ export const ChatbotPage = () => {
       },
       (error) => {
         console.error('Location error:', error);
-        let errorMessage = 'I couldn\'t access your location. ';
+        let errorMessage = '';
         
         if (error.code === error.PERMISSION_DENIED) {
-          errorMessage += 'It looks like GPS permission was denied. No worries! Please type your address manually (street, area, city), and we\'ll continue.';
+          errorMessage += t('chatbot.locationDenied');
         } else if (error.code === error.POSITION_UNAVAILABLE) {
-          errorMessage += 'Your location is currently unavailable. Please provide your address manually.';
+          errorMessage += t('chatbot.locationUnavailable');
         } else {
-          errorMessage += 'Please provide your address manually so I can help you.';
+          errorMessage += t('chatbot.locationUnavailable');
         }
         
         setMessages((prev) => [
@@ -307,8 +323,8 @@ export const ChatbotPage = () => {
       let response;
       
       if (fileToSend) {
-        // Send image or video to chatbot with location if available
-        response = await chatbotApi.sendImage(fileToSend, messageText, currentLocation);
+        // Send image or video to chatbot with location if available - use current language
+        response = await chatbotApi.sendImage(fileToSend, messageText, currentLocation, i18n.language);
       } else {
         // Send text message with location if available - use current language and session ID
         response = await chatbotApi.sendMessage(messageText, i18n.language, currentLocation, sessionId);
@@ -360,7 +376,7 @@ export const ChatbotPage = () => {
   ];
 
   const handleQuickReply = (reply: string) => {
-    if (reply === 'File a new complaint') {
+    if (reply === t('chatbot.fileComplaint')) {
       // Trigger location request flow
       setMessages((prev) => [
         ...prev,
@@ -373,7 +389,7 @@ export const ChatbotPage = () => {
         {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: '📍 To file your complaint, I need to know the location. Would you like to enable GPS for automatic location, or would you prefer to enter your address manually?',
+          content: t('chatbot.locationPrompt'),
           timestamp: new Date(),
         },
       ]);
@@ -385,7 +401,7 @@ export const ChatbotPage = () => {
           {
             id: (Date.now() + 2).toString(),
             role: 'assistant',
-            content: 'Please choose:',
+            content: t('chatbot.chooseOption'),
             timestamp: new Date(),
           },
         ]);
@@ -431,7 +447,7 @@ export const ChatbotPage = () => {
               <div className="text-center">
                 <FileImage className="w-16 h-16 text-primary-500 mx-auto mb-2" />
                 <p className="text-lg font-semibold text-primary-600 dark:text-primary-400">
-                  Drop your image or video here
+                  {t('chatbot.dropImage')}
                 </p>
               </div>
             </div>
@@ -554,7 +570,7 @@ export const ChatbotPage = () => {
         )}
 
         {/* Location Request Buttons */}
-        {!isRequestingLocation && messages.length > 0 && messages[messages.length - 1]?.content.includes('enable GPS') && (
+        {!isRequestingLocation && messages.length > 0 && messages[messages.length - 1]?.content.includes('📍') && (
           <div className="px-4 pb-2">
             <div className="flex gap-2">
               <Button
@@ -577,7 +593,7 @@ export const ChatbotPage = () => {
                     {
                       id: Date.now().toString(),
                       role: 'assistant',
-                      content: 'No problem! Please type your complete address (Street, Area, Landmark, City, Pincode) so I can help you file the complaint.',
+                      content: t('chatbot.enterAddressManually'),
                       timestamp: new Date(),
                     },
                   ]);

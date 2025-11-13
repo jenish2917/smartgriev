@@ -8,7 +8,7 @@ export const authApi = {
   // Login
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<AuthResponse>('/api/auth/login/', credentials);
+      const response = await apiClient.post<AuthResponse>('/auth/login/', credentials);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -18,7 +18,7 @@ export const authApi = {
   // Register
   register: async (data: RegisterData): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<AuthResponse>('/api/auth/register/', data);
+      const response = await apiClient.post<AuthResponse>('/auth/register/', data);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -28,7 +28,7 @@ export const authApi = {
   // Logout
   logout: async (): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/logout/');
+      await apiClient.post('/auth/logout/');
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -37,7 +37,7 @@ export const authApi = {
   // Get current user
   getCurrentUser: async (): Promise<User> => {
     try {
-      const response = await apiClient.get<User>('/api/auth/user/');
+      const response = await apiClient.get<User>('/auth/user/');
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -47,7 +47,7 @@ export const authApi = {
   // Verify email
   verifyEmail: async (token: string): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/verify-email/', { token });
+      await apiClient.post('/auth/verify-email/', { token });
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -56,7 +56,7 @@ export const authApi = {
   // Verify mobile OTP
   verifyMobile: async (otp: string): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/verify-mobile/', { otp });
+      await apiClient.post('/auth/verify-mobile/', { otp });
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -65,7 +65,7 @@ export const authApi = {
   // Resend OTP
   resendOTP: async (): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/resend-otp/');
+      await apiClient.post('/auth/resend-otp/');
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -74,7 +74,7 @@ export const authApi = {
   // Send OTP for login
   sendOTP: async (mobileNumber: string): Promise<{ message: string }> => {
     try {
-      const response = await apiClient.post<{ message: string }>('/api/auth/send-otp/', {
+      const response = await apiClient.post<{ message: string }>('/auth/send-otp/', {
         mobile_number: mobileNumber
       });
       return response.data;
@@ -86,7 +86,7 @@ export const authApi = {
   // Verify OTP and login
   verifyOTP: async (mobileNumber: string, otp: string): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<AuthResponse>('/api/auth/verify-otp/', {
+      const response = await apiClient.post<AuthResponse>('/auth/verify-otp/', {
         mobile_number: mobileNumber,
         otp
       });
@@ -99,7 +99,7 @@ export const authApi = {
   // Forgot password
   forgotPassword: async (email: string): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/forgot-password/', { email });
+      await apiClient.post('/auth/forgot-password/', { email });
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -108,7 +108,7 @@ export const authApi = {
   // Reset password
   resetPassword: async (token: string, password: string): Promise<void> => {
     try {
-      await apiClient.post('/api/auth/reset-password/', { token, password });
+      await apiClient.post('/auth/reset-password/', { token, password });
     } catch (error) {
       throw new Error(handleApiError(error));
     }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import {
   Search,
   Filter,
@@ -20,6 +21,7 @@ import { complaintApi } from '@/api/complaints';
 import type { Complaint } from '@/types';
 
 export const ComplaintsPage = () => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter] = useState<string>('all');
@@ -88,10 +90,10 @@ export const ComplaintsPage = () => {
   });
 
   const statusOptions = [
-    { value: 'all', label: 'All Status', count: totalCount },
-    { value: 'pending', label: 'Pending', count: complaints.filter((c: Complaint) => c.status === 'pending').length },
-    { value: 'in_progress', label: 'In Progress', count: complaints.filter((c: Complaint) => c.status === 'in_progress').length },
-    { value: 'resolved', label: 'Resolved', count: complaints.filter((c: Complaint) => c.status === 'resolved').length },
+    { value: 'all', label: t('complaints.allStatus'), count: totalCount },
+    { value: 'pending', label: t('complaints.pending'), count: complaints.filter((c: Complaint) => c.status === 'pending').length },
+    { value: 'in_progress', label: t('complaints.inProgress'), count: complaints.filter((c: Complaint) => c.status === 'in_progress').length },
+    { value: 'resolved', label: t('complaints.resolved'), count: complaints.filter((c: Complaint) => c.status === 'resolved').length },
     { value: 'rejected', label: 'Rejected', count: complaints.filter((c: Complaint) => c.status === 'rejected').length },
   ];
 
@@ -102,14 +104,14 @@ export const ComplaintsPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              My Complaints
+              {t('complaints.title')}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Track and manage all your submitted complaints
             </p>
           </div>
           <Button variant="primary" onClick={() => window.location.href = '/chat'}>
-            + New Complaint
+            {t('complaints.newComplaint')}
           </Button>
         </div>
 
@@ -120,7 +122,7 @@ export const ComplaintsPage = () => {
             <div className="flex-1">
               <Input
                 type="text"
-                placeholder="Search complaints..."
+                placeholder={t('complaints.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 leftIcon={<Search className="w-4 h-4" />}
@@ -183,7 +185,7 @@ export const ComplaintsPage = () => {
         ) : error ? (
           <div className="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-xl p-6 text-center">
             <p className="text-error-700 dark:text-error-400">
-              Failed to load complaints. Please try again.
+              {t('complaints.error')}
             </p>
           </div>
         ) : filteredComplaints && filteredComplaints.length > 0 ? (
@@ -263,7 +265,7 @@ export const ComplaintsPage = () => {
               <Search className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No complaints found
+              {t('complaints.noComplaints')}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
               {searchQuery || statusFilter !== 'all' || categoryFilter !== 'all'

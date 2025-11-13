@@ -215,6 +215,7 @@ def unified_vision(request):
     POST data (multipart/form-data):
     - image: Image file (required)
     - message: Optional text message to accompany image
+    - language: User's preferred language (default: 'en')
     - latitude: Optional GPS latitude
     - longitude: Optional GPS longitude
     
@@ -226,6 +227,7 @@ def unified_vision(request):
     
     image_file = request.FILES.get('image')
     message = request.data.get('message', '')
+    language = request.data.get('language', 'en')
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
     
@@ -238,13 +240,55 @@ def unified_vision(request):
         # Save image temporarily
         file_name = f"image_{uuid.uuid4()}{os.path.splitext(image_file.name)[1]}"
         file_path = default_storage.save(f'temp/{file_name}', ContentFile(image_file.read()))
-        
-        # Initialize AI processor
-        ai_processor = AdvancedAIProcessor()
-        
-        # Analyze image
         full_path = default_storage.path(file_path)
-        analysis_result = ai_processor.analyze_image(full_path)
+        
+        # Use Gemini vision model for image analysis with language support
+        try:
+            import google.generativeai as genai
+            from PIL import Image
+            
+            # Load image
+            img = Image.open(full_path)
+            
+            # Get language name
+            language_names = {
+                'en': 'English', 'hi': 'Hindi', 'gu': 'Gujarati', 
+                'bn': 'Bengali', 'te': 'Telugu', 'mr': 'Marathi',
+                'ta': 'Tamil', 'kn': 'Kannada', 'ml': 'Malayalam',
+                'pa': 'Punjabi', 'ur': 'Urdu', 'as': 'Assamese', 'or': 'Odia'
+            }
+            language_name = language_names.get(language, 'English')
+            
+            # Create vision model
+            vision_model = genai.GenerativeModel('gemini-2.0-flash')
+            
+            # Build prompt with language instruction
+            vision_prompt = f"""Analyze this image for civic issues or complaints.
+
+Describe what you see in the image. If it shows any civic problem (pothole, garbage, broken infrastructure, etc.), identify it clearly.
+
+**IMPORTANT**: You MUST respond in {language_name} only. Do not use any other language.
+
+User's message: {message if message else 'Please analyze this image for any civic issues.'}
+
+Provide:
+1. Brief description of what's in the image
+2. Any civic issues/problems you detect
+3. Urgency level if there's a problem"""
+            
+            # Generate response
+            response = vision_model.generate_content([vision_prompt, img])
+            description = response.text
+            
+            # Detect issues from response
+            issue_keywords = ['pothole', 'garbage', 'ખાડો', 'કચરો', 'damaged', 'broken', 'leak', 'problem']
+            detected_issues = [word for word in issue_keywords if word.lower() in description.lower()]
+            
+        except Exception as e:
+            logger.error(f"Gemini vision error: {e}")
+            # Fallback to simple description
+            description = f"Image uploaded successfully. Please describe the issue you're reporting."
+            detected_issues = []
         
         # Clean up temp file
         try:
@@ -253,20 +297,14 @@ def unified_vision(request):
             logger.warning(f"Failed to delete temp file {file_path}: {e}")
         
         # Build response
-        description = analysis_result.get('description', 'Image analyzed successfully')
-        detected_issues = analysis_result.get('detected_issues', [])
-        
-        # Add location context
         location_context = ""
         if latitude and longitude:
             location_context = f"\nLocation: Latitude {latitude}, Longitude {longitude}"
         
-        # Build AI response
+        # Build AI response in user's language
         response_text = description
-        if detected_issues:
-            response_text += f"\n\nDetected Issues: {', '.join(detected_issues)}"
         if message:
-            response_text = f"Based on your message '{message}' and the image: {response_text}"
+            response_text = f"{description}"
         response_text += location_context
         
         complaint_detected = len(detected_issues) > 0 or any(

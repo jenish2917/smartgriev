@@ -199,19 +199,23 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             
             conversation = self.conversations[session_id]
             
-            # Detect if message is in non-English language and translate for processing
-            translated_message = user_message
+            # Gemini 2.0 supports multi-language natively, no translation needed for input
+            # Just pass the message as-is and let Gemini understand it
+            translated_message = user_message  # Keep original for classification
             detected_language = user_language
             
+            # For department classification, we can do a simple translation if needed
+            # But for chatbot response, let Gemini handle it natively
             if user_language != 'en':
                 try:
+                    # Only translate for keyword-based department classification
                     translator = GoogleTranslator(source='auto', target='en')
                     translated_message = translator.translate(user_message)
                 except Exception as e:
                     logger.error(f"Translation error: {e}")
                     translated_message = user_message
             
-            # Build conversation context
+            # Build conversation context with explicit language instruction
             prompt = self._build_prompt(conversation, user_message, translated_message)
             
             # Auto-switch to Pro model for complex queries (>10k tokens)
@@ -222,16 +226,11 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             response = selected_model.generate_content(prompt)
             bot_response = response.text
             
-            # Classify department using keywords
+            # Classify department using keywords (use translated text for this)
             department = self._classify_department(translated_message)
             
-            # Translate response back to user's language if needed
-            if user_language != 'en':
-                try:
-                    translator = GoogleTranslator(source='en', target=user_language)
-                    bot_response = translator.translate(bot_response)
-                except Exception as e:
-                    logger.error(f"Translation error: {e}")
+            # Gemini 2.0 responds natively in the user's language based on the prompt
+            # No need to translate the response back - it should already be in the correct language
             
             # Update conversation history
             conversation['history'].append({
@@ -302,12 +301,46 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
         if conversation['complaint_data']:
             prompt += f"Current complaint information: {json.dumps(conversation['complaint_data'], indent=2)}\n\n"
         
-        # Add current user message
-        prompt += f"User's message: {user_message}\n"
-        if user_message != translated_message:
-            prompt += f"(Translated to English: {translated_message})\n"
+        # Add current user message with language instruction
+        language_name = self.languages.get(conversation['language'], 'English')
+        language_code = conversation['language']
         
-        prompt += "\nRespond to the user in their language. If you have enough information to create the complaint, ask for confirmation and provide a summary."
+        prompt += f"User's message (in {language_name}): {user_message}\n"
+        if user_message != translated_message:
+            prompt += f"(English translation for context: {translated_message})\n"
+        
+        # Strong language enforcement
+        if language_code == 'gu':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Gujarati (ગુજરાતી). DO NOT use English, Hindi, or any other language. Use Gujarati script exclusively. Every single word must be in Gujarati."
+        elif language_code == 'ml':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Malayalam (മലയാളം). DO NOT use English, Hindi, Gujarati, or any other language. Use Malayalam script exclusively. Every single word must be in Malayalam."
+        elif language_code == 'hi':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Hindi (हिंदी). DO NOT use English or any other language. Use Devanagari script exclusively. Every single word must be in Hindi."
+        elif language_code == 'bn':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Bengali (বাংলা). DO NOT use English or any other language. Use Bengali script exclusively. Every single word must be in Bengali."
+        elif language_code == 'te':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Telugu (తెలుగు). DO NOT use English or any other language. Use Telugu script exclusively. Every single word must be in Telugu."
+        elif language_code == 'mr':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Marathi (मराठी). DO NOT use English or any other language. Use Devanagari script exclusively. Every single word must be in Marathi."
+        elif language_code == 'ta':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Tamil (தமிழ்). DO NOT use English or any other language. Use Tamil script exclusively. Every single word must be in Tamil."
+        elif language_code == 'kn':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Kannada (ಕನ್ನಡ). DO NOT use English or any other language. Use Kannada script exclusively. Every single word must be in Kannada."
+        elif language_code == 'pa':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Punjabi (ਪੰਜਾਬੀ). DO NOT use English or any other language. Use Gurmukhi script exclusively. Every single word must be in Punjabi."
+        elif language_code == 'ur':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Urdu (اردو). DO NOT use English or any other language. Use Urdu script exclusively. Every single word must be in Urdu."
+        elif language_code == 'as':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Assamese (অসমীয়া). DO NOT use English or any other language. Use Assamese script exclusively. Every single word must be in Assamese."
+        elif language_code == 'or':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in Odia (ଓଡ଼ିଆ). DO NOT use English or any other language. Use Odia script exclusively. Every single word must be in Odia."
+        elif language_code != 'en':
+            prompt += f"\n**CRITICAL INSTRUCTION**: You MUST respond ONLY in {language_name}. DO NOT use English or any other language. Use {language_name} script exclusively. Every single word must be in {language_name}."
+        else:
+            prompt += f"\n**IMPORTANT**: Respond in {language_name}."
+        
+        if self._is_conversation_complete(conversation.get('complaint_data', {})):
+            prompt += f" If you have enough information to create the complaint, ask for confirmation and provide a summary in {language_name}."
         
         return prompt
     

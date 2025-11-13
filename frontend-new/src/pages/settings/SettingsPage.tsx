@@ -20,7 +20,7 @@ import { useThemeStore } from '@/store/themeStore';
 export const SettingsPage = () => {
   const { user } = useAuthStore();
   const { isDarkMode, toggleTheme } = useThemeStore();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState('general');
   const [notifications, setNotifications] = useState({
@@ -72,7 +72,7 @@ export const SettingsPage = () => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Settings
+            {t('navigation.settings')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage your account settings and preferences
