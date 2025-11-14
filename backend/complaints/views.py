@@ -177,7 +177,7 @@ class ComplaintStatusUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsOfficerOrReadOnly]
 
     def get_queryset(self):
-        return Complaint.objects.filter(department__officer=self.request.user)
+        return Complaint.objects.select_related('user', 'department').filter(department__officer=self.request.user)
 
     def perform_update(self, serializer):
         complaint = serializer.save()
@@ -248,9 +248,10 @@ class ComplaintLocationUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
+        queryset = Complaint.objects.select_related('user', 'department')
         if self.request.user.is_officer:
-            return Complaint.objects.filter(department__officer=self.request.user)
-        return Complaint.objects.filter(user=self.request.user)
+            return queryset.filter(department__officer=self.request.user)
+        return queryset.filter(user=self.request.user)
     
     def perform_update(self, serializer):
         instance = serializer.save()

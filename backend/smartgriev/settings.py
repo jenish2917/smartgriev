@@ -23,7 +23,12 @@ if os.name == 'nt':  # Windows
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-fallback-key-for-development-only-change-in-production-12345')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG := (os.getenv('DJANGO_DEBUG', 'True') == 'True'):
+        SECRET_KEY = 'django-insecure-fallback-key-for-development-only'
+    else:
+        raise ValueError("DJANGO_SECRET_KEY must be set in production!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
@@ -226,8 +231,13 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# CORS settings - Allow global access
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for global access
+# CORS settings - Secure for production, open for development
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins in development
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Redis settings
@@ -322,6 +332,15 @@ SLOW_REQUEST_THRESHOLD = float(os.getenv('SLOW_REQUEST_THRESHOLD', 1.0))  # seco
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
+
+# HTTPS and Security Headers (Production only)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 31536000))  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Rate limiting
 RATELIMIT_ENABLE = True

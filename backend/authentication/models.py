@@ -19,7 +19,7 @@ class User(AbstractUser):
         ('as', 'Assamese - অসমীয়া'),
     ]
 
-    mobile = models.CharField(max_length=15, blank=True, null=True)
+    mobile = models.CharField(max_length=15, blank=True, null=True, db_index=True)
     address = models.TextField(blank=True, null=True)
 
     # Multi-lingual preferences

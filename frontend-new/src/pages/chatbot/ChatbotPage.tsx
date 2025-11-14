@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
 import { chatbotApi } from '@/api/chatbot';
 import { handleApiError } from '@/lib/axios';
+import { logger } from '@/utils/logger';
 
 interface Message {
   id: string;
@@ -33,7 +34,6 @@ export const ChatbotPage = () => {
     messages,
     setMessages,
     addMessage,
-    removeMessage,
   } = useChatStore();
   
   const [isInitialized, setIsInitialized] = useState(false);
@@ -176,7 +176,7 @@ export const ChatbotPage = () => {
       recorder.start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Error accessing microphone:', error);
+      logger.error('Error accessing microphone:', error);
       alert('Unable to access microphone. Please check your permissions.');
     }
   };
@@ -222,7 +222,7 @@ export const ChatbotPage = () => {
         setIsRequestingLocation(false);
       },
       (error) => {
-        console.error('Location error:', error);
+        logger.error('Location error:', error);
         let errorMessage = '';
         
         if (error.code === error.PERMISSION_DENIED) {
@@ -350,7 +350,7 @@ export const ChatbotPage = () => {
 
       // Check if AI wants to auto-submit the complaint
       if (response.auto_submit === true) {
-        console.log('[AUTO-SUBMIT] Triggered by AI, session:', sessionId);
+        logger.log('[AUTO-SUBMIT] Triggered by AI, session:', sessionId);
         
         // Remove loading message first
         updateMessages((prev: Message[]) => prev.filter((msg) => msg.id !== loadingMessage.id));
@@ -386,7 +386,7 @@ export const ChatbotPage = () => {
           })
       );
     } catch (error) {
-      console.error('Chatbot error:', error);
+      logger.error('Chatbot error:', error);
       // Remove loading message and add error
       updateMessages((prev: Message[]) =>
         prev
@@ -414,20 +414,20 @@ export const ChatbotPage = () => {
 
   const handleAutoSubmitComplaint = async () => {
     if (isSubmittingComplaint) {
-      console.log('[AUTO-SUBMIT] Already submitting, skipping...');
+      logger.log('[AUTO-SUBMIT] Already submitting, skipping...');
       return;
     }
     
-    console.log('[AUTO-SUBMIT] Starting complaint submission for session:', sessionId);
+    logger.log('[AUTO-SUBMIT] Starting complaint submission for session:', sessionId);
     setIsSubmittingComplaint(true);
     
     try {
-      console.log('[AUTO-SUBMIT] Calling API...');
+      logger.log('[AUTO-SUBMIT] Calling API...');
       const result = await chatbotApi.createComplaintFromChat(sessionId, true);
-      console.log('[AUTO-SUBMIT] API Response:', result);
+      logger.log('[AUTO-SUBMIT] API Response:', result);
       
       if (result.success) {
-        console.log('[AUTO-SUBMIT] Success! Complaint ID:', result.complaint_id);
+        logger.log('[AUTO-SUBMIT] Success! Complaint ID:', result.complaint_id);
         // Add success message
         updateMessages((prev: Message[]) => [
           ...prev,
@@ -439,11 +439,11 @@ export const ChatbotPage = () => {
           },
         ]);
       } else {
-        console.error('[AUTO-SUBMIT] Failed:', result.message);
+        logger.error('[AUTO-SUBMIT] Failed:', result.message);
         throw new Error(result.message || 'Failed to submit complaint');
       }
     } catch (error) {
-      console.error('[AUTO-SUBMIT] Error:', error);
+      logger.error('[AUTO-SUBMIT] Error:', error);
       const errorMessage = handleApiError(error);
       
       // Check if it's an authentication error
@@ -466,7 +466,7 @@ export const ChatbotPage = () => {
       ]);
     } finally {
       setIsSubmittingComplaint(false);
-      console.log('[AUTO-SUBMIT] Finished');
+      logger.log('[AUTO-SUBMIT] Finished');
     }
   };
 

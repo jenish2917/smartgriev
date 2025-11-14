@@ -83,6 +83,7 @@ class Complaint(models.Model):
         unique=True,
         null=True,
         blank=True,
+        db_index=True,
         help_text='Unique complaint identifier: BC-YEAR-CITY-DEPT-SEQUENCE'
     )
     
@@ -92,8 +93,8 @@ class Complaint(models.Model):
     description = models.TextField()
     category = models.ForeignKey(ComplaintCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='complaints')
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
-    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted', db_index=True)
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium', db_index=True)
     urgency_level = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='medium')
     
     # Multi-lingual support

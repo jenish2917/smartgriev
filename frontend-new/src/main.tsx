@@ -7,6 +7,7 @@ import './index.css';
 import './lib/i18n';
 import { AppRouter } from '@/routes';
 import { useThemeStore } from '@/store/themeStore';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 // Initialize theme BEFORE React renders to prevent flash
 const savedTheme = localStorage.getItem('theme');
@@ -46,10 +47,12 @@ const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ThemeInitializer>
-        <AppRouter />
-      </ThemeInitializer>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeInitializer>
+          <AppRouter />
+        </ThemeInitializer>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

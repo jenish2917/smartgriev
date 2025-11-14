@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
+import { logger } from '@/utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -27,11 +28,11 @@ export const useTokenRefresh = () => {
       try {
         const refresh = localStorage.getItem('refresh_token');
         if (!refresh) {
-          console.warn('[TOKEN-REFRESH] No refresh token found');
+          logger.warn('[TOKEN-REFRESH] No refresh token found');
           return;
         }
 
-        console.log('[TOKEN-REFRESH] Proactively refreshing token...');
+        logger.log('[TOKEN-REFRESH] Proactively refreshing token...');
         const response = await axios.post(`${API_BASE_URL}/api/auth/token/refresh/`, {
           refresh,
         });
@@ -42,9 +43,9 @@ export const useTokenRefresh = () => {
           localStorage.setItem('refresh_token', newRefresh);
         }
         
-        console.log('[TOKEN-REFRESH] Token refreshed successfully');
+        logger.log('[TOKEN-REFRESH] Token refreshed successfully');
       } catch (error) {
-        console.error('[TOKEN-REFRESH] Failed to refresh token:', error);
+        logger.error('[TOKEN-REFRESH] Failed to refresh token:', error);
         // If refresh fails, clear auth and redirect to login
         clearAuth();
         window.location.href = '/login';
@@ -64,11 +65,11 @@ export const useTokenRefresh = () => {
           
           // If token expires in less than 5 minutes, refresh now
           if (timeUntilExpiry < 5 * 60 * 1000) {
-            console.log('[TOKEN-REFRESH] Token expiring soon, refreshing now...');
+            logger.log('[TOKEN-REFRESH] Token expiring soon, refreshing now...');
             await refreshToken();
           }
         } catch (error) {
-          console.error('[TOKEN-REFRESH] Failed to decode token:', error);
+          logger.error('[TOKEN-REFRESH] Failed to decode token:', error);
         }
       }
     };

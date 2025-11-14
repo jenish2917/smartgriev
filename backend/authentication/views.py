@@ -1,7 +1,12 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from .serializers import UserSerializer, ChangePasswordSerializer, UpdateLanguageSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -29,6 +34,7 @@ class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
+    throttle_classes = [AnonRateThrottle]  # Limit registration attempts
 
     def create(self, request, *args, **kwargs):
         confirm_password = request.data.get('confirm_password')
@@ -63,6 +69,7 @@ class UserRegistrationView(generics.CreateAPIView):
 class UserLoginView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = EmailTokenObtainPairSerializer
+    throttle_classes = [AnonRateThrottle]  # Limit login attempts to prevent brute force
     
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
