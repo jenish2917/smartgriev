@@ -83,12 +83,17 @@ def unified_chat(request):
         enhanced_message = message + location_context if location_context else message
         
         logger.info(f"Processing message in language: {language}, session: {session_id}")
+        logger.info(f"Enhanced message: {enhanced_message[:100]}...")
         
         result = gemini_chatbot.chat(
             session_id=session_id,
             user_message=enhanced_message,
             user_language=language
         )
+        
+        logger.info(f"Gemini response: {result.get('response', '')[:100]}...")
+        logger.info(f"Intent: {result.get('intent')}, Complete: {result.get('conversation_complete')}")
+        logger.info(f"Complaint data: {result.get('complaint_data')}")
         
         # Save chat log if user is authenticated
         if request.user.is_authenticated:
@@ -126,6 +131,7 @@ def unified_chat(request):
             'intent': result.get('intent', 'unknown'),
             'complaint_data': result.get('complaint_data'),
             'conversation_complete': result.get('conversation_complete', False),
+            'auto_submit': result.get('auto_submit', False),  # CRITICAL: Pass auto_submit flag to frontend
         }, status=status.HTTP_200_OK)
         
     except Exception as e:

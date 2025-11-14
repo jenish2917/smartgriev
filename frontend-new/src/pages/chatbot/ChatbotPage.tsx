@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Input, Logo } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
+import { useChatStore } from '@/store/chatStore';
 import { chatbotApi } from '@/api/chatbot';
 import { handleApiError } from '@/lib/axios';
 
@@ -25,8 +26,16 @@ interface Message {
 export const ChatbotPage = () => {
   const { user } = useAuthStore();
   const { i18n, t } = useTranslation();
-  const [sessionId] = useState<string>(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-  const [messages, setMessages] = useState<Message[]>([]);
+  
+  // Use Zustand store for persistent chat state
+  const {
+    sessionId,
+    messages,
+    setMessages,
+    addMessage,
+    removeMessage,
+  } = useChatStore();
+  
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
 
@@ -40,7 +49,7 @@ export const ChatbotPage = () => {
         timestamp: new Date(),
       }]);
       setCurrentLanguage(i18n.language);
-    } else if (!isInitialized) {
+    } else if (!isInitialized && messages.length === 0) {
       setMessages([{
         id: '1',
         role: 'assistant',
@@ -49,11 +58,12 @@ export const ChatbotPage = () => {
       }]);
       setIsInitialized(true);
     }
-  }, [t, user?.first_name, i18n.language, isInitialized, currentLanguage]);
+  }, [t, user?.first_name, i18n.language, isInitialized, currentLanguage, messages.length, setMessages]);
+  
+  // Local state variables
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingComplaint, setIsSubmittingComplaint] = useState(false);
-  const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -65,6 +75,12 @@ export const ChatbotPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  
+  // Helper to update messages (for compatibility with functional setState)
+  const updateMessages = (updater: (prev: Message[]) => Message[]) => {
+    const updated = updater(messages);
+    setMessages(updated);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -72,13 +88,6 @@ export const ChatbotPage = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
-
-  // Show submit button after enough conversation
-  useEffect(() => {
-    if (messages.length >= 5) { // After 2-3 exchanges
-      setShowSubmitButton(true);
-    }
   }, [messages]);
 
   useEffect(() => {
@@ -184,7 +193,7 @@ export const ChatbotPage = () => {
     setIsRequestingLocation(true);
     
     if (!navigator.geolocation) {
-      setMessages((prev) => [
+      updateMessages((prev: Message[]) => [
         ...prev,
         {
           id: Date.now().toString(),
@@ -201,7 +210,7 @@ export const ChatbotPage = () => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ latitude, longitude });
-        setMessages((prev) => [
+        updateMessages((prev: Message[]) => [
           ...prev,
           {
             id: Date.now().toString(),
@@ -224,7 +233,7 @@ export const ChatbotPage = () => {
           errorMessage += t('chatbot.locationUnavailable');
         }
         
-        setMessages((prev) => [
+        updateMessages((prev: Message[]) => [
           ...prev,
           {
             id: Date.now().toString(),
@@ -254,13 +263,13 @@ export const ChatbotPage = () => {
       timestamp: new Date(),
       isLoading: true,
     };
-    setMessages((prev) => [...prev, loadingMessage]);
+    updateMessages((prev: Message[]) => [...prev, loadingMessage]);
 
     try {
       const response = await chatbotApi.sendVoiceMessage(audioFile, i18n.language);
       
       // Add user message showing voice was sent
-      setMessages((prev) => [
+      updateMessages((prev: Message[]) => [
         ...prev.filter((msg) => msg.id !== loadingMessage.id),
         {
           id: Date.now().toString(),
@@ -277,7 +286,7 @@ export const ChatbotPage = () => {
       ]);
     } catch (error) {
       // Remove loading message and add error
-      setMessages((prev) =>
+      updateMessages((prev: Message[]) =>
         prev
           .filter((msg) => msg.id !== loadingMessage.id)
           .concat({
@@ -309,7 +318,7 @@ export const ChatbotPage = () => {
       } : undefined,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    updateMessages((prev: Message[]) => [...prev, userMessage]);
     const messageText = inputValue;
     const fileToSend = selectedFile;
     const currentLocation = userLocation;
@@ -326,7 +335,7 @@ export const ChatbotPage = () => {
       timestamp: new Date(),
       isLoading: true,
     };
-    setMessages((prev) => [...prev, loadingMessage]);
+    addMessage(loadingMessage);
 
     try {
       let response;
@@ -339,8 +348,34 @@ export const ChatbotPage = () => {
         response = await chatbotApi.sendMessage(messageText, i18n.language, currentLocation, sessionId);
       }
 
+      // Check if AI wants to auto-submit the complaint
+      if (response.auto_submit === true) {
+        console.log('[AUTO-SUBMIT] Triggered by AI, session:', sessionId);
+        
+        // Remove loading message first
+        updateMessages((prev: Message[]) => prev.filter((msg) => msg.id !== loadingMessage.id));
+        
+        // Add AI's confirmation message
+        updateMessages((prev: Message[]) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: response.response || 'Submitting your complaint...',
+            timestamp: new Date(),
+          },
+        ]);
+        
+        // Wait a moment for the message to show, then auto-submit
+        setTimeout(async () => {
+          await handleAutoSubmitComplaint();
+        }, 500);
+        
+        return;
+      }
+
       // Remove loading message and add real response
-      setMessages((prev) =>
+      updateMessages((prev: Message[]) =>
         prev
           .filter((msg) => msg.id !== loadingMessage.id)
           .concat({
@@ -353,7 +388,7 @@ export const ChatbotPage = () => {
     } catch (error) {
       console.error('Chatbot error:', error);
       // Remove loading message and add error
-      setMessages((prev) =>
+      updateMessages((prev: Message[]) =>
         prev
           .filter((msg) => msg.id !== loadingMessage.id)
           .concat({
@@ -377,16 +412,24 @@ export const ChatbotPage = () => {
     }
   };
 
-  const handleSubmitComplaint = async () => {
-    if (isSubmittingComplaint) return;
+  const handleAutoSubmitComplaint = async () => {
+    if (isSubmittingComplaint) {
+      console.log('[AUTO-SUBMIT] Already submitting, skipping...');
+      return;
+    }
     
+    console.log('[AUTO-SUBMIT] Starting complaint submission for session:', sessionId);
     setIsSubmittingComplaint(true);
+    
     try {
+      console.log('[AUTO-SUBMIT] Calling API...');
       const result = await chatbotApi.createComplaintFromChat(sessionId, true);
+      console.log('[AUTO-SUBMIT] API Response:', result);
       
       if (result.success) {
+        console.log('[AUTO-SUBMIT] Success! Complaint ID:', result.complaint_id);
         // Add success message
-        setMessages((prev) => [
+        updateMessages((prev: Message[]) => [
           ...prev,
           {
             id: Date.now().toString(),
@@ -395,12 +438,13 @@ export const ChatbotPage = () => {
             timestamp: new Date(),
           },
         ]);
-        setShowSubmitButton(false);
       } else {
+        console.error('[AUTO-SUBMIT] Failed:', result.message);
         throw new Error(result.message || 'Failed to submit complaint');
       }
     } catch (error) {
-      setMessages((prev) => [
+      console.error('[AUTO-SUBMIT] Error:', error);
+      updateMessages((prev: Message[]) => [
         ...prev,
         {
           id: Date.now().toString(),
@@ -411,6 +455,7 @@ export const ChatbotPage = () => {
       ]);
     } finally {
       setIsSubmittingComplaint(false);
+      console.log('[AUTO-SUBMIT] Finished');
     }
   };
 
@@ -424,7 +469,7 @@ export const ChatbotPage = () => {
   const handleQuickReply = (reply: string) => {
     if (reply === t('chatbot.fileComplaint')) {
       // Trigger location request flow
-      setMessages((prev) => [
+      updateMessages((prev: Message[]) => [
         ...prev,
         {
           id: Date.now().toString(),
@@ -442,7 +487,7 @@ export const ChatbotPage = () => {
       
       // Add location buttons as quick replies
       setTimeout(() => {
-        setMessages((prev) => [
+        updateMessages((prev: Message[]) => [
           ...prev,
           {
             id: (Date.now() + 2).toString(),
@@ -613,33 +658,6 @@ export const ChatbotPage = () => {
           </div>
         )}
 
-        {/* Submit Complaint Button */}
-        {showSubmitButton && !isSubmittingComplaint && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="px-4 pb-2"
-          >
-            <Button
-              onClick={handleSubmitComplaint}
-              disabled={isSubmittingComplaint}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg shadow-lg"
-            >
-              {isSubmittingComplaint ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Submitting Complaint...
-                </>
-              ) : (
-                '✓ Submit Complaint to Department'
-              )}
-            </Button>
-            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
-              Your complaint will be automatically classified and sent to the appropriate department
-            </p>
-          </motion.div>
-        )}
-
         {/* Location Request Buttons */}
         {!isRequestingLocation && messages.length > 0 && messages[messages.length - 1]?.content.includes('📍') && (
           <div className="px-4 pb-2">
@@ -659,7 +677,7 @@ export const ChatbotPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setMessages((prev) => [
+                  updateMessages((prev: Message[]) => [
                     ...prev,
                     {
                       id: Date.now().toString(),
@@ -813,3 +831,4 @@ export const ChatbotPage = () => {
     </DashboardLayout>
   );
 };
+

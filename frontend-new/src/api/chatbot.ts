@@ -4,6 +4,36 @@ import type { ChatMessage } from '@/types';
 /**
  * Chatbot API calls
  */
+
+interface ChatResponse {
+  response: string;
+  session_id?: string;
+  intent?: string;
+  complaint_data?: {
+    title?: string;
+    description?: string;
+    location?: string;
+    urgency?: string;
+    category?: string;
+  };
+  conversation_complete?: boolean;
+  auto_submit?: boolean;
+}
+
+interface VisionResponse {
+  response: string;
+  description: string;
+  complaint_data?: {
+    title?: string;
+    description?: string;
+    location?: string;
+    urgency?: string;
+    category?: string;
+  };
+  conversation_complete?: boolean;
+  auto_submit?: boolean;
+}
+
 export const chatbotApi = {
   // Send message to chatbot with optional location
   sendMessage: async (
@@ -11,7 +41,7 @@ export const chatbotApi = {
     language = 'en',
     location?: { latitude: number; longitude: number } | null,
     sessionId?: string
-  ): Promise<{ response: string; session_id?: string }> => {
+  ): Promise<ChatResponse> => {
     try {
       const payload: { 
         message: string; 
@@ -33,7 +63,7 @@ export const chatbotApi = {
         payload.session_id = sessionId;
       }
       
-      const response = await apiClient.post<{ response: string; session_id?: string }>('/api/chatbot/chat/', payload);
+      const response = await apiClient.post<ChatResponse>('/chatbot/chat/', payload);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -48,7 +78,7 @@ export const chatbotApi = {
       formData.append('language', language);
 
       const response = await apiClient.post<{ response: string; transcription: string }>(
-        '/api/chatbot/voice/',
+        '/chatbot/voice/',
         formData,
         {
           headers: {
@@ -68,7 +98,7 @@ export const chatbotApi = {
     message?: string,
     location?: { latitude: number; longitude: number } | null,
     language = 'en'
-  ): Promise<{ response: string; description: string }> => {
+  ): Promise<VisionResponse> => {
     try {
       const formData = new FormData();
       formData.append('image', imageFile);
@@ -79,8 +109,8 @@ export const chatbotApi = {
         formData.append('longitude', location.longitude.toString());
       }
 
-      const response = await apiClient.post<{ response: string; description: string }>(
-        '/api/chatbot/vision/',
+      const response = await apiClient.post<VisionResponse>(
+        '/chatbot/vision/',
         formData,
         {
           headers: {
@@ -97,7 +127,7 @@ export const chatbotApi = {
   // Get chat history
   getChatHistory: async (): Promise<ChatMessage[]> => {
     try {
-      const response = await apiClient.get<ChatMessage[]>('/api/chatbot/history/');
+      const response = await apiClient.get<ChatMessage[]>('/chatbot/history/');
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

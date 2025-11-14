@@ -99,24 +99,34 @@ def create_complaint_from_chat(request):
     - confirm: Set to true to confirm and create complaint
     """
     
+    logger.info(f"[CREATE_COMPLAINT] Request received from user: {request.user.email}")
+    
     session_id = request.data.get('session_id')
     confirm = request.data.get('confirm', True)  # Auto-confirm by default
     
+    logger.info(f"[CREATE_COMPLAINT] Session ID: {session_id}, Confirm: {confirm}")
+    
     if not session_id:
+        logger.error("[CREATE_COMPLAINT] Missing session_id")
         return Response({
             'error': 'session_id is required'
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         # Get conversation summary
+        logger.info(f"[CREATE_COMPLAINT] Getting conversation summary...")
         summary = gemini_chatbot.get_conversation_summary(session_id)
+        logger.info(f"[CREATE_COMPLAINT] Summary: {summary}")
         
         if 'error' in summary:
+            logger.error(f"[CREATE_COMPLAINT] Summary error: {summary}")
             return Response(summary, status=status.HTTP_404_NOT_FOUND)
         
         complaint_data = summary.get('complaint_data', {})
+        logger.info(f"[CREATE_COMPLAINT] Complaint data: {complaint_data}")
         
         if not summary.get('ready_to_submit'):
+            logger.warning("[CREATE_COMPLAINT] Not ready to submit - missing information")
             return Response({
                 'error': 'Not enough information to create complaint',
                 'complaint_data': complaint_data,

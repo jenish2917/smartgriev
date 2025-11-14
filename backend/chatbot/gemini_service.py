@@ -26,9 +26,35 @@ class GeminiChatbotService:
         genai.configure(api_key=api_key)
         
         # Use Gemini 2.0 Flash (latest stable version)
-        # Use 2.5 Flash for better performance
-        self.flash_model = genai.GenerativeModel('gemini-2.0-flash')
-        self.pro_model = genai.GenerativeModel('gemini-2.0-pro-exp')
+        # Configure with safety settings to allow civic complaints
+        safety_settings = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE"
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE"
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE"
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE"
+            }
+        ]
+        
+        # Use Gemini 2.5 Flash (stable, latest version with good quota)
+        self.flash_model = genai.GenerativeModel(
+            'gemini-2.5-flash',
+            safety_settings=safety_settings
+        )
+        self.pro_model = genai.GenerativeModel(
+            'gemini-2.5-pro',
+            safety_settings=safety_settings
+        )
         self.model = self.flash_model  # Default to Flash
         
         # Conversation history storage
@@ -68,13 +94,22 @@ ROLE: Help citizens file complaints in 12 Indian languages (English, Hindi, Beng
 YOUR TASK - CONVERSATION FLOW:
 1. **Greet** the user warmly in their language
 2. **Understand** their complaint - ask clarifying questions
-3. **Extract** key information:
-   - Issue type (what is the problem?)
-   - Location (where is it?)
-   - Urgency level (how severe?)
-   - Description (details)
-4. **Confirm** all details before finalizing
-5. **Submit** the complaint
+3. **Extract** ALL REQUIRED information (MANDATORY - DO NOT skip any):
+   ✓ Issue type (what is the problem?) - REQUIRED
+   ✓ Complete Location (area, landmark, address) - REQUIRED - minimum 5 characters
+   ✓ Urgency level (low/medium/high/urgent) - REQUIRED
+   ✓ Detailed Description (full explanation) - REQUIRED - minimum 20 characters
+   ✓ Title (brief summary) - REQUIRED
+4. **Confirm** ALL details - show complete summary and ask: "Would you like to add or change anything?"
+5. **Auto-Submit** - If user confirms (says "no", "that's all", "submit", "ok", "correct", or similar), AUTOMATICALLY submit the complaint WITHOUT requiring any button click
+
+⚠️ CRITICAL RULES:
+- NEVER show submit buttons or forms - this is a pure conversation
+- ALWAYS ask for missing information naturally
+- After collecting all info, summarize and ask for confirmation
+- If user says "no changes", "looks good", "submit it", "that's all", etc. → tell them complaint is being submitted
+- Make the confirmation question clear: "Would you like to add or modify anything, or shall I submit this complaint?"
+- Be smart about user intent - "no", "nope", "all good", "submit", "go ahead" all mean confirmation
 
 DEPARTMENTS:
 1. Water Supply - Water shortage, leakage, quality issues, supply disruption
@@ -193,8 +228,12 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             dict with response, intent, entities, and complaint_data
         """
         try:
+            logger.info(f"[CHAT] Session: {session_id}, Language: {user_language}")
+            logger.info(f"[CHAT] User message: {user_message[:100]}...")
+            
             # Initialize conversation if not exists
             if session_id not in self.conversations:
+                logger.info(f"[CHAT] Starting new conversation for session: {session_id}")
                 self.start_conversation(session_id, user_language)
             
             conversation = self.conversations[session_id]
@@ -211,23 +250,37 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
                     # Only translate for keyword-based department classification
                     translator = GoogleTranslator(source='auto', target='en')
                     translated_message = translator.translate(user_message)
+                    logger.info(f"[CHAT] Translated to English: {translated_message[:100]}...")
                 except Exception as e:
-                    logger.error(f"Translation error: {e}")
+                    logger.error(f"[CHAT] Translation error: {e}")
                     translated_message = user_message
             
             # Build conversation context with explicit language instruction
             prompt = self._build_prompt(conversation, user_message, translated_message)
+            logger.info(f"[CHAT] Prompt length: {len(prompt)} chars")
             
             # Auto-switch to Pro model for complex queries (>10k tokens)
             token_estimate = len(prompt) // 4  # Rough estimate: 4 chars ≈ 1 token
             selected_model = self.pro_model if token_estimate > 10000 else self.flash_model
+            logger.info(f"[CHAT] Using model: {'Pro' if selected_model == self.pro_model else 'Flash'}")
             
             # Generate response using Gemini (Flash or Pro)
-            response = selected_model.generate_content(prompt)
-            bot_response = response.text
+            logger.info(f"[CHAT] Calling Gemini API...")
+            try:
+                response = selected_model.generate_content(prompt)
+                bot_response = response.text
+                logger.info(f"[CHAT] Gemini response: {bot_response[:200]}...")
+            except Exception as api_error:
+                logger.error(f"[CHAT] Gemini API error: {type(api_error).__name__}: {str(api_error)}")
+                # Check if it's a safety filter issue
+                if hasattr(api_error, 'message') and 'safety' in str(api_error).lower():
+                    bot_response = "I understand you want to report a civic issue. Could you please provide more details about the problem, location, and urgency?"
+                else:
+                    raise  # Re-raise other errors to be caught by outer exception handler
             
             # Classify department using keywords (use translated text for this)
             department = self._classify_department(translated_message)
+            logger.info(f"[CHAT] Classified department: {department}")
             
             # Gemini 2.0 responds natively in the user's language based on the prompt
             # No need to translate the response back - it should already be in the correct language
@@ -240,22 +293,37 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             })
             
             # Extract complaint information using AI
+            logger.info(f"[CHAT] Extracting complaint data...")
             complaint_data = self._extract_complaint_data(conversation)
             conversation['complaint_data'] = complaint_data
+            logger.info(f"[CHAT] Extracted complaint data: {complaint_data}")
             
             # Detect intent
             intent = self._detect_intent(user_message, translated_message)
+            logger.info(f"[CHAT] Detected intent: {intent}")
+            
+            # Check if conversation is complete
+            is_complete = self._is_conversation_complete(complaint_data)
+            logger.info(f"[CHAT] Conversation complete: {is_complete}")
+            
+            # Check if user confirmed submission after info is complete
+            should_auto_submit = (
+                is_complete and 
+                intent == 'submit_confirmation'
+            )
+            logger.info(f"[CHAT] Auto-submit triggered: {should_auto_submit}")
             
             return {
                 'response': bot_response,
                 'intent': intent,
                 'complaint_data': complaint_data,
-                'conversation_complete': self._is_conversation_complete(complaint_data),
+                'conversation_complete': is_complete,
+                'auto_submit': should_auto_submit,  # New flag for frontend
                 'language': user_language
             }
             
         except Exception as e:
-            logger.error(f"Gemini chat error: {e}")
+            logger.error(f"[CHAT ERROR] {type(e).__name__}: {str(e)}", exc_info=True)
             return {
                 'response': "I apologize, but I'm having trouble processing your request. Please try again.",
                 'intent': 'error',
@@ -390,30 +458,56 @@ Return ONLY valid JSON, no explanation."""
         message = translated_message.lower()
         
         # Intent patterns
-        if any(word in message for word in ['hello', 'hi', 'hey', 'namaste', 'help']):
+        if any(word in message for word in ['hello', 'hi', 'hey', 'namaste', 'help', 'start']):
             return 'greeting'
-        elif any(word in message for word in ['yes', 'ok', 'confirm', 'correct', 'right']):
+        
+        # Confirmation patterns - user wants to submit (expanded list)
+        elif any(phrase in message for phrase in [
+            'no change', 'no modification', 'looks good', 'looks fine', 'all good', 
+            'thats all', "that's all", 'submit', 'file it', 'go ahead', 'proceed',
+            'correct', 'yes submit', 'yes please', 'confirm', 'ok submit', 'okay',
+            'nothing else', 'no more', 'no addition', 'all set', 'ready', 
+            'nope', 'nah', 'done', 'perfect', 'good to go'
+        ]):
+            return 'submit_confirmation'
+        
+        # Just "yes", "ok", "right" - could be answering a question, not confirming submission
+        elif message.strip() in ['yes', 'ok', 'correct', 'right', 'yeah', 'yep']:
             return 'confirmation'
-        elif any(word in message for word in ['no', 'wrong', 'change', 'modify']):
+        
+        # Modification/correction request
+        elif any(word in message for word in ['change', 'modify', 'edit', 'update', 'wait', 'wrong', 'actually']):
             return 'correction'
-        elif any(word in message for word in ['status', 'track', 'check', 'update']):
+        
+        elif any(word in message for word in ['status', 'track', 'check my complaint', 'complaint status']):
             return 'status_check'
+        
         elif any(word in message for word in ['thank', 'thanks', 'bye', 'goodbye']):
             return 'closing'
+        
         else:
             return 'complaint_filing'
     
     def _is_conversation_complete(self, complaint_data: dict) -> bool:
         """Check if we have enough information to create complaint"""
         
-        required_fields = ['title', 'description', 'category', 'location']
+        # All required fields that must be collected before submission
+        required_fields = ['title', 'description', 'category', 'location', 'urgency']
         
-        return all(
-            field in complaint_data and 
-            complaint_data[field] and 
-            complaint_data[field] != ""
-            for field in required_fields
-        )
+        # Check all required fields are present and not empty
+        for field in required_fields:
+            if field not in complaint_data or not complaint_data[field] or complaint_data[field] == "":
+                return False
+        
+        # Additional validation for minimum description length
+        if len(complaint_data.get('description', '')) < 20:
+            return False
+        
+        # Validate location has meaningful content
+        if len(complaint_data.get('location', '')) < 5:
+            return False
+        
+        return True
     
     def get_conversation_summary(self, session_id: str) -> dict:
         """Get summary of conversation and extracted complaint data"""
