@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import { Button, Input } from '@/components/atoms';
+import { Button, Input, Logo } from '@/components/atoms';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { handleApiError } from '@/lib/axios';
@@ -63,21 +63,9 @@ export const LoginPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white mb-4"
+              className="inline-flex items-center justify-center mb-4"
             >
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
+              <Logo size="lg" />
             </motion.div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               {t('auth.login')}

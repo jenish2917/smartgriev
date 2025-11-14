@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, Loader2, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import { Button, Input } from '@/components/atoms';
+import { Button, Input, Logo } from '@/components/atoms';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { handleApiError } from '@/lib/axios';
@@ -93,9 +93,9 @@ export const RegisterPage = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white mb-4"
+              className="inline-flex items-center justify-center mb-4"
             >
-              <User className="w-8 h-8" />
+              <Logo size="lg" />
             </motion.div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               {t('auth.register')}

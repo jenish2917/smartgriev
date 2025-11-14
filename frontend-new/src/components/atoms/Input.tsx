@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const inputVariants = cva(
-  'flex w-full rounded-md border bg-transparent px-3 py-2 text-sm transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 hover:border-primary-400 dark:hover:border-primary-600',
+  'w-full rounded-md border bg-transparent px-3 py-2.5 text-sm transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 hover:border-primary-400 dark:hover:border-primary-600',
   {
     variants: {
       variant: {
@@ -14,9 +14,9 @@ const inputVariants = cva(
         success: 'border-success-500 focus-visible:ring-success-500',
       },
       size: {
-        sm: 'h-9 text-xs',
-        md: 'h-10',
-        lg: 'h-11 text-base',
+        sm: 'h-9 text-xs py-2',
+        md: 'h-10 py-2.5',
+        lg: 'h-11 text-base py-3',
       },
     },
     defaultVariants: {
@@ -57,7 +57,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const inputVariant = error ? 'error' : variant;
-    const [isFocused, setIsFocused] = React.useState(false);
 
     return (
       <div className={cn('w-full space-y-1.5', wrapperClassName)}>
@@ -78,16 +77,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           whileFocus={{ scale: 1.01 }}
         >
           {leftIcon && (
-            <motion.div
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
-              animate={{
-                scale: isFocused ? 1.1 : 1,
-                color: isFocused ? 'rgb(18, 67, 109)' : undefined,
-              }}
-              transition={{ duration: 0.2 }}
-            >
+            <div className="absolute left-3.5 inset-y-0 flex items-center text-gray-500 dark:text-gray-400 pointer-events-none">
               {leftIcon}
-            </motion.div>
+            </div>
           )}
           <input
             type={type}
@@ -101,18 +93,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={error ? `${props.id}-error` : undefined}
-            onFocus={(e) => {
-              setIsFocused(true);
-              props.onFocus?.(e);
-            }}
-            onBlur={(e) => {
-              setIsFocused(false);
-              props.onBlur?.(e);
-            }}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <div className="absolute right-3.5 inset-y-0 flex items-center text-gray-500 dark:text-gray-400">
               {rightIcon}
             </div>
           )}

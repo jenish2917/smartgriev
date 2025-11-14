@@ -33,7 +33,7 @@ export const chatbotApi = {
         payload.session_id = sessionId;
       }
       
-      const response = await apiClient.post<{ response: string; session_id?: string }>('/chatbot/chat/', payload);
+      const response = await apiClient.post<{ response: string; session_id?: string }>('/api/chatbot/chat/', payload);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -48,7 +48,7 @@ export const chatbotApi = {
       formData.append('language', language);
 
       const response = await apiClient.post<{ response: string; transcription: string }>(
-        '/chatbot/voice/',
+        '/api/chatbot/voice/',
         formData,
         {
           headers: {
@@ -80,7 +80,7 @@ export const chatbotApi = {
       }
 
       const response = await apiClient.post<{ response: string; description: string }>(
-        '/chatbot/vision/',
+        '/api/chatbot/vision/',
         formData,
         {
           headers: {
@@ -97,7 +97,7 @@ export const chatbotApi = {
   // Get chat history
   getChatHistory: async (): Promise<ChatMessage[]> => {
     try {
-      const response = await apiClient.get<ChatMessage[]>('/chatbot/history/');
+      const response = await apiClient.get<ChatMessage[]>('/api/chatbot/history/');
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Image as ImageIcon, Video, Loader2, Bot, User as UserIcon, X, FileImage } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Input } from '@/components/atoms';
+import { Button, Input, Logo } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/store/authStore';
 import { chatbotApi } from '@/api/chatbot';
@@ -462,9 +462,7 @@ export const ChatbotPage = () => {
       <div className="h-[calc(100vh-120px)] flex flex-col bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
         {/* Chat Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-            <Bot className="w-6 h-6 text-white" />
-          </div>
+          <Logo size="sm" />
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
               {t('chatbot.aiAssistant')}
