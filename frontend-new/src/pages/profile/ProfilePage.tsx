@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, MapPin, Globe, Lock, Save, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Input } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -8,6 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { LANGUAGES } from '@/utils/constants';
 
 export const ProfilePage = () => {
+  const { t } = useTranslation();
   const { user, updateUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -124,7 +126,7 @@ export const ProfilePage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Profile Settings
+              {t('profile.title')}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Manage your account information and preferences
@@ -140,11 +142,11 @@ export const ProfilePage = () => {
         >
           <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Personal Information
+              {t('profile.personalInfo')}
             </h2>
             {!isEditing && (
               <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                Edit Profile
+                {t('profile.editProfile')}
               </Button>
             )}
           </div>
@@ -168,7 +170,7 @@ export const ProfilePage = () => {
             {/* Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                label="First Name"
+                label={t('profile.firstName')}
                 name="first_name"
                 value={formData.first_name}
                 onChange={handleInputChange}
@@ -176,7 +178,7 @@ export const ProfilePage = () => {
                 leftIcon={<User className="w-4 h-4" />}
               />
               <Input
-                label="Last Name"
+                label={t('profile.lastName')}
                 name="last_name"
                 value={formData.last_name}
                 onChange={handleInputChange}
@@ -184,7 +186,7 @@ export const ProfilePage = () => {
                 leftIcon={<User className="w-4 h-4" />}
               />
               <Input
-                label="Email"
+                label={t('profile.email')}
                 type="email"
                 name="email"
                 value={formData.email}
@@ -193,7 +195,7 @@ export const ProfilePage = () => {
                 leftIcon={<Mail className="w-4 h-4" />}
               />
               <Input
-                label="Mobile Number"
+                label={t('profile.mobile')}
                 name="mobile_number"
                 value={formData.mobile_number}
                 onChange={handleInputChange}
@@ -203,7 +205,7 @@ export const ProfilePage = () => {
             </div>
 
             <Input
-              label="Address"
+              label={t('profile.address')}
               name="address"
               value={formData.address}
               onChange={handleInputChange}
@@ -215,7 +217,7 @@ export const ProfilePage = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 <Globe className="w-4 h-4 inline mr-2" />
-                Preferred Language
+                {t('profile.language')}
               </label>
               <select
                 name="language_preference"
@@ -241,7 +243,7 @@ export const ProfilePage = () => {
                   disabled={isSaving}
                   leftIcon={<Save className="w-4 h-4" />}
                 >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                  {isSaving ? t('profile.saving') : t('profile.saveChanges')}
                 </Button>
                 <Button
                   variant="outline"
@@ -249,7 +251,7 @@ export const ProfilePage = () => {
                   disabled={isSaving}
                   leftIcon={<X className="w-4 h-4" />}
                 >
-                  Cancel
+                  {t('profile.cancel')}
                 </Button>
               </div>
             )}
@@ -265,7 +267,7 @@ export const ProfilePage = () => {
         >
           <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Security
+              {t('profile.security')}
             </h2>
             {!isChangingPassword && (
               <Button
@@ -273,7 +275,7 @@ export const ProfilePage = () => {
                 size="sm"
                 onClick={() => setIsChangingPassword(true)}
               >
-                Change Password
+                {t('profile.changePassword')}
               </Button>
             )}
           </div>
@@ -281,7 +283,7 @@ export const ProfilePage = () => {
           {isChangingPassword ? (
             <div className="p-6 space-y-4">
               <Input
-                label="Current Password"
+                label={t('profile.currentPassword')}
                 type="password"
                 name="current_password"
                 value={passwordData.current_password}
@@ -290,7 +292,7 @@ export const ProfilePage = () => {
                 leftIcon={<Lock className="w-4 h-4" />}
               />
               <Input
-                label="New Password"
+                label={t('profile.newPassword')}
                 type="password"
                 name="new_password"
                 value={passwordData.new_password}
@@ -300,7 +302,7 @@ export const ProfilePage = () => {
                 leftIcon={<Lock className="w-4 h-4" />}
               />
               <Input
-                label="Confirm New Password"
+                label={t('profile.confirmPassword')}
                 type="password"
                 name="confirm_password"
                 value={passwordData.confirm_password}
@@ -315,7 +317,7 @@ export const ProfilePage = () => {
                   onClick={handleChangePassword}
                   disabled={isSaving}
                 >
-                  {isSaving ? 'Changing...' : 'Change Password'}
+                  {isSaving ? t('profile.changing') : t('profile.changePassword')}
                 </Button>
                 <Button
                   variant="outline"

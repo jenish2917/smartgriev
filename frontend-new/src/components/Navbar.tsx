@@ -75,13 +75,13 @@ export const Navbar = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors min-w-[120px]"
               >
-                <Globe className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                <Globe className="w-4 h-4 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed break-words text-center flex-1">
                   {currentLanguage.nativeName}
                 </span>
-                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform flex-shrink-0 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Dropdown Menu */}
@@ -91,16 +91,16 @@ export const Navbar = () => {
                     <button
                       key={language.code}
                       onClick={() => handleLanguageChange(language.code)}
-                      className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      className={`w-full px-4 py-2.5 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                         currentLangCode === language.code
                           ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
                           : 'text-gray-700 dark:text-gray-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium">{language.nativeName}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium leading-relaxed break-words">{language.nativeName}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 leading-normal">
                             {language.name}
                           </div>
                         </div>

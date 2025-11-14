@@ -3,7 +3,6 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  AlertCircle,
   MessageSquare,
   FileText,
 } from 'lucide-react';
@@ -84,6 +83,19 @@ export const DashboardPage = () => {
         return 'bg-success-100 text-success-700 dark:bg-success-900/20 dark:text-success-400';
       default:
         return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return t('dashboard.pending');
+      case 'in_progress':
+        return t('dashboard.inProgress');
+      case 'resolved':
+        return t('dashboard.resolved');
+      default:
+        return status;
     }
   };
 
@@ -187,7 +199,7 @@ export const DashboardPage = () => {
                       complaint.status
                     )}`}
                   >
-                    {complaint.status.replace('_', ' ')}
+                    {getStatusLabel(complaint.status)}
                   </span>
                 </div>
               </div>
@@ -196,58 +208,6 @@ export const DashboardPage = () => {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <Button variant="ghost" fullWidth>
               {t('dashboard.viewAll')}
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <MessageSquare className="w-8 h-8 text-primary-500 mb-4" />
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              AI Assistant
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Chat with our AI to file complaints or get help
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              fullWidth
-              onClick={() => navigate('/chat')}
-            >
-              Start Chat
-            </Button>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <FileText className="w-8 h-8 text-secondary-500 mb-4" />
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Track Complaints
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              View and track all your submitted complaints
-            </p>
-            <Button variant="outline" size="sm" fullWidth>
-              View Complaints
-            </Button>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <AlertCircle className="w-8 h-8 text-warning-500 mb-4" />
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Need Help?
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Get support and learn how to use the platform
-            </p>
-            <Button variant="outline" size="sm" fullWidth>
-              Help Center
             </Button>
           </div>
         </motion.div>

@@ -66,7 +66,7 @@ export const RegisterPage = () => {
 
       if (response.access && response.refresh && response.user) {
         setAuth(response.user, response.access, response.refresh);
-        navigate('/dashboard');
+        navigate('/complaints');
       } else {
         setErrors({ general: 'Invalid response from server' });
       }
@@ -119,7 +119,12 @@ export const RegisterPage = () => {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Row 1: First & Last Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <Input
                 id="first_name"
                 type="text"
@@ -146,10 +151,15 @@ export const RegisterPage = () => {
                 required
                 disabled={loading}
               />
-            </div>
+            </motion.div>
 
             {/* Row 2: Username & Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <Input
                 id="username"
                 type="text"
@@ -176,10 +186,15 @@ export const RegisterPage = () => {
                 required
                 disabled={loading}
               />
-            </div>
+            </motion.div>
 
             {/* Row 3: Mobile & Language */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <Input
                 id="mobile_number"
                 type="tel"
@@ -214,10 +229,15 @@ export const RegisterPage = () => {
                   ))}
                 </select>
               </div>
-            </div>
+            </motion.div>
 
             {/* Address */}
-            <Input
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Input
               id="address"
               type="text"
               label={t('auth.address')}
@@ -228,10 +248,16 @@ export const RegisterPage = () => {
               }
               leftIcon={<MapPin className="w-4 h-4" />}
               disabled={loading}
-            />
+              />
+            </motion.div>
 
             {/* Password Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -286,10 +312,15 @@ export const RegisterPage = () => {
                 required
                 disabled={loading}
               />
-            </div>
+            </motion.div>
 
             {/* Terms & Conditions */}
-            <div className="space-y-1">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="space-y-1"
+            >
               <label className="flex items-start gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -319,10 +350,15 @@ export const RegisterPage = () => {
               {errors.terms && (
                 <p className="text-sm text-error-500">{errors.terms}</p>
               )}
-            </div>
+            </motion.div>
 
             {/* Submit Button */}
-            <Button
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+            >
+              <Button
               type="submit"
               variant="primary"
               size="lg"
@@ -338,11 +374,17 @@ export const RegisterPage = () => {
               ) : (
                 t('auth.register')
               )}
-            </Button>
+              </Button>
+            </motion.div>
           </form>
 
           {/* Login Link */}
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.0 }}
+            className="text-center text-sm text-gray-600 dark:text-gray-400"
+          >
             {t('auth.alreadyHaveAccount')}{' '}
             <Link
               to="/login"
@@ -350,13 +392,18 @@ export const RegisterPage = () => {
             >
               {t('auth.login')}
             </Link>
-          </p>
+          </motion.p>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-500 mt-6">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1 }}
+          className="text-center text-xs text-gray-500 mt-6"
+        >
           © 2025 SmartGriev. All rights reserved.
-        </p>
+        </motion.p>
       </motion.div>
     </div>
   );

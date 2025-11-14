@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, filters, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Q, Count
@@ -31,7 +31,7 @@ class IsOfficerOrReadOnly(permissions.BasePermission):
 
 class ComplaintListCreateView(generics.ListCreateAPIView):
     serializer_class = ComplaintSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Allow read access to all, write requires auth
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description', 'category']
     ordering_fields = ['created_at', 'updated_at', 'priority', 'sentiment']
@@ -43,6 +43,10 @@ class ComplaintListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = self.complaint_service.get_queryset()
+        
+        # If user is not authenticated, show all public complaints
+        if not self.request.user.is_authenticated:
+            return queryset.all()  # Or filter to only show published/public complaints
         
         if self.request.user.is_officer:
             queryset = queryset.filter(department__officer=self.request.user)
