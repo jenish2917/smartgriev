@@ -72,6 +72,25 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
+
+  /* Prevent layout shift and flicker */
+  #root {
+    min-height: 100vh;
+  }
+  
+  /* Smooth transitions */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Prevent flicker on page load */
+  html:not(.dark) {
+    color-scheme: light;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+  }
 }
 
 @layer components {

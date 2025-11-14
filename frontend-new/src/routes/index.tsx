@@ -13,6 +13,7 @@ import { SettingsPage } from '@/pages/settings/SettingsPage';
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
+  // Immediate redirect without any render
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

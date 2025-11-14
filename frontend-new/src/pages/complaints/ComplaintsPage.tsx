@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -25,27 +25,18 @@ export const ComplaintsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter] = useState<string>('all');
-  const [showLoading, setShowLoading] = useState(false);
 
   // Fetch complaints with React Query
   const { data, isLoading, error } = useQuery({
     queryKey: ['complaints', statusFilter, categoryFilter],
     queryFn: () => complaintApi.getComplaints(),
-    staleTime: 30000, // 30 seconds
-    retry: 1, // Only retry once
-    refetchOnWindowFocus: false, // Don't refetch on window focus
+    staleTime: 60000,
+    gcTime: 300000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
-
-  // Debounce loading state to prevent flickering
-  useEffect(() => {
-    let timer: number;
-    if (isLoading) {
-      timer = window.setTimeout(() => setShowLoading(true), 200);
-    } else {
-      setShowLoading(false);
-    }
-    return () => clearTimeout(timer);
-  }, [isLoading]);
 
   const complaints = data?.results || [];
   const totalCount = data?.count || 0;
@@ -94,7 +85,7 @@ export const ComplaintsPage = () => {
     { value: 'pending', label: t('complaints.pending'), count: complaints.filter((c: Complaint) => c.status === 'pending').length },
     { value: 'in_progress', label: t('complaints.inProgress'), count: complaints.filter((c: Complaint) => c.status === 'in_progress').length },
     { value: 'resolved', label: t('complaints.resolved'), count: complaints.filter((c: Complaint) => c.status === 'resolved').length },
-    { value: 'rejected', label: 'Rejected', count: complaints.filter((c: Complaint) => c.status === 'rejected').length },
+    { value: 'rejected', label: t('complaints.rejected'), count: complaints.filter((c: Complaint) => c.status === 'rejected').length },
   ];
 
   return (
@@ -160,8 +151,8 @@ export const ComplaintsPage = () => {
               onClick={() => setStatusFilter(option.value)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 statusFilter === option.value
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? 'bg-primary-500 text-white shadow-md'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:shadow-sm'
               }`}
             >
               {option.label} <span className="ml-1 opacity-75">({option.count})</span>
@@ -170,7 +161,7 @@ export const ComplaintsPage = () => {
         </div>
 
         {/* Complaints List */}
-        {showLoading ? (
+        {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div
@@ -183,11 +174,50 @@ export const ComplaintsPage = () => {
             ))}
           </div>
         ) : error ? (
-          <div className="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-xl p-6 text-center">
-            <p className="text-error-700 dark:text-error-400">
-              {t('complaints.error')}
-            </p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-850 rounded-2xl p-12 text-center border-2 border-dashed border-primary-200 dark:border-gray-700 shadow-lg"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+              className="w-20 h-20 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
+            >
+              <Search className="w-10 h-10 text-white" />
+            </motion.div>
+            <motion.h3
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-2xl font-bold text-gray-900 dark:text-white mb-3"
+            >
+              {t('complaints.noComplaints')}
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto"
+            >
+              Start making your community better by filing your first complaint. Our AI assistant will guide you through the process.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => window.location.href = '/chat'}
+                className="shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+              >
+                {t('complaints.newComplaint')}
+              </Button>
+            </motion.div>
+          </motion.div>
         ) : filteredComplaints && filteredComplaints.length > 0 ? (
           <div className="space-y-4">
             {filteredComplaints.map((complaint, index) => (
@@ -196,31 +226,41 @@ export const ComplaintsPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer"
+                whileHover={{ y: -4, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 cursor-pointer group"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     {/* Title and Status */}
                     <div className="flex items-start gap-3 mb-3">
-                      <div
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
                         className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
                           complaint.status
                         )}`}
                       >
                         {getStatusIcon(complaint.status)}
                         {complaint.status.replace('_', ' ').toUpperCase()}
-                      </div>
+                      </motion.div>
                       {complaint.urgency && (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-error-100 text-error-700 dark:bg-error-900/20 dark:text-error-400">
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          whileHover={{ scale: 1.1 }}
+                          className="px-2 py-1 rounded-full text-xs font-medium bg-error-100 text-error-700 dark:bg-error-900/20 dark:text-error-400"
+                        >
                           {complaint.urgency}
-                        </span>
+                        </motion.span>
                       )}
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <motion.h3
+                      whileHover={{ x: 4 }}
+                      className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                    >
                       {complaint.title}
-                    </h3>
+                    </motion.h3>
 
                     {/* Description */}
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
@@ -229,20 +269,32 @@ export const ComplaintsPage = () => {
 
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                      <div className="flex items-center gap-1">
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="flex items-center gap-1"
+                      >
                         <MapPin className="w-4 h-4" />
                         {complaint.address || 'Location not specified'}
-                      </div>
-                      <div className="flex items-center gap-1">
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="flex items-center gap-1"
+                      >
                         <Calendar className="w-4 h-4" />
                         {new Date(complaint.created_at).toLocaleDateString()}
-                      </div>
-                      <div className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded"
+                      >
                         {complaint.category}
-                      </div>
-                      <div className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded"
+                      >
                         {complaint.department}
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
 
@@ -251,31 +303,65 @@ export const ComplaintsPage = () => {
                     <Button variant="ghost" size="sm" leftIcon={<Eye className="w-4 h-4" />}>
                       View
                     </Button>
-                    <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <motion.button
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
                       <MoreVertical className="w-4 h-4" />
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-12 text-center border-2 border-dashed border-gray-200 dark:border-gray-700">
-            <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-850 rounded-2xl p-12 text-center border-2 border-dashed border-primary-200 dark:border-gray-700 shadow-lg"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+              className="w-20 h-20 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
+            >
+              <Search className="w-10 h-10 text-white" />
+            </motion.div>
+            <motion.h3
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-2xl font-bold text-gray-900 dark:text-white mb-3"
+            >
               {t('complaints.noComplaints')}
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto"
+            >
               {searchQuery || statusFilter !== 'all' || categoryFilter !== 'all'
-                ? 'Try adjusting your filters'
-                : 'Start by filing your first complaint'}
-            </p>
-            <Button variant="primary" onClick={() => window.location.href = '/chat'}>
-              File New Complaint
-            </Button>
-          </div>
+                ? 'Try adjusting your filters to see more complaints'
+                : 'Start making your community better by filing your first complaint. Our AI assistant will guide you through the process.'}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => window.location.href = '/chat'}
+                className="shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+              >
+                {t('complaints.newComplaint')}
+              </Button>
+            </motion.div>
+          </motion.div>
         )}
       </div>
     </DashboardLayout>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   MessageSquare,
   FileText,
@@ -10,6 +10,7 @@ import {
   Globe,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/atoms';
 import { useAuthStore } from '@/store/authStore';
@@ -21,11 +22,13 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, clearAuth } = useAuthStore();
   const { isDarkMode, toggleTheme } = useThemeStore();
   const { t, i18n } = useTranslation();
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
   const handleLogout = () => {
     clearAuth();
@@ -95,9 +98,13 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Logo */}
         <div className="h-16 flex items-center px-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-sm font-bold">
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 360 }}
+              transition={{ duration: 0.5 }}
+              className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-sm font-bold shadow-lg"
+            >
               SG
-            </div>
+            </motion.div>
             <span className="font-bold text-gray-900 dark:text-white">
               SmartGriev
             </span>
@@ -106,29 +113,62 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {menuItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                window.location.pathname === item.path
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">{item.label}</span>
-            </button>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <motion.button
+                key={item.path}
+                whileHover={{ scale: 1.02, x: 4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate(item.path)}
+                onMouseEnter={() => setHoveredMenu(item.path)}
+                onMouseLeave={() => setHoveredMenu(null)}
+                className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 shadow-sm'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeMenu"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 rounded-r-full"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+                <motion.div
+                  animate={{ rotate: hoveredMenu === item.path ? [0, -10, 10, -10, 0] : 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                </motion.div>
+                <span className="font-medium">{item.label}</span>
+                {isActive && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="ml-auto w-2 h-2 bg-primary-500 rounded-full"
+                  />
+                )}
+              </motion.button>
+            );
+          })}
         </nav>
 
         {/* User Section */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="space-y-2">
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-medium">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-medium"
+              >
                 {user?.first_name?.charAt(0) || 'U'}
-              </div>
+              </motion.div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {user?.first_name} {user?.last_name}
@@ -137,7 +177,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   {user?.email}
                 </p>
               </div>
-            </div>
+            </motion.div>
             <Button
               variant="ghost"
               size="sm"
@@ -167,7 +207,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
           <div className="flex items-center gap-3">
             {/* Language Selector */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+            >
               <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <select
                 value={i18n.language}
@@ -182,22 +225,36 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </motion.div>
 
-            <button 
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 relative"
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               title="Notifications"
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-error-500 rounded-full"></span>
-            </button>
-            <button
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-1 right-1 w-2 h-2 bg-error-500 rounded-full"
+              />
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute top-1 right-1 w-2 h-2 bg-error-500 rounded-full opacity-75"
+              />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               title={isDarkMode ? 'Light mode' : 'Dark mode'}
             >
               {isDarkMode ? '🌙' : '☀️'}
-            </button>
+            </motion.button>
           </div>
         </header>
 

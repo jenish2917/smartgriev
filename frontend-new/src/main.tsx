@@ -7,6 +7,14 @@ import './lib/i18n';
 import { AppRouter } from '@/routes';
 import { useThemeStore } from '@/store/themeStore';
 
+// Initialize theme BEFORE React renders to prevent flash
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.remove('dark');
+}
+
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {

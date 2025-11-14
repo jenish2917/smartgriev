@@ -100,49 +100,66 @@ export const LoginPage = () => {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              id="username"
-              type="text"
-              label={t('auth.email')}
-              placeholder="Enter your email or username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              leftIcon={<Mail className="w-4 h-4" />}
-              required
-              disabled={loading}
-            />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Input
+                id="username"
+                type="text"
+                label={t('auth.email')}
+                placeholder="Enter your email or username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                leftIcon={<Mail className="w-4 h-4" />}
+                required
+                disabled={loading}
+              />
+            </motion.div>
 
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              label={t('auth.password')}
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              leftIcon={<Lock className="w-4 h-4" />}
-              rightIcon={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
-              }
-              required
-              disabled={loading}
-            />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                label={t('auth.password')}
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                leftIcon={<Lock className="w-4 h-4" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                }
+                required
+                disabled={loading}
+              />
+            </motion.div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-sm">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center justify-between text-sm"
+            >
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -162,30 +179,41 @@ export const LoginPage = () => {
               >
                 {t('auth.forgotPassword')}
               </Link>
-            </div>
+            </motion.div>
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              fullWidth
-              disabled={loading}
-              className="mt-6"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t('auth.loggingIn')}
-                </>
-              ) : (
-                t('auth.login')
-              )}
-            </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
+                disabled={loading}
+                className="mt-6"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {t('auth.loggingIn')}
+                  </>
+                ) : (
+                  t('auth.login')
+                )}
+              </Button>
+            </motion.div>
           </form>
 
           {/* Register Link */}
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="text-center text-sm text-gray-600 dark:text-gray-400"
+          >
             {t('auth.dontHaveAccount')}{' '}
             <Link
               to="/register"
@@ -193,13 +221,18 @@ export const LoginPage = () => {
             >
               {t('auth.register')}
             </Link>
-          </p>
+          </motion.p>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-500 mt-6">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center text-xs text-gray-500 mt-6"
+        >
           © 2025 SmartGriev. All rights reserved.
-        </p>
+        </motion.p>
       </motion.div>
     </div>
   );
