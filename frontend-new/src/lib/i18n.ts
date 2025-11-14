@@ -71,6 +71,7 @@ const resources = {
       },
       complaints: {
         title: 'My Complaints',
+        pageTitle: 'Track and Manage Complaints',
         newComplaint: '+ New Complaint',
         search: 'Search...',
         allStatus: 'All Status',
@@ -79,6 +80,8 @@ const resources = {
         resolved: 'Resolved',
         rejected: 'Rejected',
         noComplaints: 'No complaints found',
+        emptyStateMessage: 'Start making your community better by filing your first complaint. Our AI assistant will guide you through the process.',
+        adjustFiltersMessage: 'Try adjusting your filters to see more complaints',
         loading: 'Loading...',
         error: 'Failed to load complaints'
       },
@@ -197,6 +200,7 @@ const resources = {
       },
       complaints: {
         title: 'मेरी शिकायतें',
+        pageTitle: 'शिकायतों को ट्रैक और प्रबंधित करें',
         newComplaint: '+ नई शिकायत',
         search: 'खोजें...',
         allStatus: 'सभी स्थिति',
@@ -205,6 +209,8 @@ const resources = {
         resolved: 'हल किया गया',
         rejected: 'अस्वीकृत',
         noComplaints: 'कोई शिकायत नहीं मिली',
+        emptyStateMessage: 'अपनी पहली शिकायत दर्ज करके अपने समुदाय को बेहतर बनाना शुरू करें। हमारा AI सहायक आपको प्रक्रिया के माध्यम से मार्गदर्शन करेगा।',
+        adjustFiltersMessage: 'अधिक शिकायतें देखने के लिए अपने फ़िल्टर समायोजित करने का प्रयास करें',
         loading: 'लोड हो रहा है...',
         error: 'शिकायतें लोड करने में विफल'
       },
@@ -722,6 +728,7 @@ const resources = {
       },
       complaints: {
         title: 'મારી ફરિયાદો',
+        pageTitle: 'ફરિયાદોને ટ્રૅક અને મેનેજ કરો',
         newComplaint: '+ નવી ફરિયાદ',
         search: 'શોધો...',
         allStatus: 'તમામ સ્થિતિ',
@@ -730,6 +737,8 @@ const resources = {
         resolved: 'ઉકેલાયેલ',
         rejected: 'નામંજૂર',
         noComplaints: 'કોઈ ફરિયાદ મળી નથી',
+        emptyStateMessage: 'તમારી પ્રથમ ફરિયાદ દાખલ કરીને તમારા સમુદાયને વધુ સારું બનાવવાનું શરૂ કરો. અમારો AI સહાયક તમને પ્રક્રિયા દ્વારા માર્ગદર્શન આપશે.',
+        adjustFiltersMessage: 'વધુ ફરિયાદો જોવા માટે તમારા ફિલ્ટર્સને સમાયોજિત કરવાનો પ્રયાસ કરો',
         loading: 'લોડ કરી રહ્યા છીએ...',
         error: 'ફરિયાદો લોડ કરવામાં નિષ્ફળ'
       },

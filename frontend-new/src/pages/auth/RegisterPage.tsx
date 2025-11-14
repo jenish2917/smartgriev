@@ -30,7 +30,61 @@ export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setErrors({ ...errors, location: 'Geolocation is not supported by your browser' });
+      return;
+    }
+
+    setLoadingLocation(true);
+    setErrors({ ...errors, location: '' });
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          // Use reverse geocoding to get address from coordinates
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+          
+          if (data.display_name) {
+            setFormData({ ...formData, address: data.display_name });
+          } else {
+            setFormData({ ...formData, address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` });
+          }
+        } catch (error) {
+          // If reverse geocoding fails, just use coordinates
+          setFormData({ ...formData, address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` });
+        } finally {
+          setLoadingLocation(false);
+        }
+      },
+      (error) => {
+        setLoadingLocation(false);
+        let errorMessage = 'Unable to retrieve your location';
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied. Please enable location permissions.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out';
+            break;
+        }
+        
+        setErrors({ ...errors, location: errorMessage });
+      }
+    );
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -219,11 +273,11 @@ export const RegisterPage = () => {
                   }
                   title="Select language preference"
                   aria-label="Language preference"
-                  className="flex w-full h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={loading}
                 >
                   {LANGUAGES.map((lang) => (
-                    <option key={lang.code} value={lang.code}>
+                    <option key={lang.code} value={lang.code} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                       {lang.nativeName}
                     </option>
                   ))}
@@ -246,8 +300,23 @@ export const RegisterPage = () => {
               onChange={(e) =>
                 setFormData({ ...formData, address: e.target.value })
               }
-              leftIcon={<MapPin className="w-4 h-4" />}
+              leftIcon={
+                <button
+                  type="button"
+                  onClick={handleGetLocation}
+                  disabled={loading || loadingLocation}
+                  className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 disabled:opacity-50"
+                  title="Get current location"
+                >
+                  {loadingLocation ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
+                </button>
+              }
               disabled={loading}
+              error={errors.location}
               />
             </motion.div>
 

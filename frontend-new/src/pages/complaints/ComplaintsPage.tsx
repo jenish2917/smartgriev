@@ -95,11 +95,8 @@ export const ComplaintsPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {t('complaints.title')}
+              {t('complaints.pageTitle')}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Track and manage all your submitted complaints
-            </p>
           </div>
           <Button variant="primary" onClick={() => window.location.href = '/chat'}>
             {t('complaints.newComplaint')}
@@ -201,7 +198,7 @@ export const ComplaintsPage = () => {
               transition={{ delay: 0.4 }}
               className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto"
             >
-              Start making your community better by filing your first complaint. Our AI assistant will guide you through the process.
+              {t('complaints.emptyStateMessage')}
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -344,8 +341,8 @@ export const ComplaintsPage = () => {
               className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto"
             >
               {searchQuery || statusFilter !== 'all' || categoryFilter !== 'all'
-                ? 'Try adjusting your filters to see more complaints'
-                : 'Start making your community better by filing your first complaint. Our AI assistant will guide you through the process.'}
+                ? t('complaints.adjustFiltersMessage')
+                : t('complaints.emptyStateMessage')}
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}

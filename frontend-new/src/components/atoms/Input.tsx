@@ -77,7 +77,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           whileFocus={{ scale: 1.01 }}
         >
           {leftIcon && (
-            <div className="absolute left-3.5 inset-y-0 flex items-center text-gray-500 dark:text-gray-400 pointer-events-none">
+            <div className="absolute left-3.5 inset-y-0 flex items-center text-gray-500 dark:text-gray-400">
               {leftIcon}
             </div>
           )}
