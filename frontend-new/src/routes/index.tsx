@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 
 import { useAuthStore } from '@/store/authStore';
+import { useTokenRefresh } from '@/hooks/useTokenRefresh';
 import App from '@/App';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
@@ -12,6 +13,9 @@ import { SettingsPage } from '@/pages/settings/SettingsPage';
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  
+  // Automatic token refresh
+  useTokenRefresh();
 
   // Immediate redirect without any render
   if (!isAuthenticated) {

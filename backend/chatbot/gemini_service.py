@@ -301,6 +301,8 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             # Detect intent
             intent = self._detect_intent(user_message, translated_message)
             logger.info(f"[CHAT] Detected intent: {intent}")
+            logger.info(f"[CHAT] User message for intent detection: '{user_message}'")
+            logger.info(f"[CHAT] Translated message for intent detection: '{translated_message}'")
             
             # Check if conversation is complete
             is_complete = self._is_conversation_complete(complaint_data)
@@ -456,36 +458,46 @@ Return ONLY valid JSON, no explanation."""
         """Detect user intent from message"""
         
         message = translated_message.lower()
+        logger.info(f"[INTENT] Detecting intent for message: '{message}'")
         
         # Intent patterns
         if any(word in message for word in ['hello', 'hi', 'hey', 'namaste', 'help', 'start']):
+            logger.info(f"[INTENT] Matched: greeting")
             return 'greeting'
         
         # Confirmation patterns - user wants to submit (expanded list)
+        # Handle "no" when asked about modifications/changes
         elif any(phrase in message for phrase in [
             'no change', 'no modification', 'looks good', 'looks fine', 'all good', 
             'thats all', "that's all", 'submit', 'file it', 'go ahead', 'proceed',
             'correct', 'yes submit', 'yes please', 'confirm', 'ok submit', 'okay',
             'nothing else', 'no more', 'no addition', 'all set', 'ready', 
-            'nope', 'nah', 'done', 'perfect', 'good to go'
-        ]):
+            'nope', 'nah', 'done', 'perfect', 'good to go', 'submit it', 'submit this',
+            'submit the complaint', 'file the complaint', 'create complaint'
+        ]) or message.strip() == 'no':  # Simple "no" when asked if they want changes
+            logger.info(f"[INTENT] Matched: submit_confirmation (message.strip()='{message.strip()}')")
             return 'submit_confirmation'
         
         # Just "yes", "ok", "right" - could be answering a question, not confirming submission
         elif message.strip() in ['yes', 'ok', 'correct', 'right', 'yeah', 'yep']:
+            logger.info(f"[INTENT] Matched: confirmation")
             return 'confirmation'
         
         # Modification/correction request
         elif any(word in message for word in ['change', 'modify', 'edit', 'update', 'wait', 'wrong', 'actually']):
+            logger.info(f"[INTENT] Matched: correction")
             return 'correction'
         
         elif any(word in message for word in ['status', 'track', 'check my complaint', 'complaint status']):
+            logger.info(f"[INTENT] Matched: status_check")
             return 'status_check'
         
         elif any(word in message for word in ['thank', 'thanks', 'bye', 'goodbye']):
+            logger.info(f"[INTENT] Matched: closing")
             return 'closing'
         
         else:
+            logger.info(f"[INTENT] Matched: complaint_filing (default)")
             return 'complaint_filing'
     
     def _is_conversation_complete(self, complaint_data: dict) -> bool:

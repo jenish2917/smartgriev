@@ -444,12 +444,23 @@ export const ChatbotPage = () => {
       }
     } catch (error) {
       console.error('[AUTO-SUBMIT] Error:', error);
+      const errorMessage = handleApiError(error);
+      
+      // Check if it's an authentication error
+      const isAuthError = errorMessage.toLowerCase().includes('token') || 
+                         errorMessage.toLowerCase().includes('unauthorized') ||
+                         errorMessage.toLowerCase().includes('authentication');
+      
+      const userMessage = isAuthError 
+        ? `❌ Your session has expired. Please logout and login again, then retry submitting your complaint.`
+        : `❌ Sorry, I couldn't submit your complaint: ${errorMessage}. Please try again or use the manual complaint form.`;
+      
       updateMessages((prev: Message[]) => [
         ...prev,
         {
           id: Date.now().toString(),
           role: 'assistant',
-          content: `❌ Sorry, I couldn't submit your complaint: ${handleApiError(error)}. Please try again or use the manual complaint form.`,
+          content: userMessage,
           timestamp: new Date(),
         },
       ]);
