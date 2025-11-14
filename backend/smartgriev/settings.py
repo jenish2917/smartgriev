@@ -38,6 +38,9 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 # Allow all hosts for global access (development only)
 ALLOWED_HOSTS = ['*']  # Allow global access
 
+# Frontend URL for email links
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
