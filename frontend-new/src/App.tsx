@@ -37,11 +37,11 @@ const App = () => {
           </div>
 
           {/* Title */}
-          <div className="space-y-2">
-            <h1 className="text-5xl font-bold text-gradient animate-slide-in-from-bottom animation-delay-100">
+          <div className="space-y-4">
+            <h1 className="text-5xl font-bold text-gradient animate-slide-in-from-bottom animation-delay-100 leading-tight break-words">
               {t('common.appName')}
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 font-medium animate-slide-in-from-bottom animation-delay-150">
+            <p className="text-xl text-gray-600 dark:text-gray-300 font-medium animate-slide-in-from-bottom animation-delay-150 leading-relaxed break-words px-4">
               {t('common.tagline')}
             </p>
           </div>
@@ -154,8 +154,8 @@ const FeatureCard = ({
         <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white">
           {icon}
         </div>
-        <h3 className="font-semibold text-gray-900 dark:text-white">{title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+        <h3 className="font-semibold text-gray-900 dark:text-white leading-normal break-words">{title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words">{description}</p>
       </div>
     </div>
   );

@@ -70,7 +70,81 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Telugu", "Noto Sans Tamil", "Noto Sans Gujarati", sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improved text rendering for Indian languages */
+  body,
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, button, input, textarea, select {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Specific fixes for Devanagari script (Hindi, Marathi, etc.) */
+  *:lang(hi), *:lang(mr), *:lang(ne), *:lang(sa) {
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+  }
+
+  /* Specific fixes for Bengali script */
+  *:lang(bn), *:lang(as) {
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+  }
+
+  /* Specific fixes for Gujarati script */
+  *:lang(gu) {
+    line-height: 1.8;
+    letter-spacing: 0.015em;
+  }
+
+  /* Specific fixes for Tamil script */
+  *:lang(ta) {
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+  }
+
+  /* Specific fixes for Telugu script */
+  *:lang(te) {
+    line-height: 1.8;
+    letter-spacing: 0.015em;
+  }
+
+  /* Specific fixes for Kannada script */
+  *:lang(kn) {
+    line-height: 1.8;
+    letter-spacing: 0.015em;
+  }
+
+  /* Specific fixes for Malayalam script */
+  *:lang(ml) {
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+  }
+
+  /* Specific fixes for Punjabi script (Gurmukhi) */
+  *:lang(pa) {
+    line-height: 1.75;
+    letter-spacing: 0.015em;
+  }
+
+  /* Specific fixes for Urdu script (Arabic-based) */
+  *:lang(ur) {
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* Specific fixes for Odia script */
+  *:lang(or) {
+    line-height: 1.8;
+    letter-spacing: 0.015em;
   }
 
   /* Prevent layout shift and flicker */

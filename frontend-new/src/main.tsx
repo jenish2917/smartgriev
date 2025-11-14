@@ -1,6 +1,7 @@
 import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import './index.css';
 import './lib/i18n';
@@ -26,13 +27,19 @@ const queryClient = new QueryClient({
   },
 });
 
-// Theme initializer component
+// Theme and Language initializer component
 const ThemeInitializer = ({ children }: { children: React.ReactNode }) => {
   const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
+
+  useEffect(() => {
+    // Update HTML lang attribute when language changes
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   return <>{children}</>;
 };
