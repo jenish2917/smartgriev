@@ -18,7 +18,23 @@ class ComplaintCategory(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=100)
     zone = models.CharField(max_length=100)
-    officer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='departments')
+    description = models.TextField(blank=True, default='')
+    email = models.EmailField(blank=True, default='')
+    phone = models.CharField(max_length=20, blank=True, default='')
+    officer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='departments')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    
+    # Future: API integration fields for direct government portal integration
+    api_endpoint = models.URLField(blank=True, default='', help_text='Government API endpoint for complaint forwarding')
+    api_key = models.CharField(max_length=255, blank=True, default='', help_text='API authentication key')
+    department_code = models.CharField(max_length=50, blank=True, default='', help_text='Official government department code')
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Department'
+        verbose_name_plural = 'Departments'
     
     def __str__(self):
         return f"{self.name} - {self.zone}"

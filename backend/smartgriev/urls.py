@@ -24,6 +24,9 @@ from rest_framework.decorators import api_view
 from .metrics_views import MetricsView, HealthCheckView
 from smartgriev.metrics_views import MetricsView, HealthCheckView
 
+# Load custom admin configuration to unregister unwanted models
+from . import admin as custom_admin
+
 @api_view(['GET'])
 def api_root(request):
     """API Root - SmartGriev System"""
