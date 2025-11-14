@@ -103,4 +103,48 @@ export const chatbotApi = {
       throw new Error(handleApiError(error));
     }
   },
+
+  // Create complaint from chat conversation
+  createComplaintFromChat: async (sessionId: string, confirm = true): Promise<{
+    success: boolean;
+    complaint_id?: number;
+    message: string;
+    preview?: boolean;
+    complaint_data?: any;
+    complaint?: {
+      id: number;
+      title: string;
+      status: string;
+      department?: string;
+      priority?: string;
+      created_at: string;
+    };
+  }> => {
+    try {
+      const response = await apiClient.post('/chatbot/gemini/create-complaint/', {
+        session_id: sessionId,
+        confirm,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Get conversation summary
+  getConversationSummary: async (sessionId: string): Promise<{
+    session_id: string;
+    language: string;
+    message_count: number;
+    complaint_data: any;
+    ready_to_submit: boolean;
+  }> => {
+    try {
+      const response = await apiClient.get(`/chatbot/gemini/summary/${sessionId}/`);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
 };
+

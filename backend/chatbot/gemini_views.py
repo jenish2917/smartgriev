@@ -92,6 +92,7 @@ def gemini_chat(request):
 def create_complaint_from_chat(request):
     """
     Create a complaint from chatbot conversation
+    Automatically formats, classifies, and assigns to correct department
     
     POST data:
     - session_id: Chat session ID
@@ -99,7 +100,7 @@ def create_complaint_from_chat(request):
     """
     
     session_id = request.data.get('session_id')
-    confirm = request.data.get('confirm', False)
+    confirm = request.data.get('confirm', True)  # Auto-confirm by default
     
     if not session_id:
         return Response({
@@ -130,46 +131,49 @@ def create_complaint_from_chat(request):
                 'message': 'Please review and confirm to create the complaint'
             })
         
-        # Create the complaint
-        title = complaint_data.get('title', 'Complaint from chatbot')
+        # Extract and format complaint data
+        title = complaint_data.get('title', 'Complaint from AI Chat')
         description = complaint_data.get('description', '')
-        category_name = complaint_data.get('category', 'Others')
+        category_name = complaint_data.get('category', 'General')
         location = complaint_data.get('location', '')
-        urgency = complaint_data.get('urgency', 'medium')
+        urgency = complaint_data.get('urgency', 'medium').lower()
+        
+        # Smart department classification based on keywords
+        department = classify_department_from_complaint(title, description, category_name)
         
         # Get or create category
         category, _ = ComplaintCategory.objects.get_or_create(
             name=category_name,
-            defaults={'description': f'{category_name} complaints'}
+            defaults={'description': f'{category_name} related complaints'}
         )
         
-        # Map category to department (simplified)
-        department = None
-        try:
-            # Try to find appropriate department
-            if category_name.lower() in ['infrastructure', 'roads']:
-                department = Department.objects.filter(name__icontains='infrastructure').first()
-            elif category_name.lower() in ['health', 'sanitation']:
-                department = Department.objects.filter(name__icontains='health').first()
-            
-            if not department:
-                department = Department.objects.first()
-        except:
-            pass
+        # Map urgency to priority
+        priority_mapping = {
+            'low': 'low',
+            'medium': 'medium',
+            'high': 'high',
+            'urgent': 'urgent',
+            'critical': 'urgent'
+        }
+        priority = priority_mapping.get(urgency, 'medium')
         
-        # Create complaint
+        # Create complaint with proper formatting
         complaint = Complaint.objects.create(
             user=request.user,
             title=title[:200],  # Max 200 chars
             description=description,
+            location=location,
             category=category,
             department=department,
-            urgency_level=urgency if urgency in ['low', 'medium', 'high', 'critical'] else 'medium',
-            priority='high' if urgency in ['urgent', 'critical'] else 'medium',
+            priority=priority,
             submitted_language=summary.get('language', 'en'),
             original_text=description,
-            status='submitted'
+            status='submitted',
+            # Additional metadata
+            sentiment=complaint_data.get('sentiment', 'neutral')
         )
+        
+        logger.info(f"Complaint created from chat: ID={complaint.id}, Department={department.name if department else 'None'}")
         
         # End the conversation
         gemini_chatbot.end_conversation(session_id)
@@ -177,19 +181,71 @@ def create_complaint_from_chat(request):
         return Response({
             'success': True,
             'complaint_id': complaint.id,
-            'message': 'Complaint created successfully',
+            'message': f'Complaint submitted successfully and assigned to {department.name if department else "General Administration"}',
             'complaint': {
                 'id': complaint.id,
                 'title': complaint.title,
                 'status': complaint.status,
+                'department': department.name if department else None,
+                'priority': complaint.priority,
                 'created_at': complaint.created_at
             }
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
+        logger.error(f"Failed to create complaint from chat: {str(e)}")
         return Response({
             'error': f'Failed to create complaint: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def classify_department_from_complaint(title: str, description: str, category: str) -> Department:
+    """
+    Classify complaint to appropriate civic department using keyword matching
+    """
+    text = f"{title} {description} {category}".lower()
+    
+    # Department classification rules with priority
+    department_keywords = {
+        'Road & Transportation': ['road', 'pothole', 'street', 'highway', 'traffic', 'signal', 'crossing', 'pavement'],
+        'Water Supply & Sewerage': ['water', 'supply', 'sewage', 'drainage', 'leak', 'pipe', 'tap', 'plumbing'],
+        'Sanitation & Cleanliness': ['garbage', 'waste', 'trash', 'sanitation', 'clean', 'dirty', 'smell', 'sweeping'],
+        'Electricity Board': ['electricity', 'power', 'light', 'streetlight', 'outage', 'transformer', 'wire', 'pole'],
+        'Health & Medical Services': ['health', 'hospital', 'medical', 'clinic', 'doctor', 'disease', 'hygiene'],
+        'Fire & Emergency Services': ['fire', 'emergency', 'accident', 'disaster', 'rescue'],
+        'Police & Law Enforcement': ['police', 'crime', 'theft', 'safety', 'law', 'violation', 'illegal'],
+        'Traffic Police': ['traffic', 'parking', 'vehicle', 'challan', 'towing'],
+        'Environment & Pollution Control': ['pollution', 'noise', 'air quality', 'environment', 'tree', 'green'],
+        'Parks & Gardens': ['park', 'garden', 'playground', 'trees', 'plants'],
+        'Municipal Corporation': ['tax', 'property', 'building', 'permit', 'license', 'civic'],
+        'Food Safety & Standards': ['food', 'restaurant', 'hygiene', 'quality', 'adulteration'],
+        'Animal Control & Welfare': ['animal', 'stray', 'dog', 'cat', 'pet', 'veterinary'],
+        'Public Transport (BRTS/Bus)': ['bus', 'transport', 'brts', 'route', 'stop'],
+    }
+    
+    # Find best matching department
+    max_matches = 0
+    best_department = None
+    
+    for dept_name, keywords in department_keywords.items():
+        matches = sum(1 for keyword in keywords if keyword in text)
+        if matches > max_matches:
+            max_matches = matches
+            try:
+                best_department = Department.objects.filter(name__icontains=dept_name).first()
+            except:
+                pass
+    
+    # If no match found, assign to General Administration
+    if not best_department or max_matches == 0:
+        try:
+            best_department = Department.objects.filter(name__icontains='General Administration').first()
+            if not best_department:
+                best_department = Department.objects.first()
+        except:
+            pass
+    
+    return best_department
 
 
 @api_view(['GET'])

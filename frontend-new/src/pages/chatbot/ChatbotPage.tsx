@@ -52,6 +52,8 @@ export const ChatbotPage = () => {
   }, [t, user?.first_name, i18n.language, isInitialized, currentLanguage]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittingComplaint, setIsSubmittingComplaint] = useState(false);
+  const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -70,6 +72,13 @@ export const ChatbotPage = () => {
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  // Show submit button after enough conversation
+  useEffect(() => {
+    if (messages.length >= 5) { // After 2-3 exchanges
+      setShowSubmitButton(true);
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -368,6 +377,43 @@ export const ChatbotPage = () => {
     }
   };
 
+  const handleSubmitComplaint = async () => {
+    if (isSubmittingComplaint) return;
+    
+    setIsSubmittingComplaint(true);
+    try {
+      const result = await chatbotApi.createComplaintFromChat(sessionId, true);
+      
+      if (result.success) {
+        // Add success message
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: `✅ ${result.message}\n\nComplaint ID: #${result.complaint_id}\nDepartment: ${result.complaint?.department || 'General'}\nPriority: ${result.complaint?.priority || 'Medium'}\n\nYou can track your complaint in the "My Complaints" section.`,
+            timestamp: new Date(),
+          },
+        ]);
+        setShowSubmitButton(false);
+      } else {
+        throw new Error(result.message || 'Failed to submit complaint');
+      }
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `❌ Sorry, I couldn't submit your complaint: ${handleApiError(error)}. Please try again or use the manual complaint form.`,
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsSubmittingComplaint(false);
+    }
+  };
+
   const quickReplies = [
     t('chatbot.fileComplaint'),
     t('chatbot.reportPothole'),
@@ -567,6 +613,33 @@ export const ChatbotPage = () => {
               ))}
             </div>
           </div>
+        )}
+
+        {/* Submit Complaint Button */}
+        {showSubmitButton && !isSubmittingComplaint && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="px-4 pb-2"
+          >
+            <Button
+              onClick={handleSubmitComplaint}
+              disabled={isSubmittingComplaint}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg shadow-lg"
+            >
+              {isSubmittingComplaint ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Submitting Complaint...
+                </>
+              ) : (
+                '✓ Submit Complaint to Department'
+              )}
+            </Button>
+            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+              Your complaint will be automatically classified and sent to the appropriate department
+            </p>
+          </motion.div>
         )}
 
         {/* Location Request Buttons */}
