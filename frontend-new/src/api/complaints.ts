@@ -8,11 +8,41 @@ export const complaintApi = {
   // Get all complaints (paginated)
   getComplaints: async (page = 1, pageSize = 10): Promise<PaginatedResponse<Complaint>> => {
     try {
-      const response = await apiClient.get<PaginatedResponse<Complaint>>(
+      const token = localStorage.getItem('access_token');
+      console.log('[API] Fetching complaints with auth token:', token ? 'Present' : 'Missing');
+      
+      // Decode JWT to see which user it belongs to (just for debugging)
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log('[API] Token belongs to user ID:', payload.user_id);
+        } catch (e) {
+          console.error('[API] Could not decode token');
+        }
+      }
+      
+      const response = await apiClient.get<any>(
         `/complaints/?page=${page}&page_size=${pageSize}`
       );
+      console.log('[API] Complaints response:', response.data);
+      console.log('[API] Response type:', Array.isArray(response.data) ? 'Array' : 'Object');
+      
+      // Handle both array and paginated response formats
+      if (Array.isArray(response.data)) {
+        console.log('[API] Got array format, converting to paginated format');
+        return {
+          count: response.data.length,
+          next: null,
+          previous: null,
+          results: response.data
+        };
+      }
+      
+      console.log('[API] Complaints count:', response.data?.count);
+      console.log('[API] Complaints results:', response.data?.results);
       return response.data;
     } catch (error) {
+      console.error('[API] Complaints fetch error:', error);
       throw new Error(handleApiError(error));
     }
   },

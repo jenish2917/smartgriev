@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Image as ImageIcon, Video, Loader2, Bot, User as UserIcon, X, FileImage } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button, Input, Logo } from '@/components/atoms';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -27,6 +28,7 @@ interface Message {
 export const ChatbotPage = () => {
   const { user } = useAuthStore();
   const { i18n, t } = useTranslation();
+  const queryClient = useQueryClient();
   
   // Use Zustand store for persistent chat state
   const {
@@ -428,16 +430,13 @@ export const ChatbotPage = () => {
       
       if (result.success) {
         logger.log('[AUTO-SUBMIT] Success! Complaint ID:', result.complaint_id);
-        // Add success message
-        updateMessages((prev: Message[]) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: 'assistant',
-            content: `✅ ${result.message}\n\nComplaint ID: #${result.complaint_id}\nDepartment: ${result.complaint?.department || 'General'}\nPriority: ${result.complaint?.priority || 'Medium'}\n\nYou can track your complaint in the "My Complaints" section.`,
-            timestamp: new Date(),
-          },
-        ]);
+        
+        // Invalidate complaints cache to refresh the list
+        queryClient.invalidateQueries({ queryKey: ['complaints'] });
+        logger.log('[AUTO-SUBMIT] Invalidated complaints cache');
+        
+        // Complaint submitted silently - no message shown to user
+        // User can check their complaints in "My Complaints" section
       } else {
         logger.error('[AUTO-SUBMIT] Failed:', result.message);
         throw new Error(result.message || 'Failed to submit complaint');

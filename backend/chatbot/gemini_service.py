@@ -101,15 +101,21 @@ YOUR TASK - CONVERSATION FLOW:
    ✓ Detailed Description (full explanation) - REQUIRED - minimum 20 characters
    ✓ Title (brief summary) - REQUIRED
 4. **Confirm** ALL details - show complete summary and ask: "Would you like to add or change anything?"
-5. **Auto-Submit** - If user confirms (says "no", "that's all", "submit", "ok", "correct", or similar), AUTOMATICALLY submit the complaint WITHOUT requiring any button click
+5. **Auto-Submit Decision** - YOU decide intelligently when to submit based on:
+   - All required information is collected (issue, location, urgency, description)
+   - User has confirmed the details (explicitly or implicitly)
+   - User shows clear intent to finalize (through their response tone and content)
+   - No pending questions or clarifications needed
 
-⚠️ CRITICAL RULES:
+⚠️ CRITICAL RULES FOR SUBMISSION:
 - NEVER show submit buttons or forms - this is a pure conversation
 - ALWAYS ask for missing information naturally
 - After collecting all info, summarize and ask for confirmation
-- If user says "no changes", "looks good", "submit it", "that's all", etc. → tell them complaint is being submitted
-- Make the confirmation question clear: "Would you like to add or modify anything, or shall I submit this complaint?"
-- Be smart about user intent - "no", "nope", "all good", "submit", "go ahead" all mean confirmation
+- **YOU decide** when the complaint is ready to submit - use your judgment
+- Look for confirmation signals: agreement, satisfaction, closure intent
+- If user confirms details and doesn't want changes → submit
+- If user seems satisfied with the summary → submit
+- Trust your AI judgment - don't rely on specific keywords
 
 DEPARTMENTS:
 1. Water Supply - Water shortage, leakage, quality issues, supply disruption
@@ -308,12 +314,11 @@ Respond naturally, empathetically, and helpfully. Build trust with the citizen."
             is_complete = self._is_conversation_complete(complaint_data)
             logger.info(f"[CHAT] Conversation complete: {is_complete}")
             
-            # Check if user confirmed submission after info is complete
-            should_auto_submit = (
-                is_complete and 
-                intent == 'submit_confirmation'
-            )
-            logger.info(f"[CHAT] Auto-submit triggered: {should_auto_submit}")
+            # Let AI decide if user wants to submit (only if conversation is complete)
+            should_auto_submit = False
+            if is_complete:
+                should_auto_submit = self._ai_should_submit(user_message, translated_message, complaint_data)
+            logger.info(f"[CHAT] AI submission decision: {should_auto_submit}")
             
             return {
                 'response': bot_response,
@@ -455,33 +460,15 @@ Return ONLY valid JSON, no explanation."""
         return complaint_data
     
     def _detect_intent(self, original_message: str, translated_message: str) -> str:
-        """Detect user intent from message"""
+        """Detect user intent using AI - NO keyword matching"""
         
-        message = translated_message.lower()
-        logger.info(f"[INTENT] Detecting intent for message: '{message}'")
+        message = translated_message
+        logger.info(f"[INTENT] Using AI to detect intent for message: '{message}'")
         
-        # Intent patterns
-        if any(word in message for word in ['hello', 'hi', 'hey', 'namaste', 'help', 'start']):
+        # Simple greeting detection (keep this as it's straightforward)
+        if any(word in message.lower() for word in ['hello', 'hi', 'hey', 'namaste', 'help', 'start']):
             logger.info(f"[INTENT] Matched: greeting")
             return 'greeting'
-        
-        # Confirmation patterns - user wants to submit (expanded list)
-        # Handle "no" when asked about modifications/changes
-        elif any(phrase in message for phrase in [
-            'no change', 'no modification', 'looks good', 'looks fine', 'all good', 
-            'thats all', "that's all", 'submit', 'file it', 'go ahead', 'proceed',
-            'correct', 'yes submit', 'yes please', 'confirm', 'ok submit', 'okay',
-            'nothing else', 'no more', 'no addition', 'all set', 'ready', 
-            'nope', 'nah', 'done', 'perfect', 'good to go', 'submit it', 'submit this',
-            'submit the complaint', 'file the complaint', 'create complaint'
-        ]) or message.strip() == 'no':  # Simple "no" when asked if they want changes
-            logger.info(f"[INTENT] Matched: submit_confirmation (message.strip()='{message.strip()}')")
-            return 'submit_confirmation'
-        
-        # Just "yes", "ok", "right" - could be answering a question, not confirming submission
-        elif message.strip() in ['yes', 'ok', 'correct', 'right', 'yeah', 'yep']:
-            logger.info(f"[INTENT] Matched: confirmation")
-            return 'confirmation'
         
         # Modification/correction request
         elif any(word in message for word in ['change', 'modify', 'edit', 'update', 'wait', 'wrong', 'actually']):
@@ -520,6 +507,59 @@ Return ONLY valid JSON, no explanation."""
             return False
         
         return True
+    
+    def _ai_should_submit(self, user_message: str, translated_message: str, complaint_data: dict) -> bool:
+        """
+        Use AI to intelligently decide if user wants to submit the complaint.
+        NO keyword matching - pure AI judgment.
+        """
+        try:
+            decision_prompt = f"""You are analyzing a user's response in a complaint submission conversation.
+
+User's latest message: "{translated_message}"
+
+Current complaint details collected:
+- Title: {complaint_data.get('title', 'N/A')}
+- Description: {complaint_data.get('description', 'N/A')}
+- Category: {complaint_data.get('category', 'N/A')}
+- Location: {complaint_data.get('location', 'N/A')}
+- Urgency: {complaint_data.get('urgency', 'N/A')}
+
+Context: The bot just showed the user a summary of their complaint and asked: "Would you like to add or change anything?"
+
+Analyze the user's response and decide:
+- Does the user want to submit the complaint as-is? (confirmed, satisfied, ready to proceed)
+- Or do they want to make changes/additions?
+
+Look for signals of:
+- Confirmation (agreement, satisfaction, approval)
+- Finalization intent (ready to proceed, done with modifications)
+- Implicit approval (no changes needed, looks good)
+
+Return ONLY a JSON object:
+{{
+    "ready_to_submit": true/false,
+    "reasoning": "brief explanation of your decision"
+}}
+
+Be intelligent - don't look for specific words, understand the intent and context."""
+
+            response = self.model.generate_content(decision_prompt)
+            decision_text = response.text.strip()
+            
+            # Parse JSON response
+            decision_text = decision_text.strip('```json\n').strip('```').strip()
+            decision = json.loads(decision_text)
+            
+            logger.info(f"[AI DECISION] Ready to submit: {decision.get('ready_to_submit', False)}")
+            logger.info(f"[AI DECISION] Reasoning: {decision.get('reasoning', 'N/A')}")
+            
+            return decision.get('ready_to_submit', False)
+            
+        except Exception as e:
+            logger.error(f"[AI DECISION ERROR] {str(e)}")
+            # Safe fallback - don't auto-submit on error
+            return False
     
     def get_conversation_summary(self, session_id: str) -> dict:
         """Get summary of conversation and extracted complaint data"""

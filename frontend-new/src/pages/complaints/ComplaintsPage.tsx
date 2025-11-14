@@ -13,6 +13,7 @@ import {
   XCircle,
   Eye,
   MoreVertical,
+  RefreshCw,
 } from 'lucide-react';
 
 import { Button, Input } from '@/components/atoms';
@@ -27,15 +28,14 @@ export const ComplaintsPage = () => {
   const [categoryFilter] = useState<string>('all');
 
   // Fetch complaints with React Query
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['complaints', statusFilter, categoryFilter],
     queryFn: () => complaintApi.getComplaints(),
-    staleTime: 60000,
-    gcTime: 300000,
-    retry: false,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
+    staleTime: 5 * 60 * 1000, // Data considered fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
+    refetchOnWindowFocus: false, // Don't refetch when switching tabs
+    refetchOnMount: 'always', // Always refetch when navigating to this page
+    refetchOnReconnect: true, // Refetch when internet reconnects
   });
 
   const complaints = data?.results || [];
@@ -75,14 +75,17 @@ export const ComplaintsPage = () => {
     const matchesSearch =
       complaint.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       complaint.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || complaint.status === statusFilter;
+    
+    // Treat 'submitted' as 'pending' for filtering
+    const complaintStatus = complaint.status === 'submitted' ? 'pending' : complaint.status;
+    const matchesStatus = statusFilter === 'all' || complaintStatus === statusFilter;
     const matchesCategory = categoryFilter === 'all' || complaint.category === categoryFilter;
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
   const statusOptions = [
     { value: 'all', label: t('complaints.allStatus'), count: totalCount },
-    { value: 'pending', label: t('complaints.pending'), count: complaints.filter((c: Complaint) => c.status === 'pending').length },
+    { value: 'pending', label: t('complaints.pending'), count: complaints.filter((c: Complaint) => c.status === 'pending' || c.status === 'submitted').length },
     { value: 'in_progress', label: t('complaints.inProgress'), count: complaints.filter((c: Complaint) => c.status === 'in_progress').length },
     { value: 'resolved', label: t('complaints.resolved'), count: complaints.filter((c: Complaint) => c.status === 'resolved').length },
     { value: 'rejected', label: t('complaints.rejected'), count: complaints.filter((c: Complaint) => c.status === 'rejected').length },
@@ -98,9 +101,19 @@ export const ComplaintsPage = () => {
               {t('complaints.pageTitle')}
             </h1>
           </div>
-          <Button variant="primary" onClick={() => window.location.href = '/chat'}>
-            {t('complaints.newComplaint')}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => refetch()}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+            <Button variant="primary" onClick={() => window.location.href = '/chat'}>
+              {t('complaints.newComplaint')}
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}
@@ -233,11 +246,11 @@ export const ComplaintsPage = () => {
                       <motion.div
                         whileHover={{ scale: 1.05 }}
                         className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                          complaint.status
+                          complaint.status === 'submitted' ? 'pending' : complaint.status
                         )}`}
                       >
-                        {getStatusIcon(complaint.status)}
-                        {complaint.status.replace('_', ' ').toUpperCase()}
+                        {getStatusIcon(complaint.status === 'submitted' ? 'pending' : complaint.status)}
+                        {(complaint.status === 'submitted' ? 'pending' : complaint.status).replace('_', ' ').toUpperCase()}
                       </motion.div>
                       {complaint.urgency && (
                         <motion.span
@@ -290,7 +303,7 @@ export const ComplaintsPage = () => {
                         whileHover={{ scale: 1.05 }}
                         className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded"
                       >
-                        {complaint.department}
+                        {typeof complaint.department === 'string' ? complaint.department : complaint.department?.name || 'N/A'}
                       </motion.div>
                     </div>
                   </div>

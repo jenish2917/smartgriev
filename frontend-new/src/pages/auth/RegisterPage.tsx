@@ -19,7 +19,7 @@ export const RegisterPage = () => {
     username: '',
     email: '',
     password: '',
-    password_confirm: '',
+    confirm_password: '',  // Changed from password_confirm to match backend
     first_name: '',
     last_name: '',
     mobile_number: '',
@@ -93,8 +93,8 @@ export const RegisterPage = () => {
       newErrors.password = 'Password must be at least 8 characters';
     }
 
-    if (formData.password !== formData.password_confirm) {
-      newErrors.password_confirm = 'Passwords do not match';
+    if (formData.password !== formData.confirm_password) {
+      newErrors.confirm_password = 'Passwords do not match';
     }
 
     if (!formData.terms_accepted) {
@@ -355,13 +355,13 @@ export const RegisterPage = () => {
                 disabled={loading}
               />
               <Input
-                id="password_confirm"
+                id="confirm_password"
                 type={showConfirmPassword ? 'text' : 'password'}
                 label={t('auth.confirmPassword')}
                 placeholder="Repeat password"
-                value={formData.password_confirm}
+                value={formData.confirm_password}
                 onChange={(e) =>
-                  setFormData({ ...formData, password_confirm: e.target.value })
+                  setFormData({ ...formData, confirm_password: e.target.value })
                 }
                 leftIcon={<Lock className="w-4 h-4" />}
                 rightIcon={
@@ -377,7 +377,7 @@ export const RegisterPage = () => {
                     )}
                   </button>
                 }
-                error={errors.password_confirm}
+                error={errors.confirm_password}
                 required
                 disabled={loading}
               />

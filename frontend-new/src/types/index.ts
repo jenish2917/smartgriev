@@ -27,7 +27,7 @@ export interface RegisterData {
   username: string;
   email: string;
   password: string;
-  password_confirm: string;
+  confirm_password: string;  // Changed from password_confirm to match backend
   first_name: string;
   last_name: string;
   mobile_number?: string;
@@ -50,9 +50,9 @@ export interface Complaint {
   title: string;
   description: string;
   category: string;
-  department: string;
+  department: string | { id: number; name: string; zone: string; officer?: any };
   urgency: 'low' | 'medium' | 'high' | 'critical';
-  status: 'pending' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
+  status: 'submitted' | 'pending' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
   latitude?: number;
   longitude?: number;
   address?: string;
