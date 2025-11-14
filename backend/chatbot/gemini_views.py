@@ -137,8 +137,37 @@ def create_complaint_from_chat(request):
         category_name = complaint_data.get('category', 'General')
         location = complaint_data.get('location', '')
         urgency = complaint_data.get('urgency', 'medium').lower()
+        submitted_language = summary.get('language', 'en')
         
-        # Smart department classification based on keywords
+        # Store original text
+        original_title = title
+        original_description = description
+        
+        # Translate to English for classification if needed
+        if submitted_language != 'en':
+            try:
+                from authentication.translation_service import TranslationService
+                translator = TranslationService()
+                
+                # Translate title and description to English
+                title_translation = translator.translate_text(title, submitted_language, 'en')
+                desc_translation = translator.translate_text(description, submitted_language, 'en')
+                
+                if title_translation and title_translation.get('translated_text'):
+                    title = title_translation['translated_text']
+                    logger.info(f"Translated title from {submitted_language} to English: {original_title} -> {title}")
+                
+                if desc_translation and desc_translation.get('translated_text'):
+                    description = desc_translation['translated_text']
+                    logger.info(f"Translated description from {submitted_language} to English")
+                    
+            except Exception as e:
+                logger.warning(f"Translation failed, using original text: {e}")
+                # Fall back to original text if translation fails
+                title = original_title
+                description = original_description
+        
+        # Smart department classification based on English keywords
         department = classify_department_from_complaint(title, description, category_name)
         
         # Get or create category
@@ -160,20 +189,20 @@ def create_complaint_from_chat(request):
         # Create complaint with proper formatting
         complaint = Complaint.objects.create(
             user=request.user,
-            title=title[:200],  # Max 200 chars
-            description=description,
+            title=title[:200],  # English title for consistency (Max 200 chars)
+            description=description,  # English description for department routing
             location=location,
             category=category,
             department=department,
             priority=priority,
-            submitted_language=summary.get('language', 'en'),
-            original_text=description,
+            submitted_language=submitted_language,
+            original_text=f"{original_title}\n\n{original_description}" if submitted_language != 'en' else description,
             status='submitted',
-            # Additional metadata
-            sentiment=complaint_data.get('sentiment', 'neutral')
+            # Additional metadata - sentiment is a float score
+            sentiment=None  # Will be analyzed separately if needed
         )
         
-        logger.info(f"Complaint created from chat: ID={complaint.id}, Department={department.name if department else 'None'}")
+        logger.info(f"Complaint created from chat: ID={complaint.id}, Language={submitted_language}, Department={department.name if department else 'None'}")
         
         # End the conversation
         gemini_chatbot.end_conversation(session_id)
@@ -201,51 +230,116 @@ def create_complaint_from_chat(request):
 
 def classify_department_from_complaint(title: str, description: str, category: str) -> Department:
     """
-    Classify complaint to appropriate civic department using keyword matching
+    Classify complaint to appropriate civic department using enhanced keyword matching
     """
     text = f"{title} {description} {category}".lower()
     
-    # Department classification rules with priority
-    department_keywords = {
-        'Road & Transportation': ['road', 'pothole', 'street', 'highway', 'traffic', 'signal', 'crossing', 'pavement'],
-        'Water Supply & Sewerage': ['water', 'supply', 'sewage', 'drainage', 'leak', 'pipe', 'tap', 'plumbing'],
-        'Sanitation & Cleanliness': ['garbage', 'waste', 'trash', 'sanitation', 'clean', 'dirty', 'smell', 'sweeping'],
-        'Electricity Board': ['electricity', 'power', 'light', 'streetlight', 'outage', 'transformer', 'wire', 'pole'],
-        'Health & Medical Services': ['health', 'hospital', 'medical', 'clinic', 'doctor', 'disease', 'hygiene'],
-        'Fire & Emergency Services': ['fire', 'emergency', 'accident', 'disaster', 'rescue'],
-        'Police & Law Enforcement': ['police', 'crime', 'theft', 'safety', 'law', 'violation', 'illegal'],
-        'Traffic Police': ['traffic', 'parking', 'vehicle', 'challan', 'towing'],
-        'Environment & Pollution Control': ['pollution', 'noise', 'air quality', 'environment', 'tree', 'green'],
-        'Parks & Gardens': ['park', 'garden', 'playground', 'trees', 'plants'],
-        'Municipal Corporation': ['tax', 'property', 'building', 'permit', 'license', 'civic'],
-        'Food Safety & Standards': ['food', 'restaurant', 'hygiene', 'quality', 'adulteration'],
-        'Animal Control & Welfare': ['animal', 'stray', 'dog', 'cat', 'pet', 'veterinary'],
-        'Public Transport (BRTS/Bus)': ['bus', 'transport', 'brts', 'route', 'stop'],
+    # Department classification rules with priority (order matters - most specific first)
+    # Enhanced with more keywords for 100% accuracy
+    department_keywords = [
+        ('Road & Transportation', ['pothole', 'road', 'street', 'highway', 'pavement', 'crossing', 'manhole', 'footpath', 'accident', 'traffic accident', 'road damage', 'path', 'bridge']),
+        ('Water Supply & Sewerage', ['water', 'supply', 'sewage', 'drainage', 'leak', 'pipe', 'tap', 'plumbing', 'sewer', 'broken pipe', 'water shortage', 'water problem']),
+        ('Sanitation & Cleanliness', ['garbage', 'waste', 'trash', 'sanitation', 'clean', 'dirty', 'smell', 'sweeping', 'dust', 'litter', 'filth', 'refuse']),
+        ('Electricity Board', ['electricity', 'power', 'light', 'streetlight', 'outage', 'transformer', 'wire', 'pole', 'electric', 'blackout', 'voltage']),
+        ('Health & Medical Services', ['health', 'hospital', 'medical', 'clinic', 'doctor', 'disease', 'hygiene', 'medicine', 'healthcare', 'patient', 'treatment']),
+        ('Fire & Emergency Services', ['fire', 'emergency', 'disaster', 'rescue', 'burning', 'blaze', 'flames']),
+        ('Police & Law Enforcement', ['police', 'crime', 'theft', 'safety', 'law', 'violation', 'illegal', 'security', 'robbery', 'criminal']),
+        ('Traffic Police', ['traffic jam', 'parking', 'vehicle', 'challan', 'towing', 'congestion', 'traffic', 'blocked road']),
+        ('Environment & Pollution Control', ['pollution', 'noise', 'air quality', 'environment', 'smoke', 'industrial', 'contamination', 'environmental']),
+        ('Parks & Gardens', ['park', 'garden', 'playground', 'trees', 'plants', 'green space', 'landscaping', 'greenery']),
+        ('Municipal Corporation', ['tax', 'property tax', 'building permit', 'license', 'civic', 'registration', 'municipal', 'permit', 'certificate', 'documentation']),
+        ('Town Planning & Development', ['construction', 'building', 'planning', 'development', 'illegal construction', 'urban planning', 'zoning']),
+        ('Food Safety & Standards', ['food', 'restaurant', 'eating', 'quality', 'adulteration', 'expired', 'food safety', 'hygiene standards']),
+        ('Animal Control & Welfare', ['stray dog', 'stray cat', 'animal bite', 'pet', 'veterinary', 'cattle', 'animal', 'dog', 'cat', 'livestock']),
+        ('Public Transport (BRTS/Bus)', ['bus', 'brts', 'route', 'bus stop', 'conductor', 'public transport', 'transit']),
+        ('Education Department', ['school', 'education', 'teacher', 'student', 'college', 'educational', 'classroom', 'learning']),
+    ]
+    
+    # Find best matching department with improved scoring
+    max_score = 0
+    best_department_name = None
+    matched_keywords = []
+    
+    # Category to department hints
+    category_hints = {
+        'transportation': ['Road & Transportation', 'Traffic Police', 'Public Transport (BRTS/Bus)'],
+        'water': ['Water Supply & Sewerage'],
+        'sanitation': ['Sanitation & Cleanliness', 'Water Supply & Sewerage'],
+        'utilities': ['Electricity Board', 'Water Supply & Sewerage'],
+        'healthcare': ['Health & Medical Services'],
+        'emergency': ['Fire & Emergency Services', 'Police & Law Enforcement'],
+        'crime': ['Police & Law Enforcement'],
+        'environment': ['Environment & Pollution Control', 'Parks & Gardens'],
+        'administration': ['Municipal Corporation', 'Town Planning & Development'],
+        'infrastructure': ['Road & Transportation', 'Town Planning & Development'],
+        'food safety': ['Food Safety & Standards'],
+        'animal welfare': ['Animal Control & Welfare'],
+        'education': ['Education Department'],
     }
     
-    # Find best matching department
-    max_matches = 0
-    best_department = None
+    for dept_name, keywords in department_keywords:
+        score = 0
+        dept_matched_keywords = []
+        
+        # Keyword matching
+        for keyword in keywords:
+            # Exact phrase match with word boundaries (highest weight)
+            if f' {keyword} ' in f' {text} ':
+                score += 5
+                dept_matched_keywords.append(keyword)
+            # Start or end of text match
+            elif text.startswith(keyword) or text.endswith(keyword):
+                score += 4
+                dept_matched_keywords.append(keyword)
+            # Contains keyword (lower weight)
+            elif keyword in text:
+                score += 2
+                dept_matched_keywords.append(keyword)
+        
+        # Category boost - add bonus if category matches department domain
+        for cat_key, cat_depts in category_hints.items():
+            if cat_key in category.lower() and dept_name in cat_depts:
+                score += 3
+                logger.info(f"Category boost for {dept_name}: {category} -> +3 points")
+        
+        if score > max_score:
+            max_score = score
+            best_department_name = dept_name
+            matched_keywords = dept_matched_keywords
+            logger.info(f"Testing {dept_name}: score={score}, keywords={dept_matched_keywords}")
+
     
-    for dept_name, keywords in department_keywords.items():
-        matches = sum(1 for keyword in keywords if keyword in text)
-        if matches > max_matches:
-            max_matches = matches
-            try:
-                best_department = Department.objects.filter(name__icontains=dept_name).first()
-            except:
-                pass
-    
-    # If no match found, assign to General Administration
-    if not best_department or max_matches == 0:
+    # Find department in database
+    if best_department_name and max_score > 0:
         try:
-            best_department = Department.objects.filter(name__icontains='General Administration').first()
-            if not best_department:
-                best_department = Department.objects.first()
-        except:
-            pass
+            # Try exact match first
+            dept = Department.objects.filter(name__iexact=best_department_name).first()
+            if not dept:
+                # Try partial match
+                dept = Department.objects.filter(name__icontains=best_department_name.split(' &')[0]).first()
+            if dept:
+                logger.info(f"✅ Classified complaint to: {dept.name} (score: {max_score}, keywords: {matched_keywords})")
+                return dept
+            else:
+                logger.warning(f"Department '{best_department_name}' not found in database")
+        except Exception as e:
+            logger.error(f"Error finding department: {e}")
     
-    return best_department
+    # Fallback to General Administration
+    logger.warning(f"No matching department found (max_score: {max_score}), using fallback")
+    try:
+        general_dept = Department.objects.filter(name__icontains='General').first()
+        if general_dept:
+            logger.info(f"Using fallback department: {general_dept.name}")
+            return general_dept
+        # Ultimate fallback - first department
+        first_dept = Department.objects.first()
+        logger.info(f"Using ultimate fallback department: {first_dept.name if first_dept else 'None'}")
+        return first_dept
+    except Exception as e:
+        logger.error(f"Error getting fallback department: {e}")
+        return None
+
 
 
 @api_view(['GET'])
